@@ -2,7 +2,7 @@ import type { Meta2d } from '@meta2d/core';
 import type { RefObject } from 'react';
 import { useMemo } from 'react';
 
-import { useEditorLocale } from '@/react/hooks/useEditorLocale';
+import locale from '@/locale';
 
 import { normalizeMeta2dPen } from '../utils/meta2dManager';
 import { GROUP_LOCALE_MAP, type PaletteItem, getPalette, itemLabelLocaleKey } from './diagram-pens';
@@ -99,12 +99,10 @@ function PaletteTile({
   disabled,
   engineRef,
   item,
-  t,
 }: {
   disabled?: boolean;
   engineRef: RefObject<Meta2d | null>;
   item: PaletteItem;
-  t: (key: string, params?: Record<string, any>) => string;
 }) {
   const addOnClick = () => {
     const engine = engineRef.current;
@@ -163,6 +161,15 @@ function PaletteTile({
   );
 }
 
+function t(key: string): string {
+  const keys = key.split('.');
+  let value: any = locale;
+  for (const k of keys) {
+    value = value?.[k];
+  }
+  return typeof value === 'string' ? value : key;
+}
+
 export function DiagramPalette({
   disabled,
   engineRef,
@@ -170,7 +177,6 @@ export function DiagramPalette({
   disabled?: boolean;
   engineRef: RefObject<Meta2d | null>;
 }) {
-  const { t } = useEditorLocale();
   const groups = useMemo(() => groupPalette(getPalette()), []);
 
   return (
@@ -207,7 +213,6 @@ export function DiagramPalette({
                 engineRef={engineRef}
                 item={item}
                 key={item.key}
-                t={t}
               />
             ))}
           </div>

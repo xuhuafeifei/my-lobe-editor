@@ -1,7 +1,7 @@
 import { Meta2d } from '@meta2d/core';
 import { type CSSProperties, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-import { useEditorLocale } from '@/react/hooks/useEditorLocale';
+import locale from '@/locale';
 
 import {
   EMPTY_META2D_PLACEHOLDER_SVG,
@@ -53,8 +53,16 @@ export interface DiagramEditorProps {
   onSave: (diagram: string, svg: string) => void;
 }
 
+function t(key: string): string {
+  const keys = key.split('.');
+  let value: any = locale;
+  for (const k of keys) {
+    value = value?.[k];
+  }
+  return typeof value === 'string' ? value : key;
+}
+
 export function DiagramEditor({ diagram, onClose, onSave }: DiagramEditorProps) {
-  const { t } = useEditorLocale();
   const canvasRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<Meta2d | null>(null);
   const initialDiagramRef = useRef(diagram);
@@ -152,6 +160,7 @@ export function DiagramEditor({ diagram, onClose, onSave }: DiagramEditorProps) 
         style={{
           background: '#fff',
           borderRadius: 10,
+          color: '#000',
           boxShadow: '0 12px 30px rgb(0 0 0 / 20%)',
           display: 'flex',
           flexDirection: 'column',

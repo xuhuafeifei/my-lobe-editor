@@ -1,7 +1,7 @@
 import type { Meta2d } from '@meta2d/core';
 import { type CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
 
-import { useEditorLocale } from '@/react/hooks/useEditorLocale';
+import locale from '@/locale';
 
 type PenData = Record<string, unknown>;
 
@@ -60,8 +60,16 @@ const layerBtn: CSSProperties = {
   padding: '4px 8px',
 };
 
+function t(key: string): string {
+  const keys = key.split('.');
+  let value: any = locale;
+  for (const k of keys) {
+    value = value?.[k];
+  }
+  return typeof value === 'string' ? value : key;
+}
+
 export function PenProps({ engine }: { engine: Meta2d | null }) {
-  const { t } = useEditorLocale();
   const [pen, setPen] = useState<PenData | null>(null);
   const [rect, setRect] = useState<{ height: number; width: number; x: number; y: number } | null>(
     null,
@@ -123,6 +131,7 @@ export function PenProps({ engine }: { engine: Meta2d | null }) {
       v.lineDash = lineDashs[value as number];
     }
     engine.setValue(v as never, { render: true } as never);
+    setPen((p) => (p ? { ...p, [prop]: value } : null));
   };
 
   const changeRect = (prop: string, value: number) => {
