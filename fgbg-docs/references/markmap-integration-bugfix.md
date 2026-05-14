@@ -99,3 +99,7 @@ Demo 的 plugins 列表中没有 `ReactMarkmapPlugin`，导致 `---markmap---` �
 
 - **快捷方式**：服务端实例 id 必须由 `IMarkdownShortCutService` 符号传入，不能与 Map 内存 key 想当然混用。
 - **粘贴**：Lexical `PASTE_COMMAND` 会跑全局处理器；嵌在编辑器外壳里的 **`textarea` 必须用 target 判定提前放行**，交给浏览器默认行为。
+
+### 集成方：`plugins` 里必须有 `ReactMarkmapPlugin`
+
+`MarkmapPlugin` 本体随 `ReactMarkmapPlugin` 挂载；宿主应用若在 `<Editor plugins={...} />` **漏注册**该项，表现为 **`---markmap---` 回车无任何效果**（与是否已升级到最新 `@fgbg/lobe-editor` 无关）。与 `ReactMeta2dPlugin` 一样显式加入即可。
