@@ -8,7 +8,6 @@ import {
   KEY_ESCAPE_COMMAND,
   KEY_TAB_COMMAND,
   LexicalEditor,
-  createCommand,
 } from 'lexical';
 import { BaselineIcon, LinkIcon } from 'lucide-react';
 import {
@@ -27,13 +26,8 @@ import { useTranslation } from '@/editor-kernel/react/useTranslation';
 import { cleanPosition, updatePosition } from '@/utils/updatePosition';
 
 import { UPDATE_LINK_TEXT_COMMAND } from '../../command';
-import { LinkNode } from '../../node/LinkNode';
+import { EDIT_LINK_COMMAND, LinkNode } from '../../node/LinkNode';
 import { styles } from '../style';
-
-export const EDIT_LINK_COMMAND = createCommand<{
-  linkNode: LinkNode | null;
-  linkNodeDOM: HTMLElement | null;
-}>();
 
 interface LinkEditProps {
   editor: LexicalEditor;
@@ -47,6 +41,7 @@ const LinkEdit: FC<LinkEditProps> = ({ editor }) => {
   const [linkUrl, setLinkUrl] = useState('');
   const [linkText, setLinkText] = useState('');
   const [linkDom, setLinkDom] = useState<HTMLElement | null>(null);
+  const linkDomRef = useRef<HTMLElement | null>(null);
   const { editable } = useEditable();
 
   const t = useTranslation();
@@ -57,6 +52,7 @@ const LinkEdit: FC<LinkEditProps> = ({ editor }) => {
     editor.focus();
     cleanPosition(divRef.current);
     linkNodeRef.current = null;
+    linkDomRef.current = null;
     setLinkUrl('');
     setLinkText('');
     setLinkDom(null);
@@ -191,7 +187,14 @@ const LinkEdit: FC<LinkEditProps> = ({ editor }) => {
               handleCancel();
               return false;
             }
+            if (
+              linkNodeRef.current?.getKey() === payload.linkNode.getKey() &&
+              linkDomRef.current === payload.linkNodeDOM
+            ) {
+              return true;
+            }
             linkNodeRef.current = payload.linkNode;
+            linkDomRef.current = payload.linkNodeDOM;
             setLinkUrl(payload.linkNode.getURL());
             setLinkText(payload.linkNode.getTextContent());
             setLinkDom(payload.linkNodeDOM);
@@ -222,7 +225,7 @@ const LinkEdit: FC<LinkEditProps> = ({ editor }) => {
         ),
       );
     },
-    [editor],
+    [editor, handleCancel],
   );
 
   if (!linkNodeRef.current || !editable) return null;

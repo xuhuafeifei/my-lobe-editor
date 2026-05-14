@@ -26,6 +26,8 @@ const zhCN = {
     edit: '编辑链接',
     editLinkTitle: '链接',
     editTextTitle: '文本',
+    editableInteractiveHint:
+      '左键单击：在链接内移动光标或编辑文本。⌘/Ctrl+单击、或鼠标中键：新标签打开。也可悬停在链接上使用工具栏「打开链接」。',
     open: '打开链接',
     placeholder: '输入链接 URL',
     unlink: '取消链接',

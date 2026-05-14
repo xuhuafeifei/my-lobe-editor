@@ -1,7 +1,7 @@
 'use client';
 
 import { $getNodeByKey, type LexicalEditor } from 'lexical';
-import { useCallback, useLayoutEffect, useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 import { useLexicalComposerContext } from '@/editor-kernel/react/react-context';
 
@@ -86,11 +86,11 @@ function MarkmapDecorator({
       {/* HUD buttons */}
       <div
         style={{
+          bottom: 8,
           display: 'flex',
           gap: 4,
           position: 'absolute',
           right: 8,
-          top: 8,
           zIndex: 10,
         }}
       >
@@ -142,12 +142,11 @@ export function ReactMarkmapPlugin({ className, theme }: ReactMarkmapPluginProps
     [className],
   );
 
-  useLayoutEffect(() => {
-    editor.registerPlugin(MarkmapPlugin, {
-      decorator,
-      theme,
-    });
-  }, [decorator, editor, theme]);
+  const registeredRef = useRef(false);
+  if (!registeredRef.current) {
+    registeredRef.current = true;
+    editor.registerPlugin(MarkmapPlugin, { decorator, theme });
+  }
 
   return null;
 }

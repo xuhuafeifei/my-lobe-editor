@@ -16,6 +16,7 @@ import type {
 } from 'lexical';
 import {
   $applyNodeReplacement,
+  $getNodeByKey,
   $getSelection,
   $isElementNode,
   $isNodeSelection,
@@ -28,9 +29,14 @@ import {
 } from 'lexical';
 
 import { assert } from '@/editor-kernel/utils';
+import type { IEditorKernel } from '@/types/kernel';
 import { createDebugLogger } from '@/utils/debug';
 
 const logger = createDebugLogger('plugin', 'link');
+
+function getKernel(editor: LexicalEditor): IEditorKernel | undefined {
+  return (editor as unknown as { __kernel?: IEditorKernel }).__kernel;
+}
 
 export type LinkAttributes = {
   rel?: null | string;
@@ -58,6 +64,11 @@ export const HOVER_LINK_COMMAND = createCommand<{
 export const HOVER_OUT_LINK_COMMAND = createCommand<{
   event: MouseEvent;
 }>('HOVER_OUT_LINK_COMMAND');
+
+export const EDIT_LINK_COMMAND = createCommand<{
+  linkNode: LinkNode | null;
+  linkNodeDOM: HTMLElement | null;
+}>('EDIT_LINK_COMMAND');
 
 /** @noInheritDoc */
 export class LinkNode extends ElementNode {
@@ -113,6 +124,67 @@ export class LinkNode extends ElementNode {
         });
       }
     });
+    if (editor.isEditable()) {
+      const kernel = getKernel(editor);
+      element.title =
+        kernel?.t('link.editableInteractiveHint') ??
+        'Click to edit link text. ⌘ or Ctrl-click (or middle-click) opens in a new tab.';
+    }
+    /** ⌘/Ctrl+click or middle-click opens href; plain click re-opens the link edit UI (selection can stay inside the same link). */
+    element.addEventListener(
+      'click',
+      (event: MouseEvent) => {
+        if (!editor.isEditable()) return;
+
+        const withModifier = event.metaKey || event.ctrlKey;
+        const middleClick = event.button === 1;
+
+        if (withModifier || middleClick) {
+          const href = element.href;
+          if (!href || /\babout:blank\b/i.test(href)) return;
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          window.open(href, '_blank', 'noopener,noreferrer');
+          return;
+        }
+
+        if (event.button !== 0) return;
+
+        const nodeKey = this.getKey();
+        let linkNodeForEdit: LinkNode | null = null;
+        editor.getEditorState().read(() => {
+          const n = $getNodeByKey(nodeKey);
+          if ($isLinkNode(n)) {
+            linkNodeForEdit = n;
+          }
+        });
+        if (linkNodeForEdit) {
+          editor.dispatchCommand(EDIT_LINK_COMMAND, {
+            linkNode: linkNodeForEdit,
+            linkNodeDOM: element,
+          });
+        }
+      },
+      true,
+    );
+    element.addEventListener(
+      'auxclick',
+      (event: MouseEvent) => {
+        if (event.button !== 1) return;
+        if (!editor.isEditable()) return;
+
+        const href = element.href;
+        if (!href || /\babout:blank\b/i.test(href)) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        window.open(href, '_blank', 'noopener,noreferrer');
+      },
+      true,
+    );
     return element;
   }
 

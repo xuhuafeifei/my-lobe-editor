@@ -28,6 +28,16 @@ export interface PasteContext {
   event: ClipboardEvent;
 }
 
+/** Paste landed on a native control (e.g. Markmap textarea) — Lexical markdown/VS Code paste must not run. */
+export function isPasteTargetNativeFormControl(event: ClipboardEvent): boolean {
+  const t = event.target;
+  if (!(t instanceof Node)) return false;
+  const el =
+    t.nodeType === Node.TEXT_NODE ? (t.parentElement as Element | null) : (t as Element | null);
+  if (!el?.closest) return false;
+  return Boolean(el.closest('textarea, input:not([type="hidden"]), select'));
+}
+
 /**
  * Paste handler function type.
  * @returns 'handled' - stop the chain, event is handled

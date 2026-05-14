@@ -19,6 +19,7 @@ import {
 } from 'lexical';
 
 import { KernelPlugin } from '@/editor-kernel/plugin';
+import { isPasteTargetNativeFormControl } from '@/plugins/common/plugin/paste-handler';
 import { IEditorKernel, IEditorPlugin, IEditorPluginConstructor, IServiceID } from '@/types';
 import { createDebugLogger } from '@/utils/debug';
 
@@ -265,6 +266,7 @@ export const MarkdownPlugin: IEditorPluginConstructor<MarkdownPluginOptions> = c
         PASTE_COMMAND,
         (event) => {
           if (!(event instanceof ClipboardEvent)) return false;
+          if (isPasteTargetNativeFormControl(event)) return false;
           if (!this.shouldHandlePasteMarkdown()) return false;
 
           // 代码块内粘贴：跳过 markdown 转换（避免光标跳转）

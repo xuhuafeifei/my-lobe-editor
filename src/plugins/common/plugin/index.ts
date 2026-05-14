@@ -44,6 +44,7 @@ import {
   handleFilePaste,
   handlePlainTextPaste,
   handleVSCodePaste,
+  isPasteTargetNativeFormControl,
   runPasteHandlers,
 } from './paste-handler';
 import { registerHeaderBackspace, registerLastElement, registerRichKeydown } from './register';
@@ -411,6 +412,7 @@ export const CommonPlugin: IEditorPluginConstructor<CommonPluginOptions> = class
         PASTE_COMMAND,
         (event) => {
           if (!(event instanceof ClipboardEvent)) return false;
+          if (isPasteTargetNativeFormControl(event)) return false;
 
           const clipboardData = event.clipboardData;
           if (!clipboardData) return false;

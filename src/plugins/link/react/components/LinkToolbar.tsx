@@ -21,13 +21,13 @@ import { cleanPosition, updatePosition } from '@/utils/updatePosition';
 
 import {
   $isLinkNode,
+  EDIT_LINK_COMMAND,
   HOVER_LINK_COMMAND,
   HOVER_OUT_LINK_COMMAND,
   LinkNode,
   TOGGLE_LINK_COMMAND,
 } from '../../node/LinkNode';
 import { styles } from '../style';
-import { EDIT_LINK_COMMAND } from './LinkEdit';
 
 interface LinkToolbarProps {
   editor: LexicalEditor;
@@ -102,20 +102,14 @@ const LinkToolbar = memo<LinkToolbarProps>(({ editor, enable }) => {
           const selection = editor.getEditorState().read(() => $getSelection());
           if (!selection) return;
           if ($isRangeSelection(selection)) {
-            // Update links for UI components
             editor.getEditorState().read(() => {
               const node = getSelectedNode(selection);
               const parent = node.getParent();
               const isLink = $isLinkNode(parent) || $isLinkNode(node);
               if (isLink === state.current.isLink) return;
               state.current.isLink = isLink;
-              if (isLink) {
-                const linkNode = $isLinkNode(parent) ? (parent as LinkNode) : (node as LinkNode);
-                editor.dispatchCommand(EDIT_LINK_COMMAND, {
-                  linkNode,
-                  linkNodeDOM: editor.getElementByKey(linkNode.getKey()),
-                });
-              } else {
+              // 选区变化离开链接时关闭编辑面板；进入链接不再自动弹出（避免关面板后选区仍在链接内无法再次触发）
+              if (!isLink) {
                 editor.dispatchCommand(EDIT_LINK_COMMAND, {
                   linkNode: null,
                   linkNodeDOM: null,
@@ -123,7 +117,12 @@ const LinkToolbar = memo<LinkToolbarProps>(({ editor, enable }) => {
               }
             });
           } else {
+            if (!state.current.isLink) return;
             state.current.isLink = false;
+            editor.dispatchCommand(EDIT_LINK_COMMAND, {
+              linkNode: null,
+              linkNodeDOM: null,
+            });
           }
         }),
         editor.registerCommand(

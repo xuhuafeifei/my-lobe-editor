@@ -9,14 +9,17 @@ import type { Paragraph } from 'mdast';
 
 import { INodeHelper } from '@/editor-kernel/inode/helper';
 import { KernelPlugin } from '@/editor-kernel/plugin';
-import { MARKDOWN_READER_LEVEL_HIGH } from '@/plugins/markdown/service/shortcut';
-import type { IMarkdownShortCutService } from '@/plugins/markdown/service/shortcut';
+import {
+  IMarkdownShortCutService,
+  MARKDOWN_READER_LEVEL_HIGH,
+} from '@/plugins/markdown/service/shortcut';
 import type { IEditorKernel, IEditorPlugin, IEditorPluginConstructor } from '@/types';
 
 import { registerMarkmapCommand } from '../command';
 import { $createMarkmapNode, MarkmapNode } from '../node';
 
 const MARKMAP_SHORTCUT = /^---markmap---$/i;
+const MARKMAP_DIALOG_SHORTCUT = /^&markmap&$/i;
 const MARKMAP_BLOCK = /^---markmap---\n([\S\s]*?)\n---\/markmap---$/i;
 
 export interface MarkmapPluginOptions {
@@ -68,13 +71,25 @@ export const MarkmapPlugin: IEditorPluginConstructor<MarkmapPluginOptions> = cla
   }
 
   registerMarkdown() {
-    const markdownService = this.kernel.requireService<IMarkdownShortCutService>(
-      'MarkdownShortCutService' as any,
-    );
+    const markdownService = this.kernel.requireService(IMarkdownShortCutService);
     if (!markdownService) return;
 
     markdownService.registerMarkdownShortCut({
       regExp: MARKMAP_SHORTCUT,
+      replace: (parentNode) => {
+        const node = $createMarkmapNode('', { autoOpenEditor: true });
+        parentNode.replace(node);
+        const selection = $createNodeSelection();
+        selection.add(node.getKey());
+        $setSelection(selection);
+      },
+      trigger: 'enter',
+      type: 'element',
+    });
+
+    // &markmap& → 直接打开全屏编辑+预览区域
+    markdownService.registerMarkdownShortCut({
+      regExp: MARKMAP_DIALOG_SHORTCUT,
       replace: (parentNode) => {
         const node = $createMarkmapNode('', { autoOpenEditor: true });
         parentNode.replace(node);

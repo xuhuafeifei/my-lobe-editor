@@ -72,3 +72,30 @@ Demo 的 plugins 列表中没有 `ReactMarkmapPlugin`，导致 `---markmap---` �
 1. **CSS `overflow: hidden` + flex `align-items` 组合敏感**：在 codemirror-block 中不要随意修改原始 CSS 布局，这些值之间相互依赖（BFC 创建、stretch 行为、圆角裁剪）
 2. **untracked 插件文件会被 dumi 打入独立异步 chunk**：此时模块加载顺序不可靠，不能直接依赖跨 chunk 的运行时值引用
 3. **TypeScript 声明合并的 `const` 值在异步模块加载时可能为 undefined**：跨 chunk 引用时用 `import type` + 字符串 key 绕过
+
+---
+
+## 2026-05-14 增补：MarkmapNode、`---markmap---`、悬浮按钮、嵌套粘贴（AI 检索摘要）
+
+> **tags**: [bugfix, markmap, markdown, paste, lexical]
+
+### 遇到的问题
+
+1. **`---markmap---` 回车无效**（对比 `---meta2d---` 正常）：快捷方式未注册。
+2. **Markmap 编辑区里粘贴**：内容被当正文 Markdown 粘贴处理，不进左侧 `textarea`。
+3. **预览区「编辑 / 删除」按钮位置**：需求改到**右下角**。
+
+### 涉及文件与处理
+
+| 文件 | 做了什么 |
+|------|----------|
+| `src/plugins/markmap/plugin/index.ts` | 使用 `kernel.requireService(IMarkdownShortCutService)` 取 Markdown 快捷服务（与 `Meta2dPlugin` 一致）；**勿**误用裸露字符串当 service id，`requireService` 用 Map key 会得到 `null`，shortcut 整段不配。Markdown 读写/shortcut 保持在 `onInit` 里注册。可选：`&markmap&` 等额外 shortcut。 |
+| `src/plugins/markmap/react/index.tsx` | 悬浮按钮：`position: absolute` 改为 `bottom: + right`（原为 `top`）。插件注册可与 `ReactMeta2dPlugin` 类似用语义清晰的生命周期写法。 |
+| `src/plugins/common/plugin/paste-handler.ts` | 新增 `isPasteTargetNativeFormControl(event)`：`event.target` 落在 `textarea` / `input`（非 hidden）/ `select` 内则视为外链原生控件粘贴。 |
+| `src/plugins/common/plugin/index.ts` | `PASTE_COMMAND` 最前：若 `isPasteTargetNativeFormControl` → `return false`，避免 VS Code / 纯文本链路抢粘贴。 |
+| `src/plugins/markdown/plugin/index.ts` | `PASTE_COMMAND` 同样在入口判断：不向嵌套表单做 Markdown 自动解析/插入。 |
+
+### 根因一句话
+
+- **快捷方式**：服务端实例 id 必须由 `IMarkdownShortCutService` 符号传入，不能与 Map 内存 key 想当然混用。
+- **粘贴**：Lexical `PASTE_COMMAND` 会跑全局处理器；嵌在编辑器外壳里的 **`textarea` 必须用 target 判定提前放行**，交给浏览器默认行为。

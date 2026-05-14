@@ -38,6 +38,8 @@ fgbg-docs/
     ├── markdown-image-transformer-design.md  # 图片 markdown transformer 设计
     ├── markdown-shortcut-transformation-system.md  # Markdown 快捷转换系统
     ├── meta2d-plugin-implementation-notes.md # Meta2d 流程图插件：JSON+SVG、拖拽首屏无边线、SVG 坐标错乱经验
+    ├── link-plugin-interaction-bugfix.md      # 链接：单击编辑 vs 修饰键跳转、EDIT_LINK_COMMAND 与异步 read、嵌套 textarea 粘贴
+    ├── markmap-integration-bugfix.md           # Markmap：`---markmap---` / service 注册、Codemirror/CSS 历史、`textarea` 内粘贴不走 MarkdownPlugin
     ├── mermaid-render-error-boundary.md  # Mermaid parse/render 错误兜底：解决 @lobehub/ui 吞错导致灰色占位图
     ├── mermaid-preview-overlay.md        # Mermaid 全屏预览浮层（缩放/拖拽）；为何不用 antd Image.data URL/SVG<img>
     └── paste-image-url-plugin-design.md       # 粘贴图片 URL 链路设计：ImagePlugin 与 LinkHighlightPlugin 的 PASTE_COMMAND 交互、优先级、useSuspenseImage 缓存

@@ -26,6 +26,8 @@ const locale = {
     edit: 'Edit Link',
     editLinkTitle: 'Link',
     editTextTitle: 'Text',
+    editableInteractiveHint:
+      'Click to place the caret / edit this link. ⌘ or Ctrl-click (or middle-click) opens in a new tab. You can also use the hovering toolbar “Open”.',
     open: 'Open Link',
     placeholder: 'Enter link URL',
     unlink: 'Unlink Link',
