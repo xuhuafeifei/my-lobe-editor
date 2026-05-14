@@ -69,6 +69,13 @@ export const MODES = [
     syntax: 'simplemode',
     value: 'mermaid',
   },
+  {
+    ext: ['markmap', 'mmap'],
+    name: 'Markmap',
+    /** No dedicated CM mode in bundle — text-like editing; value kept for fenced ```markmap markdown */
+    syntax: 'markdown',
+    value: 'markmap',
+  },
   { name: 'MATLAB', syntax: 'octave', value: 'matlab' },
   { ext: ['conf'], name: 'Nginx', syntax: 'nginx', value: 'nginx' },
   {

@@ -26,6 +26,7 @@ import { useLexicalNodeSelection } from '@/editor-kernel/react/useLexicalNodeSel
 import { useTranslation } from '@/editor-kernel/react/useTranslation';
 import { lobeTheme } from '@/plugins/codemirror-block/react/theme';
 import MermaidWithErrorBoundary from '@/plugins/common/react/MermaidWithErrorBoundary';
+import MarkmapWithErrorBoundary from '@/plugins/common/react/MarkmapWithErrorBoundary';
 
 import { SELECT_AFTER_CODEMIRROR_COMMAND, SELECT_BEFORE_CODEMIRROR_COMMAND } from '../command';
 import { loadCodeMirror } from '../lib';
@@ -65,27 +66,41 @@ const ReactCodemirrorNode: FC<ReactCodemirrorNodeProps> = ({ node, className, ed
   const [expand, setExpand] = useState<boolean>(true);
   /** Live text for in-editor Mermaid preview (Codemirror only shows source; diagram is rendered here). */
   const [mermaidDiagramSource, setMermaidDiagramSource] = useState(node.code);
+  /** Live text for in-editor Markmap preview (Codemirror only shows source; mindmap is rendered here). */
+  const [markmapSource, setMarkmapSource] = useState(node.code);
   /**
-   * Mermaid 模式下是否显示代码源码区。
-   * - Toolbar 展开按钮（箭头）仅控制 expand，不直接影响 mermaidShowSource
+   * Mermaid/Markmap 模式下是否显示代码源码区。
+   * - Toolbar 展开按钮（箭头）仅控制 expand，不直接影响 showSource
    * - 点击代码块内部区域时恢复源码显示
-   * - 点击代码块外部区域时隐藏源码，只保留 Mermaid 图
+   * - 点击代码块外部区域时隐藏源码，只保留图表
    */
   const [mermaidShowSource, setMermaidShowSource] = useState(false);
+  const [markmapShowSource, setMarkmapShowSource] = useState(false);
   const mermaidPreviewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const markmapPreviewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showCodeMirror = useMemo(
-    () => expand && (selectedLang !== 'mermaid' || mermaidShowSource),
-    [expand, mermaidShowSource, selectedLang],
+    () =>
+      expand &&
+      ((selectedLang !== 'mermaid' && selectedLang !== 'markmap') ||
+        (selectedLang === 'mermaid' && mermaidShowSource) ||
+        (selectedLang === 'markmap' && markmapShowSource)),
+    [expand, mermaidShowSource, markmapShowSource, selectedLang],
   );
 
   /** Mermaid：单击图表区域切换放大预览（无悬浮按钮） */
   const [mermaidDiagramExpanded, setMermaidDiagramExpanded] = useState(false);
+  /** Markmap：单击图表区域切换放大预览（无悬浮按钮） */
+  const [markmapExpanded, setMarkmapExpanded] = useState(false);
 
   useEffect(() => {
-    if (selectedLang !== 'mermaid') {
+    if (selectedLang === 'mermaid') {
       setMermaidShowSource(true);
       setMermaidDiagramExpanded(false);
+    }
+    if (selectedLang === 'markmap') {
+      setMarkmapShowSource(true);
+      setMarkmapExpanded(false);
     }
   }, [selectedLang]);
 
@@ -95,12 +110,12 @@ const ReactCodemirrorNode: FC<ReactCodemirrorNodeProps> = ({ node, className, ed
   }, []);
 
   /**
-   * Mermaid 模式下，点击代码块内部(非图表区域)恢复源码显示，
-   * 点击外部则隐藏源码只保留图。
+   * Mermaid / Markmap 模式下，点击代码块内部(非图表区域)恢复源码显示，
+   * 点击外部则隐藏源码只保留图表。
    * Toolbar 的展开按钮（箭头）独立控制 expand，不会和此逻辑冲突。
    */
   useEffect(() => {
-    if (selectedLang !== 'mermaid') return;
+    if (selectedLang !== 'mermaid' && selectedLang !== 'markmap') return;
 
     let detach: (() => void) | undefined;
 
@@ -118,20 +133,28 @@ const ReactCodemirrorNode: FC<ReactCodemirrorNodeProps> = ({ node, className, ed
 
         /** 点击下方渲染区时由图表自己处理缩放，不在此恢复/收起源码 */
         if (
-          selectedLang === 'mermaid' &&
+          (selectedLang === 'mermaid' || selectedLang === 'markmap') &&
           target instanceof Element &&
-          target.closest('[data-cm-mermaid-chart-area="true"]')
+          (target.closest('[data-cm-mermaid-chart-area="true"]') ||
+            target.closest('[data-cm-markmap-chart-area="true"]'))
         ) {
           return;
         }
 
         if (shell.contains(target)) {
-          setMermaidShowSource(true);
+          if (selectedLang === 'mermaid') setMermaidShowSource(true);
+          if (selectedLang === 'markmap') setMarkmapShowSource(true);
           return;
         }
 
-        setMermaidShowSource(false);
-        setMermaidDiagramExpanded(false);
+        if (selectedLang === 'mermaid') {
+          setMermaidShowSource(false);
+          setMermaidDiagramExpanded(false);
+        }
+        if (selectedLang === 'markmap') {
+          setMarkmapShowSource(false);
+          setMarkmapExpanded(false);
+        }
         instanceRef.current?.blur();
       };
 
@@ -228,6 +251,15 @@ const ReactCodemirrorNode: FC<ReactCodemirrorNodeProps> = ({ node, className, ed
     setMermaidDiagramExpanded((v) => !v);
   }, []);
 
+  /** 单击思维导图（非控件）切换放大预览 */
+  const handleMarkmapClick = useCallback((e: ReactMouseEvent<HTMLDivElement>) => {
+    const el = e.target;
+    if (!(el instanceof Element)) return;
+    if (isLikelyInteractiveTarget(el)) return;
+    e.stopPropagation();
+    setMarkmapExpanded((v) => !v);
+  }, []);
+
   useEffect(() => {
     const sel = editor.getEditorState().read(() => $getSelection());
     // 鼠标主动点击导致的选中，不处理
@@ -241,8 +273,8 @@ const ReactCodemirrorNode: FC<ReactCodemirrorNodeProps> = ({ node, className, ed
       }
       return;
     }
-    // Mermaid 收起源码时不高亮抢焦点 CodeMirror（用户在看图）
-    if (selectedLang === 'mermaid' && !showCodeMirror) {
+    // Mermaid / Markmap 收起源码时不高亮抢焦点 CodeMirror（用户在看图）
+    if ((selectedLang === 'mermaid' || selectedLang === 'markmap') && !showCodeMirror) {
       return;
     }
     // 选中状态下，聚焦 CodeMirror
@@ -261,6 +293,11 @@ const ReactCodemirrorNode: FC<ReactCodemirrorNodeProps> = ({ node, className, ed
   useEffect(() => {
     if (selectedLang !== 'mermaid' || !instanceRef.current) return;
     setMermaidDiagramSource(instanceRef.current.getValue());
+  }, [selectedLang]);
+
+  useEffect(() => {
+    if (selectedLang !== 'markmap' || !instanceRef.current) return;
+    setMarkmapSource(instanceRef.current.getValue());
   }, [selectedLang]);
 
   useEffect(() => {
@@ -365,6 +402,14 @@ const ReactCodemirrorNode: FC<ReactCodemirrorNodeProps> = ({ node, className, ed
             setMermaidDiagramSource(currentValue);
             mermaidPreviewTimerRef.current = null;
           }, 220);
+
+          if (markmapPreviewTimerRef.current) {
+            clearTimeout(markmapPreviewTimerRef.current);
+          }
+          markmapPreviewTimerRef.current = setTimeout(() => {
+            setMarkmapSource(currentValue);
+            markmapPreviewTimerRef.current = null;
+          }, 220);
         });
 
         instance.on(
@@ -403,6 +448,10 @@ const ReactCodemirrorNode: FC<ReactCodemirrorNodeProps> = ({ node, className, ed
       if (mermaidPreviewTimerRef.current) {
         clearTimeout(mermaidPreviewTimerRef.current);
         mermaidPreviewTimerRef.current = null;
+      }
+      if (markmapPreviewTimerRef.current) {
+        clearTimeout(markmapPreviewTimerRef.current);
+        markmapPreviewTimerRef.current = null;
       }
       if (instanceRef.current) {
         instanceRef.current.destroy();
@@ -453,7 +502,7 @@ const ReactCodemirrorNode: FC<ReactCodemirrorNodeProps> = ({ node, className, ed
           useTabs={useTabs}
         />
 
-        {/* CodeMirror 在上方；Mermaid 预览在下方单独区域（非代码块正文内） */}
+        {/* CodeMirror 在上方；Mermaid/Markmap 预览在下方单独区域（非代码块正文内） */}
         <div className={cx('cm-container', !showCodeMirror && 'cm-container-collapsed')}>
           <textarea className={'cm-textarea'} ref={ref} />
         </div>
@@ -476,6 +525,23 @@ const ReactCodemirrorNode: FC<ReactCodemirrorNodeProps> = ({ node, className, ed
                 >
                   {mermaidDiagramSource.trim()}
                 </MermaidWithErrorBoundary>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {selectedLang === 'markmap' && markmapSource.trim().length > 0 && (
+          <div className={'cm-markmap-preview'} data-cm-markmap-chart-area="true">
+            <div className={'cm-markmap-chart-area'} onClick={handleMarkmapClick}>
+              <div
+                className={cx(
+                  'cm-markmap-render',
+                  markmapExpanded && 'cm-markmap-render-expanded',
+                )}
+              >
+                <MarkmapWithErrorBoundary enableImagePreview={true}>
+                  {markmapSource.trim()}
+                </MarkmapWithErrorBoundary>
               </div>
             </div>
           </div>
