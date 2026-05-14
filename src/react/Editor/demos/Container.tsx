@@ -1,4 +1,5 @@
 import { CodeEditor, Collapse, CollapseProps, Highlighter, ToastHost } from '@lobehub/ui';
+import { ConfigProvider } from 'antd';
 import { type FC, type PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react';
 
 interface ContainerProps extends Omit<CollapseProps, 'items'> {
@@ -30,7 +31,7 @@ const Container: FC<PropsWithChildren<ContainerProps>> = ({
   }, []);
 
   return (
-    <>
+    <ConfigProvider>
       <ToastHost />
       <Collapse
         collapsible={collapsible}
@@ -87,7 +88,7 @@ const Container: FC<PropsWithChildren<ContainerProps>> = ({
         }}
         variant={'outlined'}
       />
-    </>
+    </ConfigProvider>
   );
 };
 

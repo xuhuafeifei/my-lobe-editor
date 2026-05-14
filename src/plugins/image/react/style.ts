@@ -11,6 +11,11 @@ export const styles = createStaticStyles(({ css, cssVar }) => ({
     &.selected {
       background-color: ${cssVar.colorPrimaryBg};
     }
+
+    /* 防止图片撑破容器：限制最大宽度为 100% */
+    img {
+      max-width: 100% !important;
+    }
   `,
 
   blockImage: css`
@@ -25,6 +30,11 @@ export const styles = createStaticStyles(({ css, cssVar }) => ({
 
     &.selected {
       background-color: ${cssVar.colorPrimaryBg};
+    }
+
+    /* 防止图片撑破容器：限制最大宽度为 100% */
+    img {
+      max-width: 100% !important;
     }
   `,
 }));

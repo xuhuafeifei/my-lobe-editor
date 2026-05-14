@@ -5,6 +5,9 @@ export const styles = createStaticStyles(
     overflow-x: auto;
     margin-block: calc(var(--lobe-markdown-margin-multiple) * 0.5em)
       calc(var(--lobe-markdown-margin-multiple) * 0.5em + 16px);
+    /* flex 布局下，min-width: auto 会让容器按内容无限撑开，导致 overflow-x: auto 失效
+       设置 min-width: 0 是 CSS flex 布局经典 fix，让容器真正被父宽度约束 */
+    min-width: 0;
 
     .editor_table {
       table-layout: fixed;

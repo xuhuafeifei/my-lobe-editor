@@ -21,6 +21,10 @@ export const styles = createStaticStyles(
       overflow: visible;
     }
 
+    &:has(.cm-markmap-preview) {
+      overflow: visible;
+    }
+
     .cm-hidden-actions {
       opacity: 0;
       transition: opacity 0.2s ease-in-out;
@@ -101,6 +105,54 @@ export const styles = createStaticStyles(
       }
 
       &.cm-mermaid-render-expanded {
+        max-height: min(92vh, 1200px);
+
+        svg {
+          max-width: none;
+        }
+      }
+    }
+
+    .cm-markmap-preview {
+      overflow: visible;
+      align-self: stretch;
+
+      width: 100%;
+      padding-block-end: 8px;
+      padding-inline: 12px;
+      border-block-start: 1px solid ${cssVar.colorFillQuaternary};
+    }
+
+    .cm-markmap-chart-area {
+      cursor: zoom-in;
+
+      overflow: visible;
+
+      width: 100%;
+      min-height: 120px;
+      border-radius: ${cssVar.borderRadius}px;
+
+      &:has(.cm-markmap-render-expanded) {
+        cursor: zoom-out;
+      }
+    }
+
+    .cm-markmap-render {
+      overflow: auto;
+      overflow-x: auto;
+      width: 100%;
+
+      max-height: min(480px, 55vh);
+
+      svg {
+        height: auto;
+      }
+
+      &:not(.cm-markmap-render-expanded) svg {
+        max-width: 100%;
+      }
+
+      &.cm-markmap-render-expanded {
         max-height: min(92vh, 1200px);
 
         svg {

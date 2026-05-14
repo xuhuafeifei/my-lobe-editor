@@ -14,6 +14,7 @@ export * from './plugins/link';
 export * from './plugins/link-highlight';
 export * from './plugins/list';
 export * from './plugins/markdown';
+export * from './plugins/markmap';
 export * from './plugins/math';
 export * from './plugins/mention';
 export * from './plugins/meta2d';

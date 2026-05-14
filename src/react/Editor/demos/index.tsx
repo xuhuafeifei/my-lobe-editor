@@ -20,6 +20,7 @@ import {
   ReactLinkPlugin,
   ReactListPlugin,
   ReactMathPlugin,
+  ReactMarkmapPlugin,
   ReactMeta2dPlugin,
   ReactTablePlugin,
   ReactToolbarPlugin,
@@ -306,6 +307,7 @@ const Demo: FC<Pick<CollapseProps, 'collapsible' | 'defaultActiveKey'>> = (props
                 ReactHRPlugin,
                 ReactTablePlugin,
                 ReactMathPlugin,
+                ReactMarkmapPlugin,
                 ReactMeta2dPlugin,
                 ReactCodePlugin,
                 Editor.withProps(ReactToolbarPlugin, {
