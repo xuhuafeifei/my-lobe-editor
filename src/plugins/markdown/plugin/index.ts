@@ -291,37 +291,39 @@ export const MarkdownPlugin: IEditorPluginConstructor<MarkdownPluginOptions> = c
           // If there's no text content, let Lexical handle it
           if (!text) return false;
 
+          // TEMP DISABLED: onPasteMarkdown callback intercepts ALL text paste including plain numbers like "132321"
+          // TODO: Add markdown feature detection before triggering callback (score >= 2)
           // If confirmation callback is provided, intercept paste for user decision
           // (bypass hasRichHTML — user explicitly wants to be asked)
-          if (this.config?.onPasteMarkdown) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            const historyState = this.kernel.getHistoryState().current;
-            Promise.resolve(this.config.onPasteMarkdown(text)).then((confirmed) => {
-              if (confirmed) {
-                editor.dispatchCommand(INSERT_MARKDOWN_COMMAND, {
-                  historyState,
-                  markdown: text,
-                });
-                this.kernel.emit('markdownParse', {
-                  cacheState: editor.getEditorState(),
-                  historyState,
-                  markdown: text,
-                  matchedPatterns: [],
-                  score: 0,
-                });
-              } else {
-                editor.update(() => {
-                  const selection = $getSelection();
-                  if ($isRangeSelection(selection)) {
-                    selection.insertRawText(text);
-                  }
-                });
-              }
-            });
-            return true;
-          }
+          // if (this.config?.onPasteMarkdown) {
+          //   event.preventDefault();
+          //   event.stopPropagation();
+          //
+          //   const historyState = this.kernel.getHistoryState().current;
+          //   Promise.resolve(this.config.onPasteMarkdown(text)).then((confirmed) => {
+          //     if (confirmed) {
+          //       editor.dispatchCommand(INSERT_MARKDOWN_COMMAND, {
+          //         historyState,
+          //         markdown: text,
+          //       });
+          //       this.kernel.emit('markdownParse', {
+          //         cacheState: editor.getEditorState(),
+          //         historyState,
+          //         markdown: text,
+          //         matchedPatterns: [],
+          //         score: 0,
+          //       });
+          //     } else {
+          //       editor.update(() => {
+          //         const selection = $getSelection();
+          //         if ($isRangeSelection(selection)) {
+          //           selection.insertRawText(text);
+          //         }
+          //       });
+          //     }
+          //   });
+          //   return true;
+          // }
 
           if (this.hasRichHTML(clipboardData)) {
             return false;
