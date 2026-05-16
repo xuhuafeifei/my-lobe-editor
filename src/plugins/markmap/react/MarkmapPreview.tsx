@@ -4,6 +4,8 @@ import { Transformer } from 'markmap-lib';
 import { Markmap } from 'markmap-view';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 
+import { countNodes, setFoldAll } from '../../common/markmap-utils';
+
 interface MarkmapPreviewProps {
   markdown: string;
 }
@@ -40,6 +42,11 @@ export function MarkmapPreview({ markdown }: MarkmapPreviewProps) {
       const markmap = new Markmap(svgElement);
       markmapRef.current = markmap;
 
+      // Auto-collapse if > 30 nodes
+      if (countNodes(root) > 30) {
+        setFoldAll(root, true);
+      }
+
       markmap.setData(root);
       requestAnimationFrame(() => {
         markmap.fit();
@@ -59,6 +66,22 @@ export function MarkmapPreview({ markdown }: MarkmapPreviewProps) {
   const zoomIn = useCallback(() => setScale((s) => Math.min(MAX_SCALE, s + SCALE_STEP)), []);
   const zoomOut = useCallback(() => setScale((s) => Math.max(MIN_SCALE, s - SCALE_STEP)), []);
   const resetZoom = useCallback(() => setScale(1), []);
+
+  const expandAll = useCallback(() => {
+    if (!markmapRef.current) return;
+    const data = markmapRef.current.state.data;
+    if (!data) return;
+    setFoldAll(data, false);
+    markmapRef.current.renderData(data);
+  }, []);
+
+  const collapseAll = useCallback(() => {
+    if (!markmapRef.current) return;
+    const data = markmapRef.current.state.data;
+    if (!data) return;
+    setFoldAll(data, true);
+    markmapRef.current.renderData(data);
+  }, []);
 
   const btnBase: React.CSSProperties = {
     alignItems: 'center',
@@ -88,6 +111,8 @@ export function MarkmapPreview({ markdown }: MarkmapPreviewProps) {
       <div style={{ alignItems: 'center', borderBottom: '1px solid #f0f0f0', display: 'flex', gap: 4, padding: '8px 12px' }}>
         <span style={{ color: '#8c8c8c', fontSize: 12 }}>预览</span>
         <div style={{ display: 'flex', gap: 4, marginLeft: 'auto' }}>
+          <button onClick={expandAll} style={btnBase} title="展开全部节点" type="button">⟱ 展开</button>
+          <button onClick={collapseAll} style={btnBase} title="折叠全部节点" type="button">⟰ 折叠</button>
           <button disabled={scale <= MIN_SCALE} onClick={zoomOut} style={{ ...btnBase, opacity: scale <= MIN_SCALE ? 0.4 : 1 }} type="button">−</button>
           <button onClick={resetZoom} style={{ ...btnBase, fontFamily: 'monospace', minWidth: 48 }} type="button">
             {Math.round(scale * 100)}%

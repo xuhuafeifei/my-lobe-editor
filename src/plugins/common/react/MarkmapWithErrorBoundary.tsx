@@ -15,6 +15,8 @@ import { createPortal } from 'react-dom';
 import { Transformer } from 'markmap-lib';
 import { Markmap } from 'markmap-view';
 
+import { countNodes as countNodesMM, setFoldAll as setFoldAllMM } from '../markmap-utils';
+
 // ============================================================================
 // Markmap 渲染错误边界
 // ============================================================================
@@ -394,6 +396,11 @@ const MarkmapWithErrorBoundary = memo<MarkmapWithErrorBoundaryProps>(
         const markmap = new Markmap(svgElement);
         markmapRef.current = markmap;
 
+        // Auto-collapse if > 30 nodes
+        if (countNodesMM(root) > 30) {
+          setFoldAllMM(root, true);
+        }
+
         // 6. 设置数据并渲染
         markmap.setData(root);
 
@@ -437,6 +444,22 @@ const MarkmapWithErrorBoundary = memo<MarkmapWithErrorBoundaryProps>(
 
     const handlePreviewClose = useCallback(() => setPreviewOpen(false), []);
 
+    const expandAll = useCallback(() => {
+      if (!markmapRef.current) return;
+      const data = markmapRef.current.state.data;
+      if (!data) return;
+      setFoldAllMM(data, false);
+      markmapRef.current.renderData(data);
+    }, []);
+
+    const collapseAll = useCallback(() => {
+      if (!markmapRef.current) return;
+      const data = markmapRef.current.state.data;
+      if (!data) return;
+      setFoldAllMM(data, true);
+      markmapRef.current.renderData(data);
+    }, []);
+
     if (!markdown) {
       return null;
     }
@@ -447,17 +470,72 @@ const MarkmapWithErrorBoundary = memo<MarkmapWithErrorBoundaryProps>(
 
     return (
       <MarkmapRenderErrorBoundary code={markdown} fallback={(err) => <ErrorFallback error={err} />}>
-        <div
-          onClick={svgContent ? handlePreviewClick : undefined}
-          ref={containerRef}
-          style={{
-            cursor: enableImagePreview && svgContent ? 'zoom-in' : undefined,
-            minHeight: 200,
-            padding: 16,
-            width: '100%',
-          }}
-        />
-        {previewOpen && svgContent && <SvgPreviewOverlay onClose={handlePreviewClose} svg={svgContent} />}
+        <div style={{ position: 'relative', width: '100%', minHeight: 200 }}>
+          <div
+            onClick={svgContent ? handlePreviewClick : undefined}
+            ref={containerRef}
+            style={{
+              cursor: enableImagePreview && svgContent ? 'zoom-in' : undefined,
+              minHeight: 200,
+              padding: 16,
+              width: '100%',
+            }}
+          />
+          {/* Floating toolbar for expand/collapse */}
+          <div
+            style={{
+              alignItems: 'center',
+              background: 'rgba(255,255,255,0.9)',
+              backdropFilter: 'blur(4px)',
+              border: '1px solid #f0f0f0',
+              borderRadius: 6,
+              bottom: 8,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+              display: 'flex',
+              gap: 4,
+              left: 8,
+              padding: '4px 8px',
+              position: 'absolute',
+              zIndex: 10,
+            }}
+          >
+            <button
+              onClick={(e) => { e.stopPropagation(); expandAll(); }}
+              style={{
+                background: 'none',
+                border: '1px solid #d9d9d9',
+                borderRadius: 4,
+                color: '#595959',
+                cursor: 'pointer',
+                fontSize: 12,
+                height: 24,
+                padding: '0 6px',
+              }}
+              title="展开全部节点"
+              type="button"
+            >
+              ⟱ 展开
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); collapseAll(); }}
+              style={{
+                background: 'none',
+                border: '1px solid #d9d9d9',
+                borderRadius: 4,
+                color: '#595959',
+                cursor: 'pointer',
+                fontSize: 12,
+                height: 24,
+                padding: '0 6px',
+              }}
+              title="折叠全部节点"
+              type="button"
+            >
+              ⟰ 折叠
+            </button>
+          </div>
+          {previewOpen && svgContent && <SvgPreviewOverlay onClose={handlePreviewClose} svg={svgContent} />}
+        </div>
       </MarkmapRenderErrorBoundary>
     );
   },

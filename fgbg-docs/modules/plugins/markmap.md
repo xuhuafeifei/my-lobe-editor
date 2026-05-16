@@ -1,8 +1,8 @@
 # Markmap 思维导图插件
 
 > **tags**: [plugin, markmap, mindmap, codemirror]
-> **related_modules**: [src/plugins/codemirror-block, src/plugins/common/react/MarkmapWithErrorBoundary.tsx]
-> **updated**: 2026-05-14
+> **related_modules**: [src/plugins/codemirror-block, src/plugins/common/react/MarkmapWithErrorBoundary.tsx, src/plugins/markmap/react/MarkmapPreview.tsx]
+> **updated**: 2026-05-15
 
 ## 定位
 
@@ -55,7 +55,72 @@ Markmap 支持不是一个独立插件，而是**集成在 `codemirror-block` �
 - **拖拽**：按住鼠标左键拖拽移动
 - **还原**：点击重置按钮 / ESC 键关闭
 
-### 5. 错误处理
+### 5. 一键展开/折叠全部节点
+
+**两个渲染场景，两种工具栏位置：**
+
+| 场景 | 工具栏位置 | 实现文件 |
+|------|----------|---------|
+| Markmap 编辑器预览面板 | 顶部工具栏 | `src/plugins/markmap/react/MarkmapPreview.tsx` |
+| 代码块中 markmap 渲染 | 左下角浮动工具栏 | `src/plugins/common/react/MarkmapWithErrorBoundary.tsx` |
+
+**核心实现逻辑：**
+
+```typescript
+// 辅助函数：递归设置节点折叠状态
+function setFoldAll(node: IMapNode, fold: boolean) {
+  for (const child of node.children || []) {
+    child.payload = { ...(child.payload ?? {}), fold: fold ? 1 : 0 };
+    setFoldAll(child, fold);
+  }
+}
+
+// 一键展开全部
+const expandAll = useCallback(() => {
+  if (!markmapRef.current) return;
+  const data = markmapRef.current.state.data;  // ⚠️ 必须使用 markmap 内部的 state.data
+  if (!data) return;
+  setFoldAll(data, false);
+  markmapRef.current.renderData(data);
+}, []);
+
+// 一键折叠全部
+const collapseAll = useCallback(() => {
+  if (!markmapRef.current) return;
+  const data = markmapRef.current.state.data;
+  if (!data) return;
+  setFoldAll(data, true);
+  markmapRef.current.renderData(data);
+}, []);
+```
+
+**关键注意事项（避免踩坑）：**
+
+1. **必须使用 `markmap.state.data` 而非原始 root**
+   - `markmap.setData(root)` 后，`root` 是 `IPureNode`（无 `state`）
+   - `markmap` 内部会转换为 `INode`（带 `state` 字段，存储在 `markmap.state.data`）
+   - `markmap.renderData()` 只接受 `INode` 类型，传原始 `IPureNode` 会报错
+
+2. **节点折叠状态存储在 `node.payload.fold`**
+   - `fold = 1` = 折叠
+   - `fold = 0` = 展开
+   - 递归遍历所有子节点设置该字段，然后重新渲染
+
+3. **自动折叠阈值：30 个节点**
+   - 初始化时 `countNodes(root)` 统计节点数（包含根节点）
+   - 超过 30 时，调用 `setFoldAll(root, true)` 预设所有节点折叠状态
+   - 注意：自动折叠要在 `setData()` 之前设置，此时操作原始 `root` 即可
+
+**MarkmapPreview.tsx 工具栏布局：**
+- 展开 / 折叠按钮在前，缩放按钮在后
+- 按钮使用 `⟱` 展开 / `⟰` 折叠 图标 + 文字
+
+**MarkmapWithErrorBoundary.tsx 工具栏布局：**
+- 左下角半透明浮动工具栏（`position: absolute`）
+- `backdrop-filter: blur(4px)` 实现毛玻璃效果
+- 按钮 `onClick` 需要 `e.stopPropagation()` 防止触发外层的全屏预览
+
+## 错误处理
 
 - Markdown 解析失败时显示红色错误提示框
 - 包含错误信息和具体位置
@@ -177,4 +242,5 @@ markmap.fit();
 
 ## 版本历史
 
+- **v1.0.0-fork.10** - 新增一键展开/折叠全部节点功能，节点数 > 30 自动折叠
 - **v1.0.0-fork.6** - 新增 markmap 思维导图支持

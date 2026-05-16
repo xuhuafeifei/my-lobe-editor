@@ -1,4 +1,5 @@
 export { INSERT_HEADING_COMMAND, INSERT_QUOTE_COMMAND } from './command';
+export * from './markmap-utils';
 export {
   $createCursorNode,
   $isCardLikeElementNode,
