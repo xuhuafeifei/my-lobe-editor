@@ -27,10 +27,17 @@ describe('List Plugin', () => {
     const { root } = editor.getDocument('json') as any;
     expect(root.children.length).toBe(1);
     expect(root.children[0].type).toBe('list');
-    expect(root.children[0].children.length).toBe(3);
+    // Two list items: one with "Item 1" + codeblock, one with "Item 2"
+    expect(root.children[0].children.length).toBe(2);
+    expect(root.children[0].children[0].type).toBe('listitem');
+    // First listitem contains both the paragraph text and code
+    expect(root.children[0].children[0].children.length).toBe(2);
+    expect(root.children[0].children[0].children[0].type).toBe('text');
+    expect(root.children[0].children[0].children[0].text).toBe('Item 1');
+    expect(root.children[0].children[0].children[1].type).toBe('code');
+    // Second listitem contains just "Item 2"
     expect(root.children[0].children[1].type).toBe('listitem');
     expect(root.children[0].children[1].children.length).toBe(1);
-    expect(root.children[0].children[1].children[0].type).toBe('text');
-    expect(root.children[0].children[1].children[0].text).toBe("console.log('Hello, world!');");
+    expect(root.children[0].children[1].children[0].text).toBe('Item 2');
   });
 });

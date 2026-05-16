@@ -169,32 +169,42 @@ export const ListPlugin: IEditorPluginConstructor<ListPluginOptions> = class
     });
 
     markdownService.registerMarkdownReader('listItem', (node, children, index) => {
-      return children.map((v) => {
+      // listItem 通常包含一个或多个块级节点（paragraph、list 等）
+      // 我们需要创建一个 listitem 节点包裹这些内容，而不是为每个子节点创建一个 listitem
+      const isCheck = typeof node.checked === 'boolean';
+
+      // 处理嵌套列表的情况：如果 children 中有 list，应该把它作为唯一子节点
+      const nestedList = children.find((c) => c.type === 'list');
+      if (nestedList) {
+        return INodeHelper.createElementNode('listitem', {
+          checked: isCheck ? node.checked : undefined,
+          children: [nestedList],
+          direction: 'ltr',
+          format: '',
+          indent: 0,
+          type: 'listitem',
+          value: index + 1,
+          version: 1,
+        });
+      }
+
+      // 普通情况：所有子节点的 children 合并到 listitem（paragraph 的 children 直接打平）
+      const listItemChildren = children.flatMap((v) => {
         if (v.type === 'paragraph') {
-          return INodeHelper.createElementNode('listitem', {
-            checked: typeof node.checked === 'boolean' ? node.checked : undefined,
-            // @ts-expect-error not error
-            children: v.children,
-            direction: 'ltr',
-            format: '',
-            indent: 0,
-            type: 'listitem',
-            value: index + 1,
-            version: 1,
-          });
-        } else if (v.type === 'list') {
-          return INodeHelper.createElementNode('listitem', {
-            children: [v],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
-            type: 'listitem',
-            value: index + 1,
-            version: 1,
-          });
+          return v.children || [];
         }
-        // keep node unchanged
         return v;
+      });
+
+      return INodeHelper.createElementNode('listitem', {
+        checked: isCheck ? node.checked : undefined,
+        children: listItemChildren,
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        type: 'listitem',
+        value: index + 1,
+        version: 1,
       });
     });
   }
