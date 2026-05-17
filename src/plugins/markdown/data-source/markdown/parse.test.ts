@@ -274,4 +274,17 @@ describe('Markdown to Lexical Conversion', () => {
     // @ts-ignore accessing type
     expect(lexical.children[0].diagram).toEqual('data');
   });
+
+  it('should parse meta2d block without newlines (JSON directly attached)', () => {
+    // This is the format when copying from a markdown export
+    const markdown = '---meta2d---{"x":0,"y":0,"pens":[]}---/meta2d---';
+
+    const lexical = parseMarkdownToLexical(markdown, {});
+
+    expect(lexical.children.length).toEqual(1);
+    // @ts-ignore accessing type
+    expect(lexical.children[0].type).toEqual('meta2d');
+    // @ts-ignore accessing type
+    expect(lexical.children[0].diagram).toEqual('{"x":0,"y":0,"pens":[]}');
+  });
 });

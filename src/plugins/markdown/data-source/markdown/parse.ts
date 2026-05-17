@@ -262,28 +262,32 @@ export function parseMarkdownToLexical(
 
   let processedMarkdown = markdown;
 
-  // Extract markmap blocks - use placeholder that won't be parsed as markdown
-  const markmapRegex = /^---markmap---$\n([\s\S]*?)\n^---\/markmap---$/gm;
+  // Extract markmap blocks - support both:
+  // - ---markmap---\ncontent\n---/markmap--- (with newlines)
+  // - ---markmap---content---/markmap--- (no newlines)
+  const markmapRegex = /---markmap---(\n?)([\s\S]*?)\n?---\/markmap---/g;
   let match: RegExpExecArray | null;
   let counter = 0;
   while ((match = markmapRegex.exec(markdown)) !== null) {
     const placeholder = `|||MARKMAP_BLOCK_${counter}|||`;
     extractedBlocks.push({
       type: 'markmap',
-      content: match[1] || '',
+      content: match[2] || '',  // match[1] is optional newline, match[2] is actual content
       placeholder,
     });
     processedMarkdown = processedMarkdown.replace(match[0], placeholder);
     counter++;
   }
 
-  // Extract meta2d blocks
-  const meta2dRegex = /^---meta2d---$\n([\s\S]*?)\n^---\/meta2d---$/gm;
+  // Extract meta2d blocks - support both:
+  // - ---meta2d---\ncontent\n---/meta2d--- (with newlines)
+  // - ---meta2d---content---/meta2d--- (no newlines)
+  const meta2dRegex = /---meta2d---(\n?)([\s\S]*?)\n?---\/meta2d---/g;
   while ((match = meta2dRegex.exec(markdown)) !== null) {
     const placeholder = `|||META2D_BLOCK_${counter}|||`;
     extractedBlocks.push({
       type: 'meta2d',
-      content: match[1] || '',
+      content: match[2] || '',  // match[1] is optional newline, match[2] is actual content
       placeholder,
     });
     processedMarkdown = processedMarkdown.replace(match[0], placeholder);

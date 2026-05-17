@@ -118,7 +118,7 @@ export const MarkmapPlugin: IEditorPluginConstructor<MarkmapPluginOptions> = cla
         const paragraphText = extractParagraphText(node as Paragraph);
         const match = paragraphText.match(MARKMAP_BLOCK);
         if (!match) return false;
-        const markdown = match[1]?.trim() || '';
+        const markdown = match[2]?.trim() || '';
         return INodeHelper.createTypeNode(MarkmapNode.getType(), {
           markdown,
         });

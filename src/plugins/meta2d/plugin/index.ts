@@ -18,7 +18,7 @@ import {
 } from '../utils/meta2dManager';
 
 const META2D_SHORTCUT = /^---meta2d---$/i;
-const META2D_BLOCK = /^---meta2d---\n([\S\s]*?)\n---\/meta2d---$/i;
+const META2D_BLOCK = /---meta2d---(\\n?)([\S\s]*?)\n?---\/meta2d---/i;
 
 export interface Meta2dPluginOptions {
   decorator?: (node: Meta2dNode, editor: LexicalEditor) => unknown;
@@ -101,7 +101,7 @@ export const Meta2dPlugin: IEditorPluginConstructor<Meta2dPluginOptions> = class
         const paragraphText = extractParagraphText(node as Paragraph);
         const match = paragraphText.match(META2D_BLOCK);
         if (!match) return false;
-        const diagram = match[1]?.trim() || EMPTY_META2D_DIAGRAM_JSON;
+        const diagram = match[2]?.trim() || EMPTY_META2D_DIAGRAM_JSON;
         return INodeHelper.createTypeNode(Meta2dNode.getType(), {
           diagram,
           svg: initialSvgForDiagram(diagram),
