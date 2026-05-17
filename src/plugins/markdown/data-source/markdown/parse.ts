@@ -308,21 +308,61 @@ export function parseMarkdownToLexical(
 
   // Step 2: Replace placeholders with actual block nodes
   if (extractedBlocks.length > 0) {
-    const replacePlaceholders = (node: any): any => {
+    const replacePlaceholders = (node: any): any[] | any => {
+      // Handle text nodes that may contain placeholders
       if (node.type === 'text' && typeof node.text === 'string') {
+        const result: any[] = [];
+        let text = node.text;
+        let matched = false;
+
         for (const block of extractedBlocks) {
-          if (node.text === block.placeholder) {
-            return {
+          const index = text.indexOf(block.placeholder);
+          if (index !== -1) {
+            matched = true;
+            // Text before placeholder
+            if (index > 0) {
+              result.push({ ...node, text: text.substring(0, index) });
+            }
+            // The block node
+            result.push({
               type: block.type,
               [block.type === 'markmap' ? 'markdown' : 'diagram']: block.content,
               version: 1,
-            };
+            });
+            // Remaining text after placeholder (recursively process)
+            const remaining = text.substring(index + block.placeholder.length);
+            if (remaining) {
+              const remainingResult = replacePlaceholders({ ...node, text: remaining });
+              if (Array.isArray(remainingResult)) {
+                result.push(...remainingResult);
+              } else {
+                result.push(remainingResult);
+              }
+            }
+            break;
           }
         }
+
+        if (matched) {
+          return result;
+        }
+        return node;
       }
+
+      // Recursively process children
       if (node.children && Array.isArray(node.children)) {
-        node.children = node.children.map(replacePlaceholders).filter(Boolean);
-        // If paragraph only contains a placeholder, replace the paragraph itself
+        const newChildren: any[] = [];
+        for (const child of node.children) {
+          const replaced = replacePlaceholders(child);
+          if (Array.isArray(replaced)) {
+            newChildren.push(...replaced);
+          } else {
+            newChildren.push(replaced);
+          }
+        }
+        node.children = newChildren.filter(Boolean);
+
+        // If paragraph only contains a block, lift the block up
         if (
           node.type === 'paragraph' &&
           node.children.length === 1 &&
@@ -331,10 +371,20 @@ export function parseMarkdownToLexical(
           return node.children[0];
         }
       }
+
       return node;
     };
 
-    result.children = result.children.map(replacePlaceholders).filter(Boolean);
+    const resultChildren: any[] = [];
+    for (const child of result.children) {
+      const replaced = replacePlaceholders(child);
+      if (Array.isArray(replaced)) {
+        resultChildren.push(...replaced);
+      } else {
+        resultChildren.push(replaced);
+      }
+    }
+    result.children = resultChildren.filter(Boolean);
   }
 
   return result;

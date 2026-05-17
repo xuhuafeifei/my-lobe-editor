@@ -287,4 +287,28 @@ describe('Markdown to Lexical Conversion', () => {
     // @ts-ignore accessing type
     expect(lexical.children[0].diagram).toEqual('{"x":0,"y":0,"pens":[]}');
   });
+
+  it('should parse meta2d block followed by other text on same line', () => {
+    // Placeholder might get concatenated with following text
+    const markdown = '## 标题\n\n---meta2d---{"x":0}---/meta2d--- 后面有内容';
+
+    const lexical = parseMarkdownToLexical(markdown, {});
+
+    // Should be: heading + paragraph (containing meta2d + text) = 2 children
+    expect(lexical.children.length).toEqual(2);
+    // Check that meta2d exists somewhere in the structure
+    const findMeta2d = (node: any): any => {
+      if (node.type === 'meta2d') return node;
+      if (node.children) {
+        for (const child of node.children) {
+          const found = findMeta2d(child);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+    const meta2d = findMeta2d(lexical);
+    expect(meta2d).not.toBeNull();
+    expect(meta2d.diagram).toEqual('{"x":0}');
+  });
 });
