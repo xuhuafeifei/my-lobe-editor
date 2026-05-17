@@ -253,15 +253,85 @@ export function parseMarkdownToLexical(
   markdown: string,
   markdownReaders: TransformerRecord = {},
 ): IRootNode {
+  // Step 1: Extract markmap and meta2d blocks from markdown
+  const extractedBlocks: Array<{
+    type: 'markmap' | 'meta2d';
+    content: string;
+    placeholder: string;
+  }> = [];
+
+  let processedMarkdown = markdown;
+
+  // Extract markmap blocks - use placeholder that won't be parsed as markdown
+  const markmapRegex = /^---markmap---$\n([\s\S]*?)\n^---\/markmap---$/gm;
+  let match: RegExpExecArray | null;
+  let counter = 0;
+  while ((match = markmapRegex.exec(markdown)) !== null) {
+    const placeholder = `|||MARKMAP_BLOCK_${counter}|||`;
+    extractedBlocks.push({
+      type: 'markmap',
+      content: match[1] || '',
+      placeholder,
+    });
+    processedMarkdown = processedMarkdown.replace(match[0], placeholder);
+    counter++;
+  }
+
+  // Extract meta2d blocks
+  const meta2dRegex = /^---meta2d---$\n([\s\S]*?)\n^---\/meta2d---$/gm;
+  while ((match = meta2dRegex.exec(markdown)) !== null) {
+    const placeholder = `|||META2D_BLOCK_${counter}|||`;
+    extractedBlocks.push({
+      type: 'meta2d',
+      content: match[1] || '',
+      placeholder,
+    });
+    processedMarkdown = processedMarkdown.replace(match[0], placeholder);
+    counter++;
+  }
+
   const ast = remark()
     .use(remarkCjkFriendly)
     .use(remarkMath)
     .use([[remarkGfm, { singleTilde: false }]])
-    .parse(markdown);
+    .parse(processedMarkdown);
   logger.debug('Parsed MDAST:', ast);
 
   const ctx = new MarkdownContext(ast);
   registerDefaultReaders(markdownReaders);
 
-  return convertMdastToLexical(ast, 0, ctx, markdownReaders) as IRootNode;
+  const result = convertMdastToLexical(ast, 0, ctx, markdownReaders) as IRootNode;
+
+  // Step 2: Replace placeholders with actual block nodes
+  if (extractedBlocks.length > 0) {
+    const replacePlaceholders = (node: any): any => {
+      if (node.type === 'text' && typeof node.text === 'string') {
+        for (const block of extractedBlocks) {
+          if (node.text === block.placeholder) {
+            return {
+              type: block.type,
+              [block.type === 'markmap' ? 'markdown' : 'diagram']: block.content,
+              version: 1,
+            };
+          }
+        }
+      }
+      if (node.children && Array.isArray(node.children)) {
+        node.children = node.children.map(replacePlaceholders).filter(Boolean);
+        // If paragraph only contains a placeholder, replace the paragraph itself
+        if (
+          node.type === 'paragraph' &&
+          node.children.length === 1 &&
+          (node.children[0].type === 'markmap' || node.children[0].type === 'meta2d')
+        ) {
+          return node.children[0];
+        }
+      }
+      return node;
+    };
+
+    result.children = result.children.map(replacePlaceholders).filter(Boolean);
+  }
+
+  return result;
 }

@@ -109,6 +109,9 @@ export const MarkmapPlugin: IEditorPluginConstructor<MarkmapPluginOptions> = cla
       return true;
     });
 
+    // Paragraph level reader: for simple cases where markmap content is plain text
+    // Note: The primary extraction is now done in parseMarkdownToLexical
+    // This reader serves as a fallback for edge cases
     markdownService.registerMarkdownReader(
       'paragraph',
       (node) => {

@@ -189,17 +189,17 @@ describe('Markdown to Lexical Conversion', () => {
 
     // Should be ONE list with ONE listitem
     expect(lexical.children.length).toEqual(1);
-    // @ts-expect-error - accessing nested structure
+    // @ts-ignore - accessing nested structure
     const list = lexical.children[0];
     expect(list.type).toEqual('list');
-    // @ts-expect-error - accessing nested structure
+    // @ts-ignore - accessing nested structure
     expect(list.children.length).toEqual(1); // Should be ONE listitem, not two!
-    // @ts-expect-error - accessing nested structure
+    // @ts-ignore - accessing nested structure
     const listitem = list.children[0];
     expect(listitem.type).toEqual('listitem');
-    // @ts-expect-error - accessing nested structure
+    // @ts-ignore - accessing nested structure
     expect(listitem.value).toEqual(1); // Should be 1, not split into 1 and 2
-    // @ts-expect-error - accessing nested structure
+    // @ts-ignore - accessing nested structure
     expect(listitem.children.length).toEqual(2); // Should have 2 text nodes (strong + text)
   });
 
@@ -247,5 +247,31 @@ describe('Markdown to Lexical Conversion', () => {
     expect(lexical.children[0].children[2].text).toEqual(
       '`COALESCE(SUM(${plugins.installCount}), 0)`',
     );
+  });
+
+  it('should parse markmap block into markmap node', () => {
+    const markdown = '---markmap---\n- Root\n  - Child\n---/markmap---';
+
+    // No need for special readers - markmap blocks are extracted before parsing
+    const lexical = parseMarkdownToLexical(markdown, {});
+
+    expect(lexical.children.length).toEqual(1);
+    // @ts-ignore accessing type
+    expect(lexical.children[0].type).toEqual('markmap');
+    // @ts-ignore accessing type
+    expect(lexical.children[0].markdown).toContain('- Root');
+  });
+
+  it('should parse meta2d block into meta2d node', () => {
+    const markdown = '---meta2d---\ndata\n---/meta2d---';
+
+    // No need for special readers - meta2d blocks are extracted before parsing
+    const lexical = parseMarkdownToLexical(markdown, {});
+
+    expect(lexical.children.length).toEqual(1);
+    // @ts-ignore accessing type
+    expect(lexical.children[0].type).toEqual('meta2d');
+    // @ts-ignore accessing type
+    expect(lexical.children[0].diagram).toEqual('data');
   });
 });

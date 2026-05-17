@@ -191,7 +191,7 @@ export const ListPlugin: IEditorPluginConstructor<ListPluginOptions> = class
       // 普通情况：所有子节点的 children 合并到 listitem（paragraph 的 children 直接打平）
       const listItemChildren = children.flatMap((v) => {
         if (v.type === 'paragraph') {
-          return v.children || [];
+          return (v as any).children || [];
         }
         return v;
       });
