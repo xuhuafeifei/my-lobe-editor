@@ -291,39 +291,38 @@ export const MarkdownPlugin: IEditorPluginConstructor<MarkdownPluginOptions> = c
           // If there's no text content, let Lexical handle it
           if (!text) return false;
 
-          // TEMP DISABLED: onPasteMarkdown callback intercepts ALL text paste including plain numbers like "132321"
-          // TODO: Add markdown feature detection before triggering callback (score >= 2)
           // If confirmation callback is provided, intercept paste for user decision
-          // (bypass hasRichHTML — user explicitly wants to be asked)
-          // if (this.config?.onPasteMarkdown) {
-          //   event.preventDefault();
-          //   event.stopPropagation();
-          //
-          //   const historyState = this.kernel.getHistoryState().current;
-          //   Promise.resolve(this.config.onPasteMarkdown(text)).then((confirmed) => {
-          //     if (confirmed) {
-          //       editor.dispatchCommand(INSERT_MARKDOWN_COMMAND, {
-          //         historyState,
-          //         markdown: text,
-          //       });
-          //       this.kernel.emit('markdownParse', {
-          //         cacheState: editor.getEditorState(),
-          //         historyState,
-          //         markdown: text,
-          //         matchedPatterns: [],
-          //         score: 0,
-          //       });
-          //     } else {
-          //       editor.update(() => {
-          //         const selection = $getSelection();
-          //         if ($isRangeSelection(selection)) {
-          //           selection.insertRawText(text);
-          //         }
-          //       });
-          //     }
-          //   });
-          //   return true;
-          // }
+          // Only trigger when markdown features are detected (score >= 2), to avoid interrupting plain text paste
+          const score = detectMarkdownFeatures(text);
+          if (this.config?.onPasteMarkdown && score >= 2) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const historyState = this.kernel.getHistoryState().current;
+            Promise.resolve(this.config.onPasteMarkdown(text)).then((confirmed) => {
+              if (confirmed) {
+                editor.dispatchCommand(INSERT_MARKDOWN_COMMAND, {
+                  historyState,
+                  markdown: text,
+                });
+                this.kernel.emit('markdownParse', {
+                  cacheState: editor.getEditorState(),
+                  historyState,
+                  markdown: text,
+                  matchedPatterns: [],
+                  score,
+                });
+              } else {
+                editor.update(() => {
+                  const selection = $getSelection();
+                  if ($isRangeSelection(selection)) {
+                    selection.insertRawText(text);
+                  }
+                });
+              }
+            });
+            return true;
+          }
 
           if (this.hasRichHTML(clipboardData)) {
             return false;
@@ -335,7 +334,6 @@ export const MarkdownPlugin: IEditorPluginConstructor<MarkdownPluginOptions> = c
           }
 
           // Markdown 特征检测 - 智能处理策略
-          const score = detectMarkdownFeatures(text);
           if (score < 2) {
             // 明显不是 markdown，按纯文本处理
             return false;

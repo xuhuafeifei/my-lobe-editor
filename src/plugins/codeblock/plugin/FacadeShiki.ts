@@ -18,7 +18,12 @@ import { createJavaScriptRegexEngine } from '@shikijs/engine-javascript';
 import type { ThemedToken, TokensResult } from '@shikijs/types';
 import type { LexicalEditor, LexicalNode, NodeKey, SerializedTextNode, Spread } from 'lexical';
 import { $createLineBreakNode, $createTabNode, $getNodeByKey } from 'lexical';
-import { bundledLanguagesInfo, bundledThemesInfo } from 'shiki';
+import { bundledThemesInfo } from 'shiki';
+import {
+  findSupportedLanguageInfo,
+  getSupportedCodeLanguageOptions,
+  resolveSupportedLanguageId,
+} from '../supported-shiki-languages';
 
 import { INode } from '@/editor-kernel/inode';
 import { INodeHelper } from '@/editor-kernel/inode/helper';
@@ -111,9 +116,7 @@ export function loadCodeLanguage(language: string, editor?: LexicalEditor, codeN
   const diffedLanguage = getDiffedLanguage(language);
   const langId = diffedLanguage ? diffedLanguage : language;
   if (!isCodeLanguageLoaded(langId)) {
-    const languageInfo = bundledLanguagesInfo.find(
-      (desc) => desc.id === langId || (desc.aliases && desc.aliases.includes(langId)),
-    );
+    const languageInfo = findSupportedLanguageInfo(langId);
     if (languageInfo) {
       // in case we arrive here concurrently (not yet loaded language is loaded twice)
       // shiki's synchronous checks make sure to load it only once
@@ -191,21 +194,14 @@ export async function loadCodeTheme(theme: string, editor?: LexicalEditor, codeN
 }
 
 export function getCodeLanguageOptions(): [string, string][] {
-  return bundledLanguagesInfo.map((i) => [i.id, i.name]);
+  return getSupportedCodeLanguageOptions();
 }
 export function getCodeThemeOptions(): [string, string][] {
   return bundledThemesInfo.map((i) => [i.id, i.displayName]);
 }
 
 export function normalizeCodeLanguage(language: string): string {
-  const langId = language;
-  const languageInfo = bundledLanguagesInfo.find(
-    (desc) => desc.id === langId || (desc.aliases && desc.aliases.includes(langId)),
-  );
-  if (languageInfo) {
-    return languageInfo.id;
-  }
-  return language;
+  return resolveSupportedLanguageId(language);
 }
 
 function getTokenStyleObject(token: ThemedToken): string {

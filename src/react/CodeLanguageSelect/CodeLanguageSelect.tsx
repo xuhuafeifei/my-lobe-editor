@@ -3,7 +3,7 @@
 import { Flexbox, MaterialFileTypeIcon, Select, Text } from '@lobehub/ui';
 import { cx } from 'antd-style';
 import { type FC, useMemo } from 'react';
-import { bundledLanguagesInfo } from 'shiki';
+import { supportedLanguagesInfo } from '@/plugins/codeblock/supported-shiki-languages';
 
 import { styles } from './style';
 import type { CodeLanguageSelectProps } from './type';
@@ -29,7 +29,7 @@ const CodeLanguageSelect: FC<CodeLanguageSelectProps> = ({ className, ...rest })
         ),
         value: 'plaintext',
       },
-      ...bundledLanguagesInfo.map((item) => ({
+      ...supportedLanguagesInfo.map((item) => ({
         aliases: item.aliases,
         label: (
           <Flexbox align={'center'} gap={4} horizontal>

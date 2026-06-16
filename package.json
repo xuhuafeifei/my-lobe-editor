@@ -1,6 +1,6 @@
 {
   "name": "@fgbg/lobe-editor",
-  "version": "1.0.0-fork.12",
+  "version": "1.0.0-fork.13",
   "description": "A powerful and extensible rich text editor built on Meta's Lexical framework, providing a modern editing experience with React integration.",
   "keywords": [
     "lobehub",
@@ -123,6 +123,7 @@
     "@meta2d/sequence-diagram": "^1.0.1",
     "@shikijs/core": "^3.20.0",
     "@shikijs/engine-javascript": "^3.20.0",
+    "@shikijs/langs": "3.23.0",
     "ahooks": "^3.9.6",
     "antd-style": "^4.1.0",
     "canvas2svg": "^1.0.16",

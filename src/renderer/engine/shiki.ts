@@ -1,6 +1,7 @@
 import { createHighlighterCoreSync, isSpecialLang } from '@shikijs/core';
 import { createJavaScriptRegexEngine } from '@shikijs/engine-javascript';
-import { bundledLanguagesInfo } from 'shiki';
+
+import { findSupportedLanguageInfo } from '@/plugins/codeblock/supported-shiki-languages';
 
 let _highlighter: ReturnType<typeof createHighlighterCoreSync> | null = null;
 function getHighlighter() {
@@ -22,9 +23,7 @@ function isLanguageLoaded(language: string): boolean {
 
 export async function loadLanguage(language: string): Promise<void> {
   if (isLanguageLoaded(language)) return;
-  const info = bundledLanguagesInfo.find(
-    (desc) => desc.id === language || desc.aliases?.includes(language),
-  );
+  const info = findSupportedLanguageInfo(language);
   if (info) {
     const highlighter = getHighlighter();
     await highlighter.loadLanguage(info.import());

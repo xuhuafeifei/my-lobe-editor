@@ -298,7 +298,12 @@ export function $runTextFormatTransformers(
 
     // No content between opening and closing tag
     if (openNode === closeNode && openTagStartIndex + tagLength === closeTagStartIndex) {
-      continue;
+      // For backtick code inline, we want to allow empty code blocks
+      // This enables the common pattern: type `` to create an empty code block
+      // with cursor positioned inside (ready to type code)
+      if (tag !== '`') {
+        continue;
+      }
     }
 
     // Checking longer tags for repeating chars (e.g. *** vs **)
