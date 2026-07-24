@@ -296,14 +296,10 @@ export function $runTextFormatTransformers(
       continue;
     }
 
-    // No content between opening and closing tag
+    // No content between opening and closing tag — do not convert.
+    // Empty `` must stay as literal text so users can continue typing ```lang fences.
     if (openNode === closeNode && openTagStartIndex + tagLength === closeTagStartIndex) {
-      // For backtick code inline, we want to allow empty code blocks
-      // This enables the common pattern: type `` to create an empty code block
-      // with cursor positioned inside (ready to type code)
-      if (tag !== '`') {
-        continue;
-      }
+      continue;
     }
 
     // Checking longer tags for repeating chars (e.g. *** vs **)

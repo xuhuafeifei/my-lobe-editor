@@ -334,6 +334,13 @@ const SvgPreviewOverlay: React.FC<{ onClose: () => void; svg: string }> = ({ onC
 // ============================================================================
 // 带完整错误处理的 Mermaid 包装组件
 // ============================================================================
+
+/** Cross-mount cache: edit → publish remounts must not flash empty (layout jump). */
+const mermaidSvgCache = new Map<string, string>();
+
+/** Match edit-mode `.cm-mermaid-chart-area` so first paint without cache still keeps some height. */
+const MERMAID_PLACEHOLDER_MIN_HEIGHT = 120;
+
 interface MermaidWithErrorBoundaryProps {
   animated?: boolean;
   children: string;
@@ -367,21 +374,36 @@ interface MermaidWithErrorBoundaryProps {
  * 1. 预解析检测：mermaid.parse() 异步检测语法错误（能捕获 parse 阶段的错误）
  * 2. 渲染错误边界：Class ErrorBoundary 捕获 React 渲染期间的错误（能捕获 render 阶段的错误）
  * 3. 代码变化时自动重置错误状态
+ *
+ * 布局稳定：
+ * - 同 code 的 SVG 缓存在模块级 Map，发布/只读重挂载可同步复用，避免高度塌陷跳动
+ * - 无缓存时用占位高度，不再 `return null`
  */
 const MermaidWithErrorBoundary = memo<MermaidWithErrorBoundaryProps>(
   ({ children, enableImagePreview = true, ...props }) => {
     const code = children.trim();
     const renderId = `mermaid-validate-${useId().replaceAll(':', '')}`;
     const [error, setError] = useState<Error | null>(null);
-    const [svg, setSvg] = useState<string>('');
+    const [svg, setSvg] = useState(() => (code ? (mermaidSvgCache.get(code) ?? '') : ''));
     const [previewOpen, setPreviewOpen] = useState(false);
 
     useEffect(() => {
       let canceled = false;
       setError(null);
-      setSvg('');
 
-      if (!code) return;
+      if (!code) {
+        setSvg('');
+        return;
+      }
+
+      const cached = mermaidSvgCache.get(code);
+      if (cached) {
+        setSvg(cached);
+        return;
+      }
+
+      // Only clear when we have nothing to show for this code (avoids flash on remount).
+      setSvg('');
 
       Promise.resolve()
         .then(async () => {
@@ -389,8 +411,9 @@ const MermaidWithErrorBoundary = memo<MermaidWithErrorBoundaryProps>(
           return mermaid.render(renderId, code);
         })
         .then(
-          ({ svg }) => {
-            if (!canceled) setSvg(svg);
+          ({ svg: nextSvg }) => {
+            mermaidSvgCache.set(code, nextSvg);
+            if (!canceled) setSvg(nextSvg);
           },
           (error) => {
             if (!canceled) setError(error instanceof Error ? error : new Error(String(error)));
@@ -422,7 +445,16 @@ const MermaidWithErrorBoundary = memo<MermaidWithErrorBoundaryProps>(
     }
 
     if (!svg) {
-      return null;
+      return (
+        <div
+          aria-busy="true"
+          aria-label="Mermaid rendering"
+          style={{
+            minHeight: MERMAID_PLACEHOLDER_MIN_HEIGHT,
+            width: '100%',
+          }}
+        />
+      );
     }
 
     return (
