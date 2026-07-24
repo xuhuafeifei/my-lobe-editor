@@ -8,6 +8,7 @@ import {
   INSERT_LINK_COMMAND,
   INSERT_MATH_COMMAND,
   INSERT_MENTION_COMMAND,
+  INSERT_META2D_COMMAND,
   INSERT_TABLE_COMMAND,
   OutlinePanel,
   OutlineProvider,
@@ -39,6 +40,7 @@ import {
   MinusIcon,
   SigmaIcon,
   Table2Icon,
+  Workflow,
 } from 'lucide-react';
 import { type FC, useMemo, useState } from 'react';
 
@@ -250,6 +252,17 @@ const Demo: FC<Pick<CollapseProps, 'collapsible' | 'defaultActiveKey'>> = (props
         label: 'InsertCodeBlock',
         onSelect: (editor) => {
           editor.dispatchCommand(INSERT_CODEMIRROR_COMMAND, undefined);
+          queueMicrotask(() => {
+            editor.focus();
+          });
+        },
+      },
+      {
+        icon: Workflow,
+        key: 'meta2d',
+        label: 'Meta2d',
+        onSelect: (editor) => {
+          editor.dispatchCommand(INSERT_META2D_COMMAND, undefined);
           queueMicrotask(() => {
             editor.focus();
           });

@@ -12,6 +12,8 @@ import { EMPTY_META2D_DIAGRAM_JSON, EMPTY_META2D_PLACEHOLDER_SVG } from '../util
 export interface InsertMeta2dPayload {
   diagram?: string;
   svg?: string;
+  /** Default true — open diagram editor after slash / command insert (parity with markmap). */
+  autoOpenEditor?: boolean;
 }
 
 export const INSERT_META2D_COMMAND: LexicalCommand<InsertMeta2dPayload | undefined> =
@@ -27,7 +29,8 @@ export function registerMeta2dCommand(editor: LexicalEditor): () => void {
           payload?.svg !== undefined && payload.svg.trim() !== ''
             ? payload.svg
             : EMPTY_META2D_PLACEHOLDER_SVG;
-        const node = $createMeta2dNode(diagram, svg);
+        const autoOpenEditor = payload?.autoOpenEditor ?? true;
+        const node = $createMeta2dNode(diagram, svg, { autoOpenEditor });
         $insertNodes([node]);
       });
       return true;
