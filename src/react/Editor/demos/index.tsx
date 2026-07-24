@@ -8,6 +8,7 @@ import {
   INSERT_LINK_COMMAND,
   INSERT_MATH_COMMAND,
   INSERT_MENTION_COMMAND,
+  INSERT_MARKMAP_COMMAND,
   INSERT_META2D_COMMAND,
   INSERT_TABLE_COMMAND,
   OutlinePanel,
@@ -38,6 +39,7 @@ import {
   Heading2Icon,
   Heading3Icon,
   MinusIcon,
+  Network,
   SigmaIcon,
   Table2Icon,
   Workflow,
@@ -263,6 +265,17 @@ const Demo: FC<Pick<CollapseProps, 'collapsible' | 'defaultActiveKey'>> = (props
         label: 'Meta2d',
         onSelect: (editor) => {
           editor.dispatchCommand(INSERT_META2D_COMMAND, undefined);
+          queueMicrotask(() => {
+            editor.focus();
+          });
+        },
+      },
+      {
+        icon: Network,
+        key: 'markmap',
+        label: 'Markmap',
+        onSelect: (editor) => {
+          editor.dispatchCommand(INSERT_MARKMAP_COMMAND, undefined);
           queueMicrotask(() => {
             editor.focus();
           });
