@@ -1,14 +1,18 @@
 'use client';
 
 import { $getNodeByKey, type LexicalEditor } from 'lexical';
-import { useCallback, useLayoutEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useLayoutEffect, useState } from 'react';
 
 import { useLexicalComposerContext } from '@/editor-kernel/react/react-context';
 
 import { $isMeta2dNode, Meta2dNode } from '../node';
 import { Meta2dPlugin } from '../plugin';
-import { DiagramEditor } from './DiagramEditor';
 import { DiagramPreview } from './DiagramPreview';
+
+const DiagramEditor = lazy(async () => {
+  const mod = await import('./DiagramEditor');
+  return { default: mod.DiagramEditor };
+});
 
 export interface ReactMeta2dPluginProps {
   className?: string;
@@ -92,7 +96,9 @@ function Meta2dDecorator({
         svg={svg}
       />
       {editing && (
-        <DiagramEditor diagram={diagram} onClose={() => setEditing(false)} onSave={handleSave} />
+        <Suspense fallback={null}>
+          <DiagramEditor diagram={diagram} onClose={() => setEditing(false)} onSave={handleSave} />
+        </Suspense>
       )}
     </div>
   );

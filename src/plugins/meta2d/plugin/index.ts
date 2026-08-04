@@ -15,7 +15,7 @@ import {
   EMPTY_META2D_DIAGRAM_JSON,
   EMPTY_META2D_PLACEHOLDER_SVG,
   initialSvgForDiagram,
-} from '../utils/meta2dManager';
+} from '../utils/meta2dLight';
 
 const META2D_SHORTCUT = /^---meta2d---$/i;
 const META2D_BLOCK = /---meta2d---(\\n?)([\S\s]*?)\n?---\/meta2d---/i;

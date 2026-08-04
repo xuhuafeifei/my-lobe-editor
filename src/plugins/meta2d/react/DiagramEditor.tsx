@@ -4,14 +4,16 @@ import { type CSSProperties, useEffect, useLayoutEffect, useRef, useState } from
 import { useEditorLocale } from '@/react/hooks/useEditorLocale';
 
 import {
-  EMPTY_META2D_PLACEHOLDER_SVG,
-  createEmptyMeta2dData,
   ensureMeta2dShapes,
   generateSvgFromDiagram,
   generateSvgFromMeta2d,
+} from '../utils/meta2dEngine';
+import {
+  EMPTY_META2D_PLACEHOLDER_SVG,
+  createEmptyMeta2dData,
   normalizeMeta2dData,
   sanitizeMeta2dData,
-} from '../utils/meta2dManager';
+} from '../utils/meta2dLight';
 import { DiagramPalette } from './DiagramPalette';
 import { PenProps } from './PenProps';
 

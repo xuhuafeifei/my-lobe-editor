@@ -60,23 +60,51 @@ const layerBtn: CSSProperties = {
   padding: '4px 8px',
 };
 
+const TEXT_DEBOUNCE_MS = 120;
+
 export function PenProps({ engine }: { engine: Meta2d | null }) {
   const { t } = useEditorLocale();
   const [pen, setPen] = useState<PenData | null>(null);
   const [rect, setRect] = useState<{ height: number; width: number; x: number; y: number } | null>(
     null,
   );
-  const localRef = useRef<PenData>({});
+  /** Local draft so typing stays snappy; canvas updates are debounced. */
+  const [textDraft, setTextDraft] = useState('');
+  const textTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const penIdRef = useRef<unknown>(null);
+
+  const flushTextToEngine = useCallback(
+    (penId: unknown, value: string) => {
+      if (!engine || penId === null || penId === undefined) return;
+      engine.setValue({ id: penId, text: value } as never, { render: true } as never);
+    },
+    [engine],
+  );
 
   const selectHandler = useCallback(
     (pens?: PenData[]) => {
       if (!pens || pens.length !== 1) {
+        if (textTimerRef.current) {
+          clearTimeout(textTimerRef.current);
+          textTimerRef.current = null;
+        }
         setPen(null);
         setRect(null);
+        setTextDraft('');
+        penIdRef.current = null;
         return;
       }
       const p = pens[0];
       if (p.globalAlpha === null || p.globalAlpha === undefined) p.globalAlpha = 1;
+      // Selection change: sync draft. Same pen active events while typing must not clobber draft.
+      if (p.id !== penIdRef.current) {
+        if (textTimerRef.current) {
+          clearTimeout(textTimerRef.current);
+          textTimerRef.current = null;
+        }
+        penIdRef.current = p.id;
+        setTextDraft((p.text as string) ?? '');
+      }
       setPen(p);
       if (engine) {
         try {
@@ -90,8 +118,14 @@ export function PenProps({ engine }: { engine: Meta2d | null }) {
   );
 
   const inactiveHandler = useCallback(() => {
+    if (textTimerRef.current) {
+      clearTimeout(textTimerRef.current);
+      textTimerRef.current = null;
+    }
     setPen(null);
     setRect(null);
+    setTextDraft('');
+    penIdRef.current = null;
   }, []);
 
   useEffect(() => {
@@ -101,6 +135,10 @@ export function PenProps({ engine }: { engine: Meta2d | null }) {
     return () => {
       engine.off('active', selectHandler);
       engine.off('inactive', inactiveHandler);
+      if (textTimerRef.current) {
+        clearTimeout(textTimerRef.current);
+        textTimerRef.current = null;
+      }
     };
   }, [engine, selectHandler, inactiveHandler]);
 
@@ -115,14 +153,35 @@ export function PenProps({ engine }: { engine: Meta2d | null }) {
   }
 
   const changeValue = (prop: string, value: unknown) => {
-    localRef.current[prop] = value;
     const v: Record<string, unknown> = { id: pen.id };
     v[prop] = value;
     if (prop === 'dash') {
       const lineDashs = [undefined, [5, 5]];
       v.lineDash = lineDashs[value as number];
     }
+    // Keep React panel in sync for non-text props (text uses textDraft).
+    if (prop !== 'text') {
+      setPen((prev) => (prev ? { ...prev, ...v } : prev));
+    }
     engine.setValue(v as never, { render: true } as never);
+  };
+
+  const changeText = (value: string) => {
+    setTextDraft(value);
+    const penId = pen.id;
+    if (textTimerRef.current) clearTimeout(textTimerRef.current);
+    textTimerRef.current = setTimeout(() => {
+      textTimerRef.current = null;
+      flushTextToEngine(penId, value);
+    }, TEXT_DEBOUNCE_MS);
+  };
+
+  const commitText = () => {
+    if (textTimerRef.current) {
+      clearTimeout(textTimerRef.current);
+      textTimerRef.current = null;
+    }
+    flushTextToEngine(pen.id, textDraft);
   };
 
   const changeRect = (prop: string, value: number) => {
@@ -145,10 +204,19 @@ export function PenProps({ engine }: { engine: Meta2d | null }) {
         <div style={labelStyle}>{t('meta2d.props.text')}</div>
         <div style={rowStyle}>
           <input
-            onChange={(e) => changeValue('text', e.target.value)}
-            style={inputStyle}
+            onBlur={commitText}
+            onChange={(e) => changeText(e.target.value)}
+            onKeyDown={(e) => {
+              // Keep Meta2d / host shortcuts from eating typing.
+              e.stopPropagation();
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                (e.target as HTMLInputElement).blur();
+              }
+            }}
+            style={{ ...inputStyle, flex: 1, width: '100%' }}
             type="text"
-            value={(pen.text as string) ?? ''}
+            value={textDraft}
           />
         </div>
       </div>

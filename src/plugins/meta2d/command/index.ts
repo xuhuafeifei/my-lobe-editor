@@ -7,13 +7,13 @@ import {
 } from 'lexical';
 
 import { $createMeta2dNode } from '../node';
-import { EMPTY_META2D_DIAGRAM_JSON, EMPTY_META2D_PLACEHOLDER_SVG } from '../utils/meta2dManager';
+import { EMPTY_META2D_DIAGRAM_JSON, EMPTY_META2D_PLACEHOLDER_SVG } from '../utils/meta2dLight';
 
 export interface InsertMeta2dPayload {
-  diagram?: string;
-  svg?: string;
   /** Default true — open diagram editor after slash / command insert (parity with markmap). */
   autoOpenEditor?: boolean;
+  diagram?: string;
+  svg?: string;
 }
 
 export const INSERT_META2D_COMMAND: LexicalCommand<InsertMeta2dPayload | undefined> =

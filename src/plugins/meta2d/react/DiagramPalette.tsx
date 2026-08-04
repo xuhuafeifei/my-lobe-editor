@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { useEditorLocale } from '@/react/hooks/useEditorLocale';
 
-import { normalizeMeta2dPen } from '../utils/meta2dManager';
+import { normalizeMeta2dPen } from '../utils/meta2dLight';
 import { GROUP_LOCALE_MAP, type PaletteItem, getPalette, itemLabelLocaleKey } from './diagram-pens';
 
 function clonePen(pen: Record<string, unknown>): Record<string, unknown> {
