@@ -11,6 +11,8 @@ import { styles } from './style';
 import { ReactFilePluginProps } from './type';
 
 const ReactFilePlugin: FC<ReactFilePluginProps> = ({
+  allowedExtensions,
+  allowedMimeTypes,
   className,
   locale,
   handleUpload,
@@ -25,6 +27,8 @@ const ReactFilePlugin: FC<ReactFilePluginProps> = ({
     }
     editor.registerPlugin(UploadPlugin);
     editor.registerPlugin(FilePlugin, {
+      allowedExtensions,
+      allowedMimeTypes,
       decorator: (node, editor) => {
         return <ReactFile className={className} editor={editor} node={node} />;
       },
@@ -37,7 +41,7 @@ const ReactFilePlugin: FC<ReactFilePluginProps> = ({
       markdownWriter: markdownWriter,
       theme: theme || styles,
     });
-  }, [editor]);
+  }, [allowedExtensions, allowedMimeTypes, editor]);
 
   return null;
 };

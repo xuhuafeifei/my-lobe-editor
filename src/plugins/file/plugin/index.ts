@@ -11,16 +11,16 @@ import {
 
 import { KernelPlugin } from '@/editor-kernel/plugin';
 import { IMarkdownShortCutService } from '@/plugins/markdown/service/shortcut';
-import { IUploadService } from '@/plugins/upload';
+import { IUploadService, UPLOAD_PRIORITY_LOW } from '@/plugins/upload';
 import { IEditorKernel, IEditorPlugin, IEditorPluginConstructor } from '@/types';
 import { createDebugLogger } from '@/utils/debug';
 
 import { registerFileCommand } from '../command';
 import { $createFileNode, $isFileNode, FileNode } from '../node/FileNode';
 import { registerFileNodeSelectionObserver } from '../utils';
+import { FileMatchOptions, isAllowedUploadFile } from '../utils/matchFile';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface FilePluginOptions {
+export interface FilePluginOptions extends FileMatchOptions {
   decorator: (node: FileNode, editor: LexicalEditor) => any;
   handleUpload: (file: File) => Promise<{ url: string }>;
   markdownWriter?: (file: FileNode) => string;
@@ -56,10 +56,12 @@ export const FilePlugin: IEditorPluginConstructor<FilePluginOptions> = class
   }
 
   onInit(editor: LexicalEditor): void {
-    // Register the upload handler if provided
     this.kernel
       .requireService(IUploadService)
-      ?.registerUpload(async (file: File, from: string, range: Range | null | undefined) => {
+      ?.registerUpload(async (file: File, _from: string, range: Range | null | undefined) => {
+        if (!isAllowedUploadFile(file, this.config)) {
+          return false;
+        }
         editor.update(() => {
           if (range) {
             const rangeSelection = $createRangeSelection();
@@ -69,7 +71,7 @@ export const FilePlugin: IEditorPluginConstructor<FilePluginOptions> = class
             $setSelection(rangeSelection);
           }
           const fileNode = $createFileNode(file.name);
-          $insertNodes([fileNode]); // Insert a zero-width space to ensure the image is not the last child
+          $insertNodes([fileNode]);
           if ($isRootOrShadowRoot(fileNode.getParentOrThrow())) {
             $wrapNodeInElement(fileNode, $createParagraphNode).selectEnd();
           }
@@ -86,8 +88,8 @@ export const FilePlugin: IEditorPluginConstructor<FilePluginOptions> = class
               });
             });
         });
-        return null;
-      });
+        return true;
+      }, UPLOAD_PRIORITY_LOW);
 
     this.register(registerFileCommand(editor, this.config!.handleUpload));
     this.register(registerFileNodeSelectionObserver(editor));

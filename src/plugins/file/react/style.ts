@@ -21,6 +21,16 @@ export const styles = createStaticStyles(({ css, cssVar }) => ({
 
     background: ${cssVar.colorFillSecondary};
 
+    a {
+      cursor: pointer;
+      color: inherit;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
     span {
       user-select: none;
     }

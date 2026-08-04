@@ -15,6 +15,7 @@ const zhCN = {
   },
   confirm: '确认',
   file: {
+    download: '下载文件',
     error: '错误：{{message}}',
     uploading: '正在上传文件...',
   },

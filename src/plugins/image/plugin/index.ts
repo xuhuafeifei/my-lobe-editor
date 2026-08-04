@@ -118,6 +118,9 @@ export const ImagePlugin: IEditorPluginConstructor<ImagePluginOptions> = class
     }
 
     uploadService.registerUpload(async (file: File, from: string, range?: Range | null) => {
+      if (!file.type.startsWith('image/')) {
+        return false;
+      }
       // Get image dimensions before uploading
       const imageWidth = await this.getImageWidth(file);
 

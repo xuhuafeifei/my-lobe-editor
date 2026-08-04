@@ -1,6 +1,6 @@
-import { MaterialFileTypeIcon , Center } from '@lobehub/ui';
+import { Center, MaterialFileTypeIcon } from '@lobehub/ui';
 import { CLICK_COMMAND, COMMAND_PRIORITY_LOW, LexicalEditor } from 'lexical';
-import { type FC, useCallback, useEffect, useRef } from 'react';
+import { type FC, type MouseEvent as ReactMouseEvent, useCallback, useEffect, useRef } from 'react';
 
 import { useLexicalNodeSelection } from '@/editor-kernel/react/useLexicalNodeSelection';
 import { useTranslation } from '@/editor-kernel/react/useTranslation';
@@ -20,10 +20,10 @@ const ReactFile: FC<ReactFileProps> = ({ className, editor, node }) => {
 
   const onClick = useCallback(
     (payload: MouseEvent) => {
-      if (payload.target === spanRef.current) {
+      if (payload.target === spanRef.current || spanRef.current?.contains(payload.target as Node)) {
         clearSelection();
         setSelected(true);
-        return true; // Indicate that the click was handled
+        return true;
       }
       return false;
     },
@@ -31,9 +31,13 @@ const ReactFile: FC<ReactFileProps> = ({ className, editor, node }) => {
   );
 
   useEffect(() => {
-    // Perform any necessary side effects here
     return editor.registerCommand<MouseEvent>(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW);
   }, [editor, node, onClick]);
+
+  const onDownloadClick = useCallback((e: ReactMouseEvent<HTMLAnchorElement>) => {
+    // Keep selection behavior; allow default download / open.
+    e.stopPropagation();
+  }, []);
 
   if (node.status === 'pending') {
     return <div className={className}>{t('file.uploading')}</div>;
@@ -47,10 +51,33 @@ const ReactFile: FC<ReactFileProps> = ({ className, editor, node }) => {
     );
   }
 
-  return (
-    <Center className={className} gap={'.2em'} horizontal ref={spanRef}>
+  const content = (
+    <>
       <MaterialFileTypeIcon filename={node.name} size={18} type={'file'} variant={'raw'} />
       {node.name}
+    </>
+  );
+
+  if (node.fileUrl) {
+    return (
+      <Center className={className} gap={'.2em'} horizontal ref={spanRef}>
+        <a
+          download={node.name}
+          href={node.fileUrl}
+          onClick={onDownloadClick}
+          rel="noopener noreferrer"
+          target="_blank"
+          title={t('file.download')}
+        >
+          {content}
+        </a>
+      </Center>
+    );
+  }
+
+  return (
+    <Center className={className} gap={'.2em'} horizontal ref={spanRef}>
+      {content}
     </Center>
   );
 };

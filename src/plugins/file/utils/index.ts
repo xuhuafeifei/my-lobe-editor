@@ -1,5 +1,8 @@
 import { $getSelection, $isNodeSelection, $isRangeSelection, LexicalEditor } from 'lexical';
 
+export type { FileMatchOptions } from './matchFile';
+export { isAllowedUploadFile } from './matchFile';
+
 export function registerFileNodeSelectionObserver(editor: LexicalEditor): () => void {
   const selectFileKeys: string[] = [];
   return editor.registerUpdateListener(({ editorState }) => {

@@ -15,6 +15,7 @@ const locale = {
   },
   confirm: 'Confirm',
   file: {
+    download: 'Download file',
     error: 'Error: {{message}}',
     uploading: 'Uploading file...',
   },
