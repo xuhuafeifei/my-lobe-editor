@@ -45,6 +45,13 @@ const selfClosingHtmlTags = new Set([
   'wbr',
 ]);
 
+/** Compare HTML open/close by tag name only, e.g. `span` from `<span style="...">`. */
+export function getHtmlTagName(htmlValue: string): string {
+  const inner = htmlValue.replace(/^<\/?/, '').replace(/\/?>$/, '').trim();
+  const match = /^([A-Za-z][\w-]*)/.exec(inner);
+  return match ? match[1].toLowerCase() : '';
+}
+
 class MarkdownContext {
   private stack: Array<IHTMLStack> = [];
   constructor(public readonly root: Root) {}
@@ -98,8 +105,11 @@ function convertMdastToLexical(
                 if (isComment) {
                   return ret;
                 }
-                const tag = child.value.replaceAll(/^<\/?|>$/g, '');
+                const tag = getHtmlTagName(child.value);
                 const isEndTag = child.value.startsWith('</');
+                if (!tag) {
+                  return ret;
+                }
                 if (selfClosingHtmlTags.has(tag)) {
                   // Self-closing tag
                   const reader = markdownReaders['html'];
@@ -126,7 +136,14 @@ function convertMdastToLexical(
                   htmlStack.pop();
                   if (top?.tag !== tag) {
                     logger.warn('HTML tag mismatch:', tag);
-                    ret.push(...(top?.children || []));
+                    // 化为纯文本：开标签原文 + 中间内容 + 闭标签原文
+                    if (top) {
+                      ret.push(
+                        INodeHelper.createTextNode(top.node.value),
+                        ...((top.children.flat().filter(Boolean) || []) as MarkdownReadNode[]),
+                      );
+                    }
+                    ret.push(INodeHelper.createTextNode(child.value));
                     return ret;
                   }
                   const reader = markdownReaders['html'];
@@ -255,9 +272,9 @@ export function parseMarkdownToLexical(
 ): IRootNode {
   // Step 1: Extract markmap and meta2d blocks from markdown
   const extractedBlocks: Array<{
-    type: 'markmap' | 'meta2d';
     content: string;
     placeholder: string;
+    type: 'markmap' | 'meta2d';
   }> = [];
 
   let processedMarkdown = markdown;
@@ -265,15 +282,16 @@ export function parseMarkdownToLexical(
   // Extract markmap blocks - support both:
   // - ---markmap---\ncontent\n---/markmap--- (with newlines)
   // - ---markmap---content---/markmap--- (no newlines)
-  const markmapRegex = /---markmap---(\n?)([\s\S]*?)\n?---\/markmap---/g;
+  const markmapRegex = /---markmap---(\n?)([\S\s]*?)\n?---\/markmap---/g;
   let match: RegExpExecArray | null;
   let counter = 0;
   while ((match = markmapRegex.exec(markdown)) !== null) {
     const placeholder = `|||MARKMAP_BLOCK_${counter}|||`;
     extractedBlocks.push({
-      type: 'markmap',
-      content: match[2] || '',  // match[1] is optional newline, match[2] is actual content
+      content: match[2] || '',
+      // match[1] is optional newline, match[2] is actual content
       placeholder,
+      type: 'markmap',
     });
     processedMarkdown = processedMarkdown.replace(match[0], placeholder);
     counter++;
@@ -282,13 +300,14 @@ export function parseMarkdownToLexical(
   // Extract meta2d blocks - support both:
   // - ---meta2d---\ncontent\n---/meta2d--- (with newlines)
   // - ---meta2d---content---/meta2d--- (no newlines)
-  const meta2dRegex = /---meta2d---(\n?)([\s\S]*?)\n?---\/meta2d---/g;
+  const meta2dRegex = /---meta2d---(\n?)([\S\s]*?)\n?---\/meta2d---/g;
   while ((match = meta2dRegex.exec(markdown)) !== null) {
     const placeholder = `|||META2D_BLOCK_${counter}|||`;
     extractedBlocks.push({
-      type: 'meta2d',
-      content: match[2] || '',  // match[1] is optional newline, match[2] is actual content
+      content: match[2] || '',
+      // match[1] is optional newline, match[2] is actual content
       placeholder,
+      type: 'meta2d',
     });
     processedMarkdown = processedMarkdown.replace(match[0], placeholder);
     counter++;
@@ -321,7 +340,7 @@ export function parseMarkdownToLexical(
             matched = true;
             // Text before placeholder
             if (index > 0) {
-              result.push({ ...node, text: text.substring(0, index) });
+              result.push({ ...node, text: text.slice(0, Math.max(0, index)) });
             }
             // The block node
             result.push({
@@ -330,7 +349,7 @@ export function parseMarkdownToLexical(
               version: 1,
             });
             // Remaining text after placeholder (recursively process)
-            const remaining = text.substring(index + block.placeholder.length);
+            const remaining = text.slice(Math.max(0, index + block.placeholder.length));
             if (remaining) {
               const remainingResult = replacePlaceholders({ ...node, text: remaining });
               if (Array.isArray(remainingResult)) {

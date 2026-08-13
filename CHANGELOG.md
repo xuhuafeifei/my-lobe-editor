@@ -2,7 +2,37 @@
 
 # Changelog
 
-### [Version&nbsp;1.0.0-fork.5](https://github.com/xuhuafei/lobe-editor)
+### [Version 1.0.0-fork.20](https://github.com/xuhuafeifei/my-lobe-editor)
+
+<sup>Released on **2026-08-13**</sup>
+
+#### 🚀 Features
+
+- **markdown**: Bidirectional text color / background-color via HTML `<span style="…">` — export Lexical `TextNode.style` to Markdown, and import span styles back to Lexical JSON (tag pairing by name only; works in paragraphs and table cells; ignored inside code).
+
+#### 🐛 Bug Fixes / Related
+
+- **file** _(1.0.0-fork / prior)_: Downloadable file attachment cards; upload handler correctly claims files; optional mime/extension allowlist; non-image early-exit in Image upload path.
+
+<br/>
+
+<details>
+<summary><kbd>Improvements and Fixes</kbd></summary>
+
+#### What's improved
+
+- **markdown**: Color round-trip with `<span style="color: …">` / `background-color` ([master](https://github.com/xuhuafeifei/my-lobe-editor))
+
+</details>
+
+<div align="right">
+
+[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
+
+</div>
+
+### [Version 1.0.0-fork.5](https://github.com/xuhuafei/lobe-editor)
+
 <sup>Released on **2026-05-11**</sup>
 
 #### 🐛 Bug Fixes
@@ -11,20 +41,14 @@
 
 <br/>
 
-
-
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **color-picker**: Fix ColorPicker value snaps to black when selection is null ([9efdfe9](https://github.com/xuhuafei/lobe-editor/commit/9efdfe9))
+- **color-picker**: Fix ColorPicker value snaps to black when selection is null ([9efdfe9](https://github.com/xuhuafei/lobe-editor/commit/9efdfe9))
 
 </details>
-
-
 
 <div align="right">
 
@@ -32,9 +56,9 @@
 
 </div>
 
-### [Version&nbsp;1.0.0-fork.4](https://github.com/xuhuafei/lobe-editor)
-<sup>Released on **2026-05-10**</sup>
+### [Version 1.0.0-fork.4](https://github.com/xuhuafei/lobe-editor)
 
+<sup>Released on **2026-05-10**</sup>
 
 #### 🚀 Features
 
@@ -44,7 +68,6 @@
 - **paste**: Add `confirmPasteMarkdown` prop with built-in confirmation dialog
 - **toolbar**: Limit floating toolbar to inline format buttons only, remove 500ms debounce for instant updates
 
-
 #### 🐛 Bug Fixes
 
 - **editor**: `ReactEditor` and `useEditor` now call `editor.destroy()` on unmount, with `pendingDestroyRef` + `queueMicrotask` for StrictMode compatibility
@@ -53,9 +76,7 @@
 - **link**: Empty link text `[](url)` now shows URL as fallback; Enter key triggers text-match transformers
 - **toolbar**: Share `lastUsedColor` between floating and main toolbar instances; left-click "A" uses last picked color
 
-
 <br/>
-
 
 <div align="right">
 
@@ -63,30 +84,24 @@
 
 </div>
 
-### [Version&nbsp;4.9.3](https://github.com/lobehub/lobe-editor/compare/v4.9.2...v4.9.3)
-<sup>Released on **2026-04-22**</sup>
+### [Version 4.9.3](https://github.com/lobehub/lobe-editor/compare/v4.9.2...v4.9.3)
 
+<sup>Released on **2026-04-22**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Lock lexical dependencies to 0.42.0.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Lock lexical dependencies to 0.42.0 ([17d79d5](https://github.com/lobehub/lobe-editor/commit/17d79d5))
+- **misc**: Lock lexical dependencies to 0.42.0 ([17d79d5](https://github.com/lobehub/lobe-editor/commit/17d79d5))
 
 </details>
-
 
 <div align="right">
 
@@ -94,30 +109,24 @@
 
 </div>
 
-### [Version&nbsp;4.9.2](https://github.com/lobehub/lobe-editor/compare/v4.9.1...v4.9.2)
-<sup>Released on **2026-04-22**</sup>
+### [Version 4.9.2](https://github.com/lobehub/lobe-editor/compare/v4.9.1...v4.9.2)
 
+<sup>Released on **2026-04-22**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Relax lexical postinstall hash guard.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Relax lexical postinstall hash guard ([99c1f00](https://github.com/lobehub/lobe-editor/commit/99c1f00))
+- **misc**: Relax lexical postinstall hash guard ([99c1f00](https://github.com/lobehub/lobe-editor/commit/99c1f00))
 
 </details>
-
 
 <div align="right">
 
@@ -125,30 +134,24 @@
 
 </div>
 
-### [Version&nbsp;4.9.1](https://github.com/lobehub/lobe-editor/compare/v4.9.0...v4.9.1)
-<sup>Released on **2026-04-22**</sup>
+### [Version 4.9.1](https://github.com/lobehub/lobe-editor/compare/v4.9.0...v4.9.1)
 
+<sup>Released on **2026-04-22**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Tolerate CRLF lexical postinstall patch.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Tolerate CRLF lexical postinstall patch ([49ef52b](https://github.com/lobehub/lobe-editor/commit/49ef52b))
+- **misc**: Tolerate CRLF lexical postinstall patch ([49ef52b](https://github.com/lobehub/lobe-editor/commit/49ef52b))
 
 </details>
-
 
 <div align="right">
 
@@ -156,30 +159,24 @@
 
 </div>
 
-## [Version&nbsp;4.9.0](https://github.com/lobehub/lobe-editor/compare/v4.8.5...v4.9.0)
-<sup>Released on **2026-04-22**</sup>
+## [Version 4.9.0](https://github.com/lobehub/lobe-editor/compare/v4.8.5...v4.9.0)
 
+<sup>Released on **2026-04-22**</sup>
 
 #### ✨ Features
 
 - **headless**: Add editor API for transforms without React.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **headless**: Add editor API for transforms without React, closes [#137](https://github.com/lobehub/lobe-editor/issues/137) ([28bc9ac](https://github.com/lobehub/lobe-editor/commit/28bc9ac))
+- **headless**: Add editor API for transforms without React, closes [#137](https://github.com/lobehub/lobe-editor/issues/137) ([28bc9ac](https://github.com/lobehub/lobe-editor/commit/28bc9ac))
 
 </details>
-
 
 <div align="right">
 
@@ -187,30 +184,24 @@
 
 </div>
 
-### [Version&nbsp;4.8.5](https://github.com/lobehub/lobe-editor/compare/v4.8.4...v4.8.5)
-<sup>Released on **2026-04-21**</sup>
+### [Version 4.8.5](https://github.com/lobehub/lobe-editor/compare/v4.8.4...v4.8.5)
 
+<sup>Released on **2026-04-21**</sup>
 
 #### 🐛 Bug Fixes
 
 - **renderer**: Support serialized diff nodes in LexicalDiff.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **renderer**: Support serialized diff nodes in LexicalDiff ([b937cdb](https://github.com/lobehub/lobe-editor/commit/b937cdb))
+- **renderer**: Support serialized diff nodes in LexicalDiff ([b937cdb](https://github.com/lobehub/lobe-editor/commit/b937cdb))
 
 </details>
-
 
 <div align="right">
 
@@ -218,30 +209,24 @@
 
 </div>
 
-### [Version&nbsp;4.8.4](https://github.com/lobehub/lobe-editor/compare/v4.8.3...v4.8.4)
-<sup>Released on **2026-04-18**</sup>
+### [Version 4.8.4](https://github.com/lobehub/lobe-editor/compare/v4.8.3...v4.8.4)
 
+<sup>Released on **2026-04-18**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Enhance placeholder node management during auto-complete suggestions.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Enhance placeholder node management during auto-complete suggestions, closes [#135](https://github.com/lobehub/lobe-editor/issues/135) ([4a9dfe8](https://github.com/lobehub/lobe-editor/commit/4a9dfe8))
+- **misc**: Enhance placeholder node management during auto-complete suggestions, closes [#135](https://github.com/lobehub/lobe-editor/issues/135) ([4a9dfe8](https://github.com/lobehub/lobe-editor/commit/4a9dfe8))
 
 </details>
-
 
 <div align="right">
 
@@ -249,30 +234,24 @@
 
 </div>
 
-### [Version&nbsp;4.8.3](https://github.com/lobehub/lobe-editor/compare/v4.8.2...v4.8.3)
-<sup>Released on **2026-04-16**</sup>
+### [Version 4.8.3](https://github.com/lobehub/lobe-editor/compare/v4.8.2...v4.8.3)
 
+<sup>Released on **2026-04-16**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Add node transformation and update listener for DiffNode handling.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Add node transformation and update listener for DiffNode handling, closes [#132](https://github.com/lobehub/lobe-editor/issues/132) ([4b17599](https://github.com/lobehub/lobe-editor/commit/4b17599))
+- **misc**: Add node transformation and update listener for DiffNode handling, closes [#132](https://github.com/lobehub/lobe-editor/issues/132) ([4b17599](https://github.com/lobehub/lobe-editor/commit/4b17599))
 
 </details>
-
 
 <div align="right">
 
@@ -280,30 +259,24 @@
 
 </div>
 
-### [Version&nbsp;4.8.2](https://github.com/lobehub/lobe-editor/compare/v4.8.1...v4.8.2)
-<sup>Released on **2026-04-13**</sup>
+### [Version 4.8.2](https://github.com/lobehub/lobe-editor/compare/v4.8.1...v4.8.2)
 
+<sup>Released on **2026-04-13**</sup>
 
 #### 🐛 Bug Fixes
 
 - **diff**: Adjust padding and remove column-gap in borderless styles.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **diff**: Adjust padding and remove column-gap in borderless styles ([38d7112](https://github.com/lobehub/lobe-editor/commit/38d7112))
+- **diff**: Adjust padding and remove column-gap in borderless styles ([38d7112](https://github.com/lobehub/lobe-editor/commit/38d7112))
 
 </details>
-
 
 <div align="right">
 
@@ -311,30 +284,24 @@
 
 </div>
 
-### [Version&nbsp;4.8.1](https://github.com/lobehub/lobe-editor/compare/v4.8.0...v4.8.1)
-<sup>Released on **2026-04-12**</sup>
+### [Version 4.8.1](https://github.com/lobehub/lobe-editor/compare/v4.8.0...v4.8.1)
 
+<sup>Released on **2026-04-12**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Patch lexical on postinstall for keepId.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Patch lexical on postinstall for keepId ([c28e31c](https://github.com/lobehub/lobe-editor/commit/c28e31c))
+- **misc**: Patch lexical on postinstall for keepId ([c28e31c](https://github.com/lobehub/lobe-editor/commit/c28e31c))
 
 </details>
-
 
 <div align="right">
 
@@ -342,30 +309,24 @@
 
 </div>
 
-## [Version&nbsp;4.8.0](https://github.com/lobehub/lobe-editor/compare/v4.7.0...v4.8.0)
-<sup>Released on **2026-04-12**</sup>
+## [Version 4.8.0](https://github.com/lobehub/lobe-editor/compare/v4.7.0...v4.8.0)
 
+<sup>Released on **2026-04-12**</sup>
 
 #### ✨ Features
 
 - **diff**: Add borderless appearance variant for LexicalDiff.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **diff**: Add borderless appearance variant for LexicalDiff ([f0a871b](https://github.com/lobehub/lobe-editor/commit/f0a871b))
+- **diff**: Add borderless appearance variant for LexicalDiff ([f0a871b](https://github.com/lobehub/lobe-editor/commit/f0a871b))
 
 </details>
-
 
 <div align="right">
 
@@ -373,30 +334,24 @@
 
 </div>
 
-## [Version&nbsp;4.7.0](https://github.com/lobehub/lobe-editor/compare/v4.6.2...v4.7.0)
-<sup>Released on **2026-04-07**</sup>
+## [Version 4.7.0](https://github.com/lobehub/lobe-editor/compare/v4.6.2...v4.7.0)
 
+<sup>Released on **2026-04-07**</sup>
 
 #### ✨ Features
 
 - **clipboard**: Add text/markdown format to copy output.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **clipboard**: Add text/markdown format to copy output, closes [#131](https://github.com/lobehub/lobe-editor/issues/131) ([fc56717](https://github.com/lobehub/lobe-editor/commit/fc56717))
+- **clipboard**: Add text/markdown format to copy output, closes [#131](https://github.com/lobehub/lobe-editor/issues/131) ([fc56717](https://github.com/lobehub/lobe-editor/commit/fc56717))
 
 </details>
-
 
 <div align="right">
 
@@ -404,30 +359,24 @@
 
 </div>
 
-### [Version&nbsp;4.6.2](https://github.com/lobehub/lobe-editor/compare/v4.6.1...v4.6.2)
-<sup>Released on **2026-04-01**</sup>
+### [Version 4.6.2](https://github.com/lobehub/lobe-editor/compare/v4.6.1...v4.6.2)
 
+<sup>Released on **2026-04-01**</sup>
 
 #### ♻ Code Refactoring
 
 - **misc**: Use @lobehub/ui Highlighter for static renderer codeblock.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### Code refactoring
 
-* **misc**: Use @lobehub/ui Highlighter for static renderer codeblock ([df4806f](https://github.com/lobehub/lobe-editor/commit/df4806f))
+- **misc**: Use @lobehub/ui Highlighter for static renderer codeblock ([df4806f](https://github.com/lobehub/lobe-editor/commit/df4806f))
 
 </details>
-
 
 <div align="right">
 
@@ -435,30 +384,24 @@
 
 </div>
 
-### [Version&nbsp;4.6.1](https://github.com/lobehub/lobe-editor/compare/v4.6.0...v4.6.1)
-<sup>Released on **2026-04-01**</sup>
+### [Version 4.6.1](https://github.com/lobehub/lobe-editor/compare/v4.6.0...v4.6.1)
 
+<sup>Released on **2026-04-01**</sup>
 
 #### ♻ Code Refactoring
 
 - **misc**: Migrate @lexical/code to @lexical/code-core.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### Code refactoring
 
-* **misc**: Migrate @lexical/code to @lexical/code-core ([f3813ed](https://github.com/lobehub/lobe-editor/commit/f3813ed))
+- **misc**: Migrate @lexical/code to @lexical/code-core ([f3813ed](https://github.com/lobehub/lobe-editor/commit/f3813ed))
 
 </details>
-
 
 <div align="right">
 
@@ -466,30 +409,24 @@
 
 </div>
 
-## [Version&nbsp;4.6.0](https://github.com/lobehub/lobe-editor/compare/v4.5.0...v4.6.0)
-<sup>Released on **2026-04-01**</sup>
+## [Version 4.6.0](https://github.com/lobehub/lobe-editor/compare/v4.5.0...v4.6.0)
 
+<sup>Released on **2026-04-01**</sup>
 
 #### ✨ Features
 
 - **misc**: Trigger release.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Trigger release ([64cae2a](https://github.com/lobehub/lobe-editor/commit/64cae2a))
+- **misc**: Trigger release ([64cae2a](https://github.com/lobehub/lobe-editor/commit/64cae2a))
 
 </details>
-
 
 <div align="right">
 
@@ -497,30 +434,24 @@
 
 </div>
 
-## [Version&nbsp;4.5.0](https://github.com/lobehub/lobe-editor/compare/v4.4.0...v4.5.0)
-<sup>Released on **2026-03-27**</sup>
+## [Version 4.5.0](https://github.com/lobehub/lobe-editor/compare/v4.4.0...v4.5.0)
 
+<sup>Released on **2026-03-27**</sup>
 
 #### ✨ Features
 
 - **misc**: Markdown paste auto-convert with threshold and undo/redo history.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Markdown paste auto-convert with threshold and undo/redo history ([9be14dc](https://github.com/lobehub/lobe-editor/commit/9be14dc))
+- **misc**: Markdown paste auto-convert with threshold and undo/redo history ([9be14dc](https://github.com/lobehub/lobe-editor/commit/9be14dc))
 
 </details>
-
 
 <div align="right">
 
@@ -528,30 +459,24 @@
 
 </div>
 
-## [Version&nbsp;4.4.0](https://github.com/lobehub/lobe-editor/compare/v4.3.2...v4.4.0)
-<sup>Released on **2026-03-26**</sup>
+## [Version 4.4.0](https://github.com/lobehub/lobe-editor/compare/v4.3.2...v4.4.0)
 
+<sup>Released on **2026-03-26**</sup>
 
 #### ✨ Features
 
 - **renderer**: Add LexicalDiff viewer.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **renderer**: Add LexicalDiff viewer, closes [#128](https://github.com/lobehub/lobe-editor/issues/128) ([5ecaebd](https://github.com/lobehub/lobe-editor/commit/5ecaebd))
+- **renderer**: Add LexicalDiff viewer, closes [#128](https://github.com/lobehub/lobe-editor/issues/128) ([5ecaebd](https://github.com/lobehub/lobe-editor/commit/5ecaebd))
 
 </details>
-
 
 <div align="right">
 
@@ -559,30 +484,24 @@
 
 </div>
 
-### [Version&nbsp;4.3.2](https://github.com/lobehub/lobe-editor/compare/v4.3.1...v4.3.2)
-<sup>Released on **2026-03-21**</sup>
+### [Version 4.3.2](https://github.com/lobehub/lobe-editor/compare/v4.3.1...v4.3.2)
 
+<sup>Released on **2026-03-21**</sup>
 
 #### 🐛 Bug Fixes
 
 - **renderer**: Preserve multiline whitespace in LexicalRenderer.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **renderer**: Preserve multiline whitespace in LexicalRenderer ([125f307](https://github.com/lobehub/lobe-editor/commit/125f307))
+- **renderer**: Preserve multiline whitespace in LexicalRenderer ([125f307](https://github.com/lobehub/lobe-editor/commit/125f307))
 
 </details>
-
 
 <div align="right">
 
@@ -590,30 +509,24 @@
 
 </div>
 
-### [Version&nbsp;4.3.1](https://github.com/lobehub/lobe-editor/compare/v4.3.0...v4.3.1)
-<sup>Released on **2026-03-19**</sup>
+### [Version 4.3.1](https://github.com/lobehub/lobe-editor/compare/v4.3.0...v4.3.1)
 
+<sup>Released on **2026-03-19**</sup>
 
 #### 🐛 Bug Fixes
 
 - **slash**: Export ISlashOption type from main package.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **slash**: Export ISlashOption type from main package ([a2b0c3b](https://github.com/lobehub/lobe-editor/commit/a2b0c3b))
+- **slash**: Export ISlashOption type from main package ([a2b0c3b](https://github.com/lobehub/lobe-editor/commit/a2b0c3b))
 
 </details>
-
 
 <div align="right">
 
@@ -621,30 +534,24 @@
 
 </div>
 
-## [Version&nbsp;4.3.0](https://github.com/lobehub/lobe-editor/compare/v4.2.0...v4.3.0)
-<sup>Released on **2026-03-19**</sup>
+## [Version 4.3.0](https://github.com/lobehub/lobe-editor/compare/v4.2.0...v4.3.0)
 
+<sup>Released on **2026-03-19**</sup>
 
 #### ✨ Features
 
 - **slash**: Export ISlashMenuOption type from main package.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **slash**: Export ISlashMenuOption type from main package ([be848d9](https://github.com/lobehub/lobe-editor/commit/be848d9))
+- **slash**: Export ISlashMenuOption type from main package ([be848d9](https://github.com/lobehub/lobe-editor/commit/be848d9))
 
 </details>
-
 
 <div align="right">
 
@@ -652,30 +559,24 @@
 
 </div>
 
-## [Version&nbsp;4.2.0](https://github.com/lobehub/lobe-editor/compare/v4.1.1...v4.2.0)
-<sup>Released on **2026-03-18**</sup>
+## [Version 4.2.0](https://github.com/lobehub/lobe-editor/compare/v4.1.1...v4.2.0)
 
+<sup>Released on **2026-03-18**</sup>
 
 #### ✨ Features
 
 - **renderer**: Add headless LexicalRenderer component.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **renderer**: Add headless LexicalRenderer component, closes [#127](https://github.com/lobehub/lobe-editor/issues/127) ([0299eea](https://github.com/lobehub/lobe-editor/commit/0299eea))
+- **renderer**: Add headless LexicalRenderer component, closes [#127](https://github.com/lobehub/lobe-editor/issues/127) ([0299eea](https://github.com/lobehub/lobe-editor/commit/0299eea))
 
 </details>
-
 
 <div align="right">
 
@@ -683,30 +584,24 @@
 
 </div>
 
-### [Version&nbsp;4.1.1](https://github.com/lobehub/lobe-editor/compare/v4.1.0...v4.1.1)
-<sup>Released on **2026-03-18**</sup>
+### [Version 4.1.1](https://github.com/lobehub/lobe-editor/compare/v4.1.0...v4.1.1)
 
+<sup>Released on **2026-03-18**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Prevent nesting of code nodes in selection processing.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Prevent nesting of code nodes in selection processing, closes [#119](https://github.com/lobehub/lobe-editor/issues/119) ([a5f59e5](https://github.com/lobehub/lobe-editor/commit/a5f59e5))
+- **misc**: Prevent nesting of code nodes in selection processing, closes [#119](https://github.com/lobehub/lobe-editor/issues/119) ([a5f59e5](https://github.com/lobehub/lobe-editor/commit/a5f59e5))
 
 </details>
-
 
 <div align="right">
 
@@ -714,30 +609,24 @@
 
 </div>
 
-## [Version&nbsp;4.1.0](https://github.com/lobehub/lobe-editor/compare/v4.0.2...v4.1.0)
-<sup>Released on **2026-03-16**</sup>
+## [Version 4.1.0](https://github.com/lobehub/lobe-editor/compare/v4.0.2...v4.1.0)
 
+<sup>Released on **2026-03-16**</sup>
 
 #### ✨ Features
 
 - **mention, slash**: Enhance demo items with additional options and improved structure.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **mention, slash**: Enhance demo items with additional options and improved structure ([41f428d](https://github.com/lobehub/lobe-editor/commit/41f428d))
+- **mention, slash**: Enhance demo items with additional options and improved structure ([41f428d](https://github.com/lobehub/lobe-editor/commit/41f428d))
 
 </details>
-
 
 <div align="right">
 
@@ -745,30 +634,24 @@
 
 </div>
 
-### [Version&nbsp;4.0.2](https://github.com/lobehub/lobe-editor/compare/v4.0.1...v4.0.2)
-<sup>Released on **2026-03-09**</sup>
+### [Version 4.0.2](https://github.com/lobehub/lobe-editor/compare/v4.0.1...v4.0.2)
 
+<sup>Released on **2026-03-09**</sup>
 
 #### 🐛 Bug Fixes
 
 - **math**: Prevent dollar-space-dollar from being misidentified as inline math.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **math**: Prevent dollar-space-dollar from being misidentified as inline math, closes [#125](https://github.com/lobehub/lobe-editor/issues/125) ([e742978](https://github.com/lobehub/lobe-editor/commit/e742978))
+- **math**: Prevent dollar-space-dollar from being misidentified as inline math, closes [#125](https://github.com/lobehub/lobe-editor/issues/125) ([e742978](https://github.com/lobehub/lobe-editor/commit/e742978))
 
 </details>
-
 
 <div align="right">
 
@@ -776,30 +659,24 @@
 
 </div>
 
-### [Version&nbsp;4.0.1](https://github.com/lobehub/lobe-editor/compare/v4.0.0...v4.0.1)
-<sup>Released on **2026-03-02**</sup>
+### [Version 4.0.1](https://github.com/lobehub/lobe-editor/compare/v4.0.0...v4.0.1)
 
+<sup>Released on **2026-03-02**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Update @lobehub/ui to version 5.0.0 in package.json.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
-
-
 
 #### What's fixed
 
-* **misc**: Update @lobehub/ui to version 5.0.0 in package.json ([a72e7b3](https://github.com/lobehub/lobe-editor/commit/a72e7b3))
+- **misc**: Update @lobehub/ui to version 5.0.0 in package.json ([a72e7b3](https://github.com/lobehub/lobe-editor/commit/a72e7b3))
 
 </details>
-
 
 <div align="right">
 
@@ -807,30 +684,24 @@
 
 </div>
 
-## [Version&nbsp;4.0.0](https://github.com/lobehub/lobe-editor/compare/v3.16.1...v4.0.0)
-<sup>Released on **2026-03-02**</sup>
+## [Version 4.0.0](https://github.com/lobehub/lobe-editor/compare/v3.16.1...v4.0.0)
 
+<sup>Released on **2026-03-02**</sup>
 
 #### ✨ Features
 
-- **misc**: Bump [force major].
-
+- **misc**: Bump \[force major].
 
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Bump [force major] ([990ba33](https://github.com/lobehub/lobe-editor/commit/990ba33))
+- **misc**: Bump \[force major] ([990ba33](https://github.com/lobehub/lobe-editor/commit/990ba33))
 
 </details>
-
 
 <div align="right">
 
@@ -838,30 +709,24 @@
 
 </div>
 
-### [Version&nbsp;3.16.1](https://github.com/lobehub/lobe-editor/compare/v3.16.0...v3.16.1)
-<sup>Released on **2026-02-12**</sup>
+### [Version 3.16.1](https://github.com/lobehub/lobe-editor/compare/v3.16.0...v3.16.1)
 
+<sup>Released on **2026-02-12**</sup>
 
 #### 🐛 Bug Fixes
 
 - **image**: Add onPickFile prop for custom file picker support.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **image**: Add onPickFile prop for custom file picker support, closes [#123](https://github.com/lobehub/lobe-editor/issues/123) ([267cd65](https://github.com/lobehub/lobe-editor/commit/267cd65))
+- **image**: Add onPickFile prop for custom file picker support, closes [#123](https://github.com/lobehub/lobe-editor/issues/123) ([267cd65](https://github.com/lobehub/lobe-editor/commit/267cd65))
 
 </details>
-
 
 <div align="right">
 
@@ -869,30 +734,24 @@
 
 </div>
 
-## [Version&nbsp;3.16.0](https://github.com/lobehub/lobe-editor/compare/v3.15.0...v3.16.0)
-<sup>Released on **2026-02-12**</sup>
+## [Version 3.16.0](https://github.com/lobehub/lobe-editor/compare/v3.15.0...v3.16.0)
 
+<sup>Released on **2026-02-12**</sup>
 
 #### ✨ Features
 
 - **misc**: Add image edit popover for modifying src and replacing image.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Add image edit popover for modifying src and replacing image, closes [#122](https://github.com/lobehub/lobe-editor/issues/122) ([eb08212](https://github.com/lobehub/lobe-editor/commit/eb08212))
+- **misc**: Add image edit popover for modifying src and replacing image, closes [#122](https://github.com/lobehub/lobe-editor/issues/122) ([eb08212](https://github.com/lobehub/lobe-editor/commit/eb08212))
 
 </details>
-
 
 <div align="right">
 
@@ -900,30 +759,24 @@
 
 </div>
 
-## [Version&nbsp;3.15.0](https://github.com/lobehub/lobe-editor/compare/v3.14.1...v3.15.0)
-<sup>Released on **2026-01-31**</sup>
+## [Version 3.15.0](https://github.com/lobehub/lobe-editor/compare/v3.14.1...v3.15.0)
 
+<sup>Released on **2026-01-31**</sup>
 
 #### ✨ Features
 
 - **misc**: Implement selection management with setSelection and getSelection methods.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Implement selection management with setSelection and getSelection methods, closes [#116](https://github.com/lobehub/lobe-editor/issues/116) ([2b7f12a](https://github.com/lobehub/lobe-editor/commit/2b7f12a))
+- **misc**: Implement selection management with setSelection and getSelection methods, closes [#116](https://github.com/lobehub/lobe-editor/issues/116) ([2b7f12a](https://github.com/lobehub/lobe-editor/commit/2b7f12a))
 
 </details>
-
 
 <div align="right">
 
@@ -931,30 +784,24 @@
 
 </div>
 
-### [Version&nbsp;3.14.1](https://github.com/lobehub/lobe-editor/compare/v3.14.0...v3.14.1)
-<sup>Released on **2026-01-27**</sup>
+### [Version 3.14.1](https://github.com/lobehub/lobe-editor/compare/v3.14.0...v3.14.1)
 
+<sup>Released on **2026-01-27**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Litexml th reader.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Litexml th reader, closes [#117](https://github.com/lobehub/lobe-editor/issues/117) ([2012c0f](https://github.com/lobehub/lobe-editor/commit/2012c0f))
+- **misc**: Litexml th reader, closes [#117](https://github.com/lobehub/lobe-editor/issues/117) ([2012c0f](https://github.com/lobehub/lobe-editor/commit/2012c0f))
 
 </details>
-
 
 <div align="right">
 
@@ -962,44 +809,35 @@
 
 </div>
 
-## [Version&nbsp;3.14.0](https://github.com/lobehub/lobe-editor/compare/v3.13.2...v3.14.0)
-<sup>Released on **2026-01-17**</sup>
+## [Version 3.14.0](https://github.com/lobehub/lobe-editor/compare/v3.13.2...v3.14.0)
 
+<sup>Released on **2026-01-17**</sup>
 
 #### ✨ Features
 
 - **misc**: Add support for inserting elements before and after the root …, reset history state on document change to ensure clean redo/un….
 
-
 #### 🐛 Bug Fixes
 
 - **misc**: Add HISTORY_MERGE_TAG to cursor and code inline registration f…, katex render loop, update hasDiffNode and useHasDiffNode to handle optional edito….
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Add support for inserting elements before and after the root …, closes [#109](https://github.com/lobehub/lobe-editor/issues/109) ([f46a4dc](https://github.com/lobehub/lobe-editor/commit/f46a4dc))
-* **misc**: Reset history state on document change to ensure clean redo/un…, closes [#114](https://github.com/lobehub/lobe-editor/issues/114) ([7bf5406](https://github.com/lobehub/lobe-editor/commit/7bf5406))
-
-
+- **misc**: Add support for inserting elements before and after the root …, closes [#109](https://github.com/lobehub/lobe-editor/issues/109) ([f46a4dc](https://github.com/lobehub/lobe-editor/commit/f46a4dc))
+- **misc**: Reset history state on document change to ensure clean redo/un…, closes [#114](https://github.com/lobehub/lobe-editor/issues/114) ([7bf5406](https://github.com/lobehub/lobe-editor/commit/7bf5406))
 
 #### What's fixed
 
-* **misc**: Add HISTORY_MERGE_TAG to cursor and code inline registration f…, closes [#112](https://github.com/lobehub/lobe-editor/issues/112) ([b60336a](https://github.com/lobehub/lobe-editor/commit/b60336a))
-* **misc**: Katex render loop ([3dcda16](https://github.com/lobehub/lobe-editor/commit/3dcda16))
-* **misc**: Update hasDiffNode and useHasDiffNode to handle optional edito…, closes [#115](https://github.com/lobehub/lobe-editor/issues/115) ([e4b3e51](https://github.com/lobehub/lobe-editor/commit/e4b3e51))
+- **misc**: Add HISTORY_MERGE_TAG to cursor and code inline registration f…, closes [#112](https://github.com/lobehub/lobe-editor/issues/112) ([b60336a](https://github.com/lobehub/lobe-editor/commit/b60336a))
+- **misc**: Katex render loop ([3dcda16](https://github.com/lobehub/lobe-editor/commit/3dcda16))
+- **misc**: Update hasDiffNode and useHasDiffNode to handle optional edito…, closes [#115](https://github.com/lobehub/lobe-editor/issues/115) ([e4b3e51](https://github.com/lobehub/lobe-editor/commit/e4b3e51))
 
 </details>
-
 
 <div align="right">
 
@@ -1007,30 +845,24 @@
 
 </div>
 
-### [Version&nbsp;3.13.2](https://github.com/lobehub/lobe-editor/compare/v3.13.1...v3.13.2)
-<sup>Released on **2026-01-15**</sup>
+### [Version 3.13.2](https://github.com/lobehub/lobe-editor/compare/v3.13.1...v3.13.2)
 
+<sup>Released on **2026-01-15**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Refactor MathEditorContainer to use Popover for improved positioning and styling.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Refactor MathEditorContainer to use Popover for improved positioning and styling ([0e5ae08](https://github.com/lobehub/lobe-editor/commit/0e5ae08))
+- **misc**: Refactor MathEditorContainer to use Popover for improved positioning and styling ([0e5ae08](https://github.com/lobehub/lobe-editor/commit/0e5ae08))
 
 </details>
-
 
 <div align="right">
 
@@ -1038,30 +870,24 @@
 
 </div>
 
-### [Version&nbsp;3.13.1](https://github.com/lobehub/lobe-editor/compare/v3.13.0...v3.13.1)
-<sup>Released on **2026-01-13**</sup>
+### [Version 3.13.1](https://github.com/lobehub/lobe-editor/compare/v3.13.0...v3.13.1)
 
+<sup>Released on **2026-01-13**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Refactor MathInline component to improve click handling and st….
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Refactor MathInline component to improve click handling and st…, closes [#113](https://github.com/lobehub/lobe-editor/issues/113) ([d042a5f](https://github.com/lobehub/lobe-editor/commit/d042a5f))
+- **misc**: Refactor MathInline component to improve click handling and st…, closes [#113](https://github.com/lobehub/lobe-editor/issues/113) ([d042a5f](https://github.com/lobehub/lobe-editor/commit/d042a5f))
 
 </details>
-
 
 <div align="right">
 
@@ -1069,30 +895,24 @@
 
 </div>
 
-## [Version&nbsp;3.13.0](https://github.com/lobehub/lobe-editor/compare/v3.12.1...v3.13.0)
-<sup>Released on **2026-01-12**</sup>
+## [Version 3.13.0](https://github.com/lobehub/lobe-editor/compare/v3.12.1...v3.13.0)
 
+<sup>Released on **2026-01-12**</sup>
 
 #### ✨ Features
 
 - **misc**: Enhance paste handling with VS Code integration.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Enhance paste handling with VS Code integration ([31f3c37](https://github.com/lobehub/lobe-editor/commit/31f3c37))
+- **misc**: Enhance paste handling with VS Code integration ([31f3c37](https://github.com/lobehub/lobe-editor/commit/31f3c37))
 
 </details>
-
 
 <div align="right">
 
@@ -1100,30 +920,24 @@
 
 </div>
 
-### [Version&nbsp;3.12.1](https://github.com/lobehub/lobe-editor/compare/v3.12.0...v3.12.1)
-<sup>Released on **2026-01-12**</sup>
+### [Version 3.12.1](https://github.com/lobehub/lobe-editor/compare/v3.12.0...v3.12.1)
 
+<sup>Released on **2026-01-12**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Update anchor selection logic to use LOBE_THEME_APP_ID for improved element targeting.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Update anchor selection logic to use LOBE_THEME_APP_ID for improved element targeting ([07d2f6d](https://github.com/lobehub/lobe-editor/commit/07d2f6d))
+- **misc**: Update anchor selection logic to use LOBE_THEME_APP_ID for improved element targeting ([07d2f6d](https://github.com/lobehub/lobe-editor/commit/07d2f6d))
 
 </details>
-
 
 <div align="right">
 
@@ -1131,30 +945,24 @@
 
 </div>
 
-## [Version&nbsp;3.12.0](https://github.com/lobehub/lobe-editor/compare/v3.11.0...v3.12.0)
-<sup>Released on **2026-01-11**</sup>
+## [Version 3.12.0](https://github.com/lobehub/lobe-editor/compare/v3.11.0...v3.12.0)
 
+<sup>Released on **2026-01-11**</sup>
 
 #### ✨ Features
 
 - **misc**: Add Virtual Block plugin and React integration.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Add Virtual Block plugin and React integration, closes [#111](https://github.com/lobehub/lobe-editor/issues/111) ([3451954](https://github.com/lobehub/lobe-editor/commit/3451954))
+- **misc**: Add Virtual Block plugin and React integration, closes [#111](https://github.com/lobehub/lobe-editor/issues/111) ([3451954](https://github.com/lobehub/lobe-editor/commit/3451954))
 
 </details>
-
 
 <div align="right">
 
@@ -1162,30 +970,24 @@
 
 </div>
 
-## [Version&nbsp;3.11.0](https://github.com/lobehub/lobe-editor/compare/v3.10.0...v3.11.0)
-<sup>Released on **2026-01-11**</sup>
+## [Version 3.11.0](https://github.com/lobehub/lobe-editor/compare/v3.10.0...v3.11.0)
 
+<sup>Released on **2026-01-11**</sup>
 
 #### ✨ Features
 
 - **misc**: Add pasteAsPlainText option to force plain text paste.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Add pasteAsPlainText option to force plain text paste, closes [#110](https://github.com/lobehub/lobe-editor/issues/110) ([d52387e](https://github.com/lobehub/lobe-editor/commit/d52387e))
+- **misc**: Add pasteAsPlainText option to force plain text paste, closes [#110](https://github.com/lobehub/lobe-editor/issues/110) ([d52387e](https://github.com/lobehub/lobe-editor/commit/d52387e))
 
 </details>
-
 
 <div align="right">
 
@@ -1193,30 +995,24 @@
 
 </div>
 
-## [Version&nbsp;3.10.0](https://github.com/lobehub/lobe-editor/compare/v3.9.1...v3.10.0)
-<sup>Released on **2026-01-10**</sup>
+## [Version 3.10.0](https://github.com/lobehub/lobe-editor/compare/v3.9.1...v3.10.0)
 
+<sup>Released on **2026-01-10**</sup>
 
 #### ✨ Features
 
 - **misc**: Add options for data source.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Add options for data source, closes [#105](https://github.com/lobehub/lobe-editor/issues/105) ([715f72d](https://github.com/lobehub/lobe-editor/commit/715f72d))
+- **misc**: Add options for data source, closes [#105](https://github.com/lobehub/lobe-editor/issues/105) ([715f72d](https://github.com/lobehub/lobe-editor/commit/715f72d))
 
 </details>
-
 
 <div align="right">
 
@@ -1224,30 +1020,24 @@
 
 </div>
 
-### [Version&nbsp;3.9.1](https://github.com/lobehub/lobe-editor/compare/v3.9.0...v3.9.1)
-<sup>Released on **2026-01-09**</sup>
+### [Version 3.9.1](https://github.com/lobehub/lobe-editor/compare/v3.9.0...v3.9.1)
 
+<sup>Released on **2026-01-09**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Update target directory resolution for lexical patching.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Update target directory resolution for lexical patching ([3e627cf](https://github.com/lobehub/lobe-editor/commit/3e627cf))
+- **misc**: Update target directory resolution for lexical patching ([3e627cf](https://github.com/lobehub/lobe-editor/commit/3e627cf))
 
 </details>
-
 
 <div align="right">
 
@@ -1255,30 +1045,24 @@
 
 </div>
 
-## [Version&nbsp;3.9.0](https://github.com/lobehub/lobe-editor/compare/v3.8.0...v3.9.0)
-<sup>Released on **2026-01-08**</sup>
+## [Version 3.9.0](https://github.com/lobehub/lobe-editor/compare/v3.8.0...v3.9.0)
 
+<sup>Released on **2026-01-08**</sup>
 
 #### ✨ Features
 
 - **misc**: Reset random key to avoid ID conflicts during state parsing.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Reset random key to avoid ID conflicts during state parsing, closes [#103](https://github.com/lobehub/lobe-editor/issues/103) ([7119713](https://github.com/lobehub/lobe-editor/commit/7119713))
+- **misc**: Reset random key to avoid ID conflicts during state parsing, closes [#103](https://github.com/lobehub/lobe-editor/issues/103) ([7119713](https://github.com/lobehub/lobe-editor/commit/7119713))
 
 </details>
-
 
 <div align="right">
 
@@ -1286,30 +1070,24 @@
 
 </div>
 
-## [Version&nbsp;3.8.0](https://github.com/lobehub/lobe-editor/compare/v3.7.0...v3.8.0)
-<sup>Released on **2026-01-07**</sup>
+## [Version 3.8.0](https://github.com/lobehub/lobe-editor/compare/v3.7.0...v3.8.0)
 
+<sup>Released on **2026-01-07**</sup>
 
 #### ✨ Features
 
 - **misc**: Enhance wrapBlockModify to handle list item modifications.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Enhance wrapBlockModify to handle list item modifications, closes [#102](https://github.com/lobehub/lobe-editor/issues/102) ([c068e8f](https://github.com/lobehub/lobe-editor/commit/c068e8f))
+- **misc**: Enhance wrapBlockModify to handle list item modifications, closes [#102](https://github.com/lobehub/lobe-editor/issues/102) ([c068e8f](https://github.com/lobehub/lobe-editor/commit/c068e8f))
 
 </details>
-
 
 <div align="right">
 
@@ -1317,31 +1095,25 @@
 
 </div>
 
-## [Version&nbsp;3.7.0](https://github.com/lobehub/lobe-editor/compare/v3.6.0...v3.7.0)
-<sup>Released on **2026-01-07**</sup>
+## [Version 3.7.0](https://github.com/lobehub/lobe-editor/compare/v3.6.0...v3.7.0)
 
+<sup>Released on **2026-01-07**</sup>
 
 #### ✨ Features
 
 - **misc**: Add TypeScript declaration for 'lexical' module and update resetRandomKey usage, Enhance CodeMirror integration with new commands and selection handling.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Add TypeScript declaration for 'lexical' module and update resetRandomKey usage ([f355a05](https://github.com/lobehub/lobe-editor/commit/f355a05))
-* **misc**: Enhance CodeMirror integration with new commands and selection handling ([6ca0f10](https://github.com/lobehub/lobe-editor/commit/6ca0f10))
+- **misc**: Add TypeScript declaration for 'lexical' module and update resetRandomKey usage ([f355a05](https://github.com/lobehub/lobe-editor/commit/f355a05))
+- **misc**: Enhance CodeMirror integration with new commands and selection handling ([6ca0f10](https://github.com/lobehub/lobe-editor/commit/6ca0f10))
 
 </details>
-
 
 <div align="right">
 
@@ -1349,30 +1121,24 @@
 
 </div>
 
-## [Version&nbsp;3.6.0](https://github.com/lobehub/lobe-editor/compare/v3.5.0...v3.6.0)
-<sup>Released on **2026-01-07**</sup>
+## [Version 3.6.0](https://github.com/lobehub/lobe-editor/compare/v3.5.0...v3.6.0)
 
+<sup>Released on **2026-01-07**</sup>
 
 #### ✨ Features
 
 - **misc**: KeepId with resetRandomKey.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: KeepId with resetRandomKey, closes [#100](https://github.com/lobehub/lobe-editor/issues/100) ([7b006b8](https://github.com/lobehub/lobe-editor/commit/7b006b8))
+- **misc**: KeepId with resetRandomKey, closes [#100](https://github.com/lobehub/lobe-editor/issues/100) ([7b006b8](https://github.com/lobehub/lobe-editor/commit/7b006b8))
 
 </details>
-
 
 <div align="right">
 
@@ -1380,54 +1146,42 @@
 
 </div>
 
-## [Version&nbsp;3.5.0](https://github.com/lobehub/lobe-editor/compare/v3.4.2...v3.5.0)
-<sup>Released on **2026-01-06**</sup>
+## [Version 3.5.0](https://github.com/lobehub/lobe-editor/compare/v3.4.2...v3.5.0)
 
+<sup>Released on **2026-01-06**</sup>
 
 #### ✨ Features
 
 - **misc**: Implement list item removal handling in diff commands and styles.
 
-
 #### 🐛 Bug Fixes
 
 - **misc**: Fix disable markdown format, Fix test, Fix test.
-
 
 #### 💄 Styles
 
 - **misc**: Add default editor change debounce.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Implement list item removal handling in diff commands and styles, closes [#99](https://github.com/lobehub/lobe-editor/issues/99) ([71feacb](https://github.com/lobehub/lobe-editor/commit/71feacb))
-
-
+- **misc**: Implement list item removal handling in diff commands and styles, closes [#99](https://github.com/lobehub/lobe-editor/issues/99) ([71feacb](https://github.com/lobehub/lobe-editor/commit/71feacb))
 
 #### What's fixed
 
-* **misc**: Fix disable markdown format ([b6e3242](https://github.com/lobehub/lobe-editor/commit/b6e3242))
-* **misc**: Fix test ([60e9cb9](https://github.com/lobehub/lobe-editor/commit/60e9cb9))
-* **misc**: Fix test ([3b1f8b4](https://github.com/lobehub/lobe-editor/commit/3b1f8b4))
-
-
+- **misc**: Fix disable markdown format ([b6e3242](https://github.com/lobehub/lobe-editor/commit/b6e3242))
+- **misc**: Fix test ([60e9cb9](https://github.com/lobehub/lobe-editor/commit/60e9cb9))
+- **misc**: Fix test ([3b1f8b4](https://github.com/lobehub/lobe-editor/commit/3b1f8b4))
 
 #### Styles
 
-* **misc**: Add default editor change debounce ([3d5299b](https://github.com/lobehub/lobe-editor/commit/3d5299b))
+- **misc**: Add default editor change debounce ([3d5299b](https://github.com/lobehub/lobe-editor/commit/3d5299b))
 
 </details>
-
 
 <div align="right">
 
@@ -1435,30 +1189,24 @@
 
 </div>
 
-### [Version&nbsp;3.4.2](https://github.com/lobehub/lobe-editor/compare/v3.4.1...v3.4.2)
-<sup>Released on **2025-12-31**</sup>
+### [Version 3.4.2](https://github.com/lobehub/lobe-editor/compare/v3.4.1...v3.4.2)
 
+<sup>Released on **2025-12-31**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Add try catch.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Add try catch, closes [#97](https://github.com/lobehub/lobe-editor/issues/97) ([574d71f](https://github.com/lobehub/lobe-editor/commit/574d71f))
+- **misc**: Add try catch, closes [#97](https://github.com/lobehub/lobe-editor/issues/97) ([574d71f](https://github.com/lobehub/lobe-editor/commit/574d71f))
 
 </details>
-
 
 <div align="right">
 
@@ -1466,33 +1214,27 @@
 
 </div>
 
-### [Version&nbsp;3.4.1](https://github.com/lobehub/lobe-editor/compare/v3.4.0...v3.4.1)
-<sup>Released on **2025-12-30**</sup>
+### [Version 3.4.1](https://github.com/lobehub/lobe-editor/compare/v3.4.0...v3.4.1)
 
+<sup>Released on **2025-12-30**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Add onPaste event handler to IKernelEventMap and update CommonPlugin, change command priority for onPaste event to critical, keep id bugs, optimize child node appending in $parseSerializedNodeImpl.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Add onPaste event handler to IKernelEventMap and update CommonPlugin ([4d886ae](https://github.com/lobehub/lobe-editor/commit/4d886ae))
-* **misc**: Change command priority for onPaste event to critical ([a231222](https://github.com/lobehub/lobe-editor/commit/a231222))
-* **misc**: Keep id bugs, closes [#96](https://github.com/lobehub/lobe-editor/issues/96) ([18f130d](https://github.com/lobehub/lobe-editor/commit/18f130d))
-* **misc**: Optimize child node appending in $parseSerializedNodeImpl ([9116c3b](https://github.com/lobehub/lobe-editor/commit/9116c3b))
+- **misc**: Add onPaste event handler to IKernelEventMap and update CommonPlugin ([4d886ae](https://github.com/lobehub/lobe-editor/commit/4d886ae))
+- **misc**: Change command priority for onPaste event to critical ([a231222](https://github.com/lobehub/lobe-editor/commit/a231222))
+- **misc**: Keep id bugs, closes [#96](https://github.com/lobehub/lobe-editor/issues/96) ([18f130d](https://github.com/lobehub/lobe-editor/commit/18f130d))
+- **misc**: Optimize child node appending in $parseSerializedNodeImpl ([9116c3b](https://github.com/lobehub/lobe-editor/commit/9116c3b))
 
 </details>
-
 
 <div align="right">
 
@@ -1500,30 +1242,24 @@
 
 </div>
 
-## [Version&nbsp;3.4.0](https://github.com/lobehub/lobe-editor/compare/v3.3.2...v3.4.0)
-<sup>Released on **2025-12-29**</sup>
+## [Version 3.4.0](https://github.com/lobehub/lobe-editor/compare/v3.3.2...v3.4.0)
 
+<sup>Released on **2025-12-29**</sup>
 
 #### ✨ Features
 
 - **misc**: Override lexical source support keep id.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Override lexical source support keep id, closes [#95](https://github.com/lobehub/lobe-editor/issues/95) ([9e96484](https://github.com/lobehub/lobe-editor/commit/9e96484))
+- **misc**: Override lexical source support keep id, closes [#95](https://github.com/lobehub/lobe-editor/issues/95) ([9e96484](https://github.com/lobehub/lobe-editor/commit/9e96484))
 
 </details>
-
 
 <div align="right">
 
@@ -1531,30 +1267,24 @@
 
 </div>
 
-### [Version&nbsp;3.3.2](https://github.com/lobehub/lobe-editor/compare/v3.3.1...v3.3.2)
-<sup>Released on **2025-12-29**</sup>
+### [Version 3.3.2](https://github.com/lobehub/lobe-editor/compare/v3.3.1...v3.3.2)
 
+<sup>Released on **2025-12-29**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Fix codemirror command.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Fix codemirror command ([27d1ee9](https://github.com/lobehub/lobe-editor/commit/27d1ee9))
+- **misc**: Fix codemirror command ([27d1ee9](https://github.com/lobehub/lobe-editor/commit/27d1ee9))
 
 </details>
-
 
 <div align="right">
 
@@ -1562,30 +1292,24 @@
 
 </div>
 
-### [Version&nbsp;3.3.1](https://github.com/lobehub/lobe-editor/compare/v3.3.0...v3.3.1)
-<sup>Released on **2025-12-29**</sup>
+### [Version 3.3.1](https://github.com/lobehub/lobe-editor/compare/v3.3.0...v3.3.1)
 
+<sup>Released on **2025-12-29**</sup>
 
 #### ♻ Code Refactoring
 
 - **misc**: Refactor cdn codemirror.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### Code refactoring
 
-* **misc**: Refactor cdn codemirror ([70dd21e](https://github.com/lobehub/lobe-editor/commit/70dd21e))
+- **misc**: Refactor cdn codemirror ([70dd21e](https://github.com/lobehub/lobe-editor/commit/70dd21e))
 
 </details>
-
 
 <div align="right">
 
@@ -1593,43 +1317,34 @@
 
 </div>
 
-## [Version&nbsp;3.3.0](https://github.com/lobehub/lobe-editor/compare/v3.2.2...v3.3.0)
-<sup>Released on **2025-12-29**</sup>
+## [Version 3.3.0](https://github.com/lobehub/lobe-editor/compare/v3.2.2...v3.3.0)
 
+<sup>Released on **2025-12-29**</sup>
 
 #### ✨ Features
 
 - **misc**: Add codemirror plugin.
 
-
 #### 🐛 Bug Fixes
 
 - **misc**: Fix build, Fix build, Fix typo.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Add codemirror plugin, closes [#56](https://github.com/lobehub/lobe-editor/issues/56) ([9bf4f07](https://github.com/lobehub/lobe-editor/commit/9bf4f07))
-
-
+- **misc**: Add codemirror plugin, closes [#56](https://github.com/lobehub/lobe-editor/issues/56) ([9bf4f07](https://github.com/lobehub/lobe-editor/commit/9bf4f07))
 
 #### What's fixed
 
-* **misc**: Fix build ([e8df563](https://github.com/lobehub/lobe-editor/commit/e8df563))
-* **misc**: Fix build ([740c319](https://github.com/lobehub/lobe-editor/commit/740c319))
-* **misc**: Fix typo ([fe43f8f](https://github.com/lobehub/lobe-editor/commit/fe43f8f))
+- **misc**: Fix build ([e8df563](https://github.com/lobehub/lobe-editor/commit/e8df563))
+- **misc**: Fix build ([740c319](https://github.com/lobehub/lobe-editor/commit/740c319))
+- **misc**: Fix typo ([fe43f8f](https://github.com/lobehub/lobe-editor/commit/fe43f8f))
 
 </details>
-
 
 <div align="right">
 
@@ -1637,30 +1352,24 @@
 
 </div>
 
-### [Version&nbsp;3.2.2](https://github.com/lobehub/lobe-editor/compare/v3.2.1...v3.2.2)
-<sup>Released on **2025-12-28**</sup>
+### [Version 3.2.2](https://github.com/lobehub/lobe-editor/compare/v3.2.1...v3.2.2)
 
+<sup>Released on **2025-12-28**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Fix portal render.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Fix portal render ([1ce4e93](https://github.com/lobehub/lobe-editor/commit/1ce4e93))
+- **misc**: Fix portal render ([1ce4e93](https://github.com/lobehub/lobe-editor/commit/1ce4e93))
 
 </details>
-
 
 <div align="right">
 
@@ -1668,30 +1377,24 @@
 
 </div>
 
-### [Version&nbsp;3.2.1](https://github.com/lobehub/lobe-editor/compare/v3.2.0...v3.2.1)
-<sup>Released on **2025-12-27**</sup>
+### [Version 3.2.1](https://github.com/lobehub/lobe-editor/compare/v3.2.0...v3.2.1)
 
+<sup>Released on **2025-12-27**</sup>
 
 #### ♻ Code Refactoring
 
 - **misc**: Refactor static style.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### Code refactoring
 
-* **misc**: Refactor static style ([909f50f](https://github.com/lobehub/lobe-editor/commit/909f50f))
+- **misc**: Refactor static style ([909f50f](https://github.com/lobehub/lobe-editor/commit/909f50f))
 
 </details>
-
 
 <div align="right">
 
@@ -1699,30 +1402,24 @@
 
 </div>
 
-## [Version&nbsp;3.2.0](https://github.com/lobehub/lobe-editor/compare/v3.1.1...v3.2.0)
-<sup>Released on **2025-12-25**</sup>
+## [Version 3.2.0](https://github.com/lobehub/lobe-editor/compare/v3.1.1...v3.2.0)
 
+<sup>Released on **2025-12-25**</sup>
 
 #### ✨ Features
 
 - **misc**: Add support for bold, italic, and underline in litexml plugin.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Add support for bold, italic, and underline in litexml plugin, closes [#92](https://github.com/lobehub/lobe-editor/issues/92) ([f465b2f](https://github.com/lobehub/lobe-editor/commit/f465b2f))
+- **misc**: Add support for bold, italic, and underline in litexml plugin, closes [#92](https://github.com/lobehub/lobe-editor/issues/92) ([f465b2f](https://github.com/lobehub/lobe-editor/commit/f465b2f))
 
 </details>
-
 
 <div align="right">
 
@@ -1730,30 +1427,24 @@
 
 </div>
 
-### [Version&nbsp;3.1.1](https://github.com/lobehub/lobe-editor/compare/v3.1.0...v3.1.1)
-<sup>Released on **2025-12-25**</sup>
+### [Version 3.1.1](https://github.com/lobehub/lobe-editor/compare/v3.1.0...v3.1.1)
 
+<sup>Released on **2025-12-25**</sup>
 
 #### 💄 Styles
 
 - **misc**: Clean console.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### Styles
 
-* **misc**: Clean console ([7bbaef9](https://github.com/lobehub/lobe-editor/commit/7bbaef9))
+- **misc**: Clean console ([7bbaef9](https://github.com/lobehub/lobe-editor/commit/7bbaef9))
 
 </details>
-
 
 <div align="right">
 
@@ -1761,30 +1452,24 @@
 
 </div>
 
-## [Version&nbsp;3.1.0](https://github.com/lobehub/lobe-editor/compare/v3.0.0...v3.1.0)
-<sup>Released on **2025-12-25**</sup>
+## [Version 3.1.0](https://github.com/lobehub/lobe-editor/compare/v3.0.0...v3.1.0)
 
+<sup>Released on **2025-12-25**</sup>
 
 #### ✨ Features
 
 - **misc**: Improve editor event handling and link toolbar state management.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Improve editor event handling and link toolbar state management, closes [#91](https://github.com/lobehub/lobe-editor/issues/91) ([fc4715b](https://github.com/lobehub/lobe-editor/commit/fc4715b))
+- **misc**: Improve editor event handling and link toolbar state management, closes [#91](https://github.com/lobehub/lobe-editor/issues/91) ([fc4715b](https://github.com/lobehub/lobe-editor/commit/fc4715b))
 
 </details>
-
 
 <div align="right">
 
@@ -1792,30 +1477,24 @@
 
 </div>
 
-## [Version&nbsp;3.0.0](https://github.com/lobehub/lobe-editor/compare/v2.2.0...v3.0.0)
-<sup>Released on **2025-12-24**</sup>
+## [Version 3.0.0](https://github.com/lobehub/lobe-editor/compare/v2.2.0...v3.0.0)
 
+<sup>Released on **2025-12-24**</sup>
 
 #### ✨ Features
 
-- **misc**: Bump v3 [force major].
-
+- **misc**: Bump v3 \[force major].
 
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Bump v3 [force major] ([ebb8c51](https://github.com/lobehub/lobe-editor/commit/ebb8c51))
+- **misc**: Bump v3 \[force major] ([ebb8c51](https://github.com/lobehub/lobe-editor/commit/ebb8c51))
 
 </details>
-
 
 <div align="right">
 
@@ -1823,30 +1502,24 @@
 
 </div>
 
-## [Version&nbsp;2.2.0](https://github.com/lobehub/lobe-editor/compare/v2.1.1...v2.2.0)
-<sup>Released on **2025-12-23**</sup>
+## [Version 2.2.0](https://github.com/lobehub/lobe-editor/compare/v2.1.1...v2.2.0)
 
+<sup>Released on **2025-12-23**</sup>
 
 #### ✨ Features
 
 - **misc**: Update mouseup event listener to document for better toolbar ….
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Update mouseup event listener to document for better toolbar …, closes [#89](https://github.com/lobehub/lobe-editor/issues/89) ([402b0d5](https://github.com/lobehub/lobe-editor/commit/402b0d5))
+- **misc**: Update mouseup event listener to document for better toolbar …, closes [#89](https://github.com/lobehub/lobe-editor/issues/89) ([402b0d5](https://github.com/lobehub/lobe-editor/commit/402b0d5))
 
 </details>
-
 
 <div align="right">
 
@@ -1854,30 +1527,24 @@
 
 </div>
 
-### [Version&nbsp;2.1.1](https://github.com/lobehub/lobe-editor/compare/v2.1.0...v2.1.1)
-<sup>Released on **2025-12-22**</sup>
+### [Version 2.1.1](https://github.com/lobehub/lobe-editor/compare/v2.1.0...v2.1.1)
 
+<sup>Released on **2025-12-22**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Fix import.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Fix import ([6dba150](https://github.com/lobehub/lobe-editor/commit/6dba150))
+- **misc**: Fix import ([6dba150](https://github.com/lobehub/lobe-editor/commit/6dba150))
 
 </details>
-
 
 <div align="right">
 
@@ -1885,30 +1552,24 @@
 
 </div>
 
-## [Version&nbsp;2.1.0](https://github.com/lobehub/lobe-editor/compare/v2.0.5...v2.1.0)
-<sup>Released on **2025-12-22**</sup>
+## [Version 2.1.0](https://github.com/lobehub/lobe-editor/compare/v2.0.5...v2.1.0)
 
+<sup>Released on **2025-12-22**</sup>
 
 #### ✨ Features
 
 - **misc**: Update Lexical dependencies to version 0.39.0 and refactor e….
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Update Lexical dependencies to version 0.39.0 and refactor e…, closes [#88](https://github.com/lobehub/lobe-editor/issues/88) ([222866e](https://github.com/lobehub/lobe-editor/commit/222866e))
+- **misc**: Update Lexical dependencies to version 0.39.0 and refactor e…, closes [#88](https://github.com/lobehub/lobe-editor/issues/88) ([222866e](https://github.com/lobehub/lobe-editor/commit/222866e))
 
 </details>
-
 
 <div align="right">
 
@@ -1916,30 +1577,24 @@
 
 </div>
 
-### [Version&nbsp;2.0.5](https://github.com/lobehub/lobe-editor/compare/v2.0.4...v2.0.5)
-<sup>Released on **2025-12-22**</sup>
+### [Version 2.0.5](https://github.com/lobehub/lobe-editor/compare/v2.0.4...v2.0.5)
 
+<sup>Released on **2025-12-22**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Rollback lexical to 0.38.2.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Rollback lexical to 0.38.2 ([09b0d12](https://github.com/lobehub/lobe-editor/commit/09b0d12))
+- **misc**: Rollback lexical to 0.38.2 ([09b0d12](https://github.com/lobehub/lobe-editor/commit/09b0d12))
 
 </details>
-
 
 <div align="right">
 
@@ -1947,30 +1602,24 @@
 
 </div>
 
-### [Version&nbsp;2.0.4](https://github.com/lobehub/lobe-editor/compare/v2.0.3...v2.0.4)
-<sup>Released on **2025-12-22**</sup>
+### [Version 2.0.4](https://github.com/lobehub/lobe-editor/compare/v2.0.3...v2.0.4)
 
+<sup>Released on **2025-12-22**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Modify diffNode add remove diffNode should be remove diffNode.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Modify diffNode add remove diffNode should be remove diffNode, closes [#87](https://github.com/lobehub/lobe-editor/issues/87) ([0115478](https://github.com/lobehub/lobe-editor/commit/0115478))
+- **misc**: Modify diffNode add remove diffNode should be remove diffNode, closes [#87](https://github.com/lobehub/lobe-editor/issues/87) ([0115478](https://github.com/lobehub/lobe-editor/commit/0115478))
 
 </details>
-
 
 <div align="right">
 
@@ -1979,30 +1628,25 @@
 </div>
 
 ## [Version 1.36.0](https://github.com/lobehub/lobe-editor/compare/v1.35.0...v1.36.0)
-### [Version&nbsp;2.0.3](https://github.com/lobehub/lobe-editor/compare/v2.0.2...v2.0.3)
-<sup>Released on **2025-12-21**</sup>
 
+### [Version 2.0.3](https://github.com/lobehub/lobe-editor/compare/v2.0.2...v2.0.3)
+
+<sup>Released on **2025-12-21**</sup>
 
 #### 💄 Styles
 
 - **misc**: Remove react layout kit.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### Styles
 
-* **misc**: Remove react layout kit ([f3c0c08](https://github.com/lobehub/lobe-editor/commit/f3c0c08))
+- **misc**: Remove react layout kit ([f3c0c08](https://github.com/lobehub/lobe-editor/commit/f3c0c08))
 
 </details>
-
 
 <div align="right">
 
@@ -2010,30 +1654,24 @@
 
 </div>
 
-### [Version&nbsp;2.0.2](https://github.com/lobehub/lobe-editor/compare/v2.0.1...v2.0.2)
-<sup>Released on **2025-12-21**</sup>
+### [Version 2.0.2](https://github.com/lobehub/lobe-editor/compare/v2.0.1...v2.0.2)
 
+<sup>Released on **2025-12-21**</sup>
 
 #### 🐛 Bug Fixes
 
 - **misc**: Fix type.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's fixed
 
-* **misc**: Fix type ([07276e5](https://github.com/lobehub/lobe-editor/commit/07276e5))
+- **misc**: Fix type ([07276e5](https://github.com/lobehub/lobe-editor/commit/07276e5))
 
 </details>
-
 
 <div align="right">
 
@@ -2041,30 +1679,24 @@
 
 </div>
 
-### [Version&nbsp;2.0.1](https://github.com/lobehub/lobe-editor/compare/v2.0.0...v2.0.1)
-<sup>Released on **2025-12-20**</sup>
+### [Version 2.0.1](https://github.com/lobehub/lobe-editor/compare/v2.0.0...v2.0.1)
 
+<sup>Released on **2025-12-20**</sup>
 
 #### 💄 Styles
 
 - **misc**: Update deps.
 
-
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
-
-
 
 #### Styles
 
-* **misc**: Update deps ([504c40e](https://github.com/lobehub/lobe-editor/commit/504c40e))
+- **misc**: Update deps ([504c40e](https://github.com/lobehub/lobe-editor/commit/504c40e))
 
 </details>
-
 
 <div align="right">
 
@@ -2072,30 +1704,24 @@
 
 </div>
 
-## [Version&nbsp;2.0.0](https://github.com/lobehub/lobe-editor/compare/v1.36.0...v2.0.0)
-<sup>Released on **2025-12-20**</sup>
+## [Version 2.0.0](https://github.com/lobehub/lobe-editor/compare/v1.36.0...v2.0.0)
 
+<sup>Released on **2025-12-20**</sup>
 
 #### ✨ Features
 
-- **misc**: Bump v2 [force major].
-
+- **misc**: Bump v2 \[force major].
 
 <br/>
-
-
 
 <details>
 <summary><kbd>Improvements and Fixes</kbd></summary>
 
-
-
 #### What's improved
 
-* **misc**: Bump v2 [force major] ([8930afe](https://github.com/lobehub/lobe-editor/commit/8930afe))
+- **misc**: Bump v2 \[force major] ([8930afe](https://github.com/lobehub/lobe-editor/commit/8930afe))
 
 </details>
-
 
 <div align="right">
 
@@ -2103,7 +1729,8 @@
 
 </div>
 
-## [Version&nbsp;1.36.0](https://github.com/lobehub/lobe-editor/compare/v1.35.0...v1.36.0)
+## [Version 1.36.0](https://github.com/lobehub/lobe-editor/compare/v1.35.0...v1.36.0)
+
 <sup>Released on **2025-12-20**</sup>
 
 <sup>Released on **2025-12-20**</sup>

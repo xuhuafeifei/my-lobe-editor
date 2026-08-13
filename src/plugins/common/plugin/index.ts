@@ -37,6 +37,7 @@ import TextDataSource from '../data-source/text-data-source';
 import { patchBreakLine, registerBreakLineClick } from '../node/ElementDOMSlot';
 import { CursorNode, registerCursorNode } from '../node/cursor';
 import { $isCursorInQuote, $isCursorInTable, createBlockNode } from '../utils';
+import { buildSpanStyleAttribute } from '../utils/textStyle';
 import { registerMDReader } from './mdReader';
 import {
   type PasteContext,
@@ -339,7 +340,11 @@ export const CommonPlugin: IEditorPluginConstructor<CommonPluginOptions> = class
       const isStrikethrough = formats.strikethrough && node.hasFormat('strikethrough');
       const isSuperscript = formats.superscript && node.hasFormat('superscript');
       const isSubscript = formats.subscript && node.hasFormat('subscript');
+      const spanStyle = buildSpanStyleAttribute(node.getStyle());
 
+      if (spanStyle) {
+        ctx.appendLine(`<span style="${spanStyle}">`);
+      }
       if (isBold) {
         ctx.appendLine('**');
       }
@@ -386,6 +391,9 @@ export const CommonPlugin: IEditorPluginConstructor<CommonPluginOptions> = class
       }
       if (isBold) {
         ctx.appendLine('**');
+      }
+      if (spanStyle) {
+        ctx.appendLine('</span>');
       }
 
       if (tailSpace) {

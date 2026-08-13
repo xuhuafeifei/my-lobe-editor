@@ -11,6 +11,8 @@ import type { INode } from '@/editor-kernel/inode';
 import { INodeHelper } from '@/editor-kernel/inode/helper';
 import type { IMarkdownShortCutService } from '@/plugins/markdown/service/shortcut';
 
+import { buildSpanStyleAttribute, extractStyleFromSpanOpenTag } from '../utils/textStyle';
+
 export function registerMDReader(markdownService: IMarkdownShortCutService) {
   markdownService.registerMarkdownReader('blockquote', (node, children) => {
     return INodeHelper.createElementNode('quote', {
@@ -89,6 +91,20 @@ export function registerMDReader(markdownService: IMarkdownShortCutService) {
       return children.map((child) => {
         if (INodeHelper.isTextNode(child)) {
           child.format = (child.format || 0) | IS_BOLD;
+        }
+        return child;
+      });
+    } else if (/^<span\b/i.test(node.value.trim())) {
+      const spanStyle = extractStyleFromSpanOpenTag(node.value);
+      if (!spanStyle) {
+        // No safe color → treat as plain text children (caller drops tags)
+        return false;
+      }
+      return children.map((child) => {
+        if (INodeHelper.isTextNode(child)) {
+          child.style = buildSpanStyleAttribute(
+            [child.style, spanStyle].filter(Boolean).join('; '),
+          );
         }
         return child;
       });
