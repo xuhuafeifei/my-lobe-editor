@@ -81,6 +81,26 @@ export interface IHTMLStack {
   tag: string;
 }
 
+function normalizeParagraphReaderResult(
+  nodeType: string,
+  inode: MarkdownReadNode | MarkdownReadNode[],
+): MarkdownReadNode | MarkdownReadNode[] {
+  if (nodeType !== 'paragraph') return inode;
+  if (Array.isArray(inode)) {
+    return {
+      ...INodeHelper.createParagraph(),
+      children: inode,
+    };
+  }
+  if (inode.type !== 'paragraph') {
+    return {
+      ...INodeHelper.createParagraph(),
+      children: [inode],
+    };
+  }
+  return inode;
+}
+
 function convertMdastToLexical(
   node: Root | RootContent,
   index: number,
@@ -218,25 +238,34 @@ function convertMdastToLexical(
           for (const element of reader) {
             const inode = element(node as unknown as any, children, index);
             if (inode) {
-              return inode;
+              return normalizeParagraphReaderResult(node.type, inode);
             }
           }
         } else if (typeof reader === 'function') {
           const inode = reader(node as unknown as any, children, index);
           if (inode) {
-            return inode;
+            return normalizeParagraphReaderResult(node.type, inode);
           }
         }
       }
 
       // Fallback for unsupported nodes
+      if (node.type === 'paragraph') {
+        return {
+          ...INodeHelper.createParagraph(),
+          children,
+        };
+      }
       return children || null;
     }
   }
 }
 
 function registerDefaultReaders(markdownReaders: TransformerRecord) {
-  if (!markdownReaders['root']) {
+  const hasReader = (reader: TransformerRecord[keyof TransformerRecord]) =>
+    typeof reader === 'function' || (Array.isArray(reader) && reader.length > 0);
+
+  if (!hasReader(markdownReaders['root'])) {
     markdownReaders['root'] = (node: Root, children: MarkdownReadNode[]) => {
       return {
         ...INodeHelper.createRootNode(),
@@ -244,7 +273,7 @@ function registerDefaultReaders(markdownReaders: TransformerRecord) {
       };
     };
   }
-  if (!markdownReaders['paragraph']) {
+  if (!hasReader(markdownReaders['paragraph'])) {
     markdownReaders['paragraph'] = (node: Paragraph, children: MarkdownReadNode[]) => {
       return {
         ...INodeHelper.createParagraph(),
@@ -252,7 +281,7 @@ function registerDefaultReaders(markdownReaders: TransformerRecord) {
       };
     };
   }
-  if (!markdownReaders['heading']) {
+  if (!hasReader(markdownReaders['heading'])) {
     markdownReaders['heading'] = (node: Heading, children: MarkdownReadNode[]) => {
       const headingType = `h${Math.min(Math.max(node.depth, 1), 6)}`;
       return INodeHelper.createElementNode('heading', {

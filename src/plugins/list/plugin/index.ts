@@ -102,7 +102,10 @@ export const ListPlugin: IEditorPluginConstructor<ListPluginOptions> = class
 
     markdownService.registerMarkdownWriter(ListNode.getType(), (ctx, node) => {
       if ($isListNode(node)) {
-        ctx.wrap('', '\n');
+        // listitem 内先有正文再跟嵌套 list 时，需要先换行再写子 bullet，否则会变成「简介    - 子项」
+        const parent = node.getParent();
+        const prefix = $isListItemNode(parent) ? '\n' : '';
+        ctx.wrap(prefix, '\n');
       }
     });
 
@@ -173,22 +176,8 @@ export const ListPlugin: IEditorPluginConstructor<ListPluginOptions> = class
       // 我们需要创建一个 listitem 节点包裹这些内容，而不是为每个子节点创建一个 listitem
       const isCheck = typeof node.checked === 'boolean';
 
-      // 处理嵌套列表的情况：如果 children 中有 list，应该把它作为唯一子节点
-      const nestedList = children.find((c) => c.type === 'list');
-      if (nestedList) {
-        return INodeHelper.createElementNode('listitem', {
-          checked: isCheck ? node.checked : undefined,
-          children: [nestedList],
-          direction: 'ltr',
-          format: '',
-          indent: 0,
-          type: 'listitem',
-          value: index + 1,
-          version: 1,
-        });
-      }
-
-      // 普通情况：所有子节点的 children 合并到 listitem（paragraph 的 children 直接打平）
+      // Lexical ListItemNode expects inline content followed by an optional nested list.
+      // Keep the nested list, and flatten paragraph children into inline text.
       const listItemChildren = children.flatMap((v) => {
         if (v.type === 'paragraph') {
           return (v as any).children || [];

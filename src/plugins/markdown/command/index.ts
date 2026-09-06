@@ -4,8 +4,11 @@ import {
   $getRoot,
   $getSelection,
   $isElementNode,
+  $isRangeSelection,
+  $isRootOrShadowRoot,
   $isTextNode,
   COMMAND_PRIORITY_HIGH,
+  type EditorState,
   HISTORIC_TAG,
   HISTORY_PUSH_TAG,
   LexicalEditor,
@@ -18,13 +21,15 @@ import { createDebugLogger } from '@/utils/debug';
 
 import { parseMarkdownToLexical } from '../data-source/markdown/parse';
 import { MarkdownShortCutService } from '../service/shortcut';
-import { $generateNodesFromSerializedNodes, $insertGeneratedNodes } from '../utils';
+import { $generateNodesFromSerializedNodes } from '../utils';
 
 const logger = createDebugLogger('plugin', 'markdown');
 
 export const INSERT_MARKDOWN_COMMAND = createCommand<{
+  editorState?: EditorState;
   historyState: HistoryStateEntry | null;
   markdown: string;
+  replaceDocument?: boolean;
 }>('INSERT_MARKDOWN_COMMAND');
 
 export const GET_MARKDOWN_SELECTION_COMMAND = createCommand<{
@@ -41,6 +46,45 @@ function restoreToEntry(editor: LexicalEditor, entry: HistoryStateEntry | null) 
   editor.setEditorState(entry.editorState, {
     tag: HISTORIC_TAG,
   });
+}
+
+function $getTopLevelNode(node: LexicalNode): LexicalNode {
+  let current = node;
+  let parent = current.getParent();
+  while (parent !== null && !$isRootOrShadowRoot(parent)) {
+    current = parent;
+    parent = current.getParent();
+  }
+  return current;
+}
+
+function $insertMarkdownBlocks(nodes: LexicalNode[]): void {
+  if (nodes.length === 0) return;
+
+  let selection = $getSelection();
+  if (!$isRangeSelection(selection)) {
+    $getRoot().append(...nodes);
+    nodes.at(-1)?.selectEnd();
+    return;
+  }
+
+  if (!selection.isCollapsed()) selection.removeText();
+
+  let placeholder = $getTopLevelNode(selection.anchor.getNode());
+  if (placeholder.getTextContent() !== '') {
+    selection.insertParagraph();
+    selection = $getSelection();
+    if (!$isRangeSelection(selection)) {
+      $getRoot().append(...nodes);
+      nodes.at(-1)?.selectEnd();
+      return;
+    }
+    placeholder = $getTopLevelNode(selection.anchor.getNode());
+  }
+
+  for (const node of nodes) placeholder.insertBefore(node);
+  if (placeholder.getTextContent() === '') placeholder.remove();
+  nodes.at(-1)?.selectEnd();
 }
 
 function collectTextNodesFromEditor(kernel: IEditorKernel): Array<{ key: string; text: string }> {
@@ -109,16 +153,34 @@ export function registerMarkdownCommand(
       (payload) => {
         const { markdown } = payload;
         logger.debug('INSERT_MARKDOWN_COMMAND payload:', payload);
-        restoreToEntry(editor, payload.historyState);
+        if (payload.editorState) {
+          editor.setEditorState(payload.editorState, { tag: HISTORIC_TAG });
+        } else {
+          restoreToEntry(editor, payload.historyState);
+        }
+        const isEmpty = editor.getEditorState().read(
+          () =>
+            $getRoot()
+              .getTextContent()
+              .replaceAll(/[\u200B-\u200D\u2060\uFEFF]/g, '') === '',
+        );
+        if (payload.replaceDocument || isEmpty) {
+          kernel.setDocument('markdown', markdown, { keepHistory: true });
+          return false;
+        }
         setTimeout(() => {
           editor.update(
             () => {
               try {
                 const root = parseMarkdownToLexical(markdown, service.markdownReaders);
-                const selection = $getSelection();
+                let selection = $getSelection();
+                if (selection === null) {
+                  $getRoot().selectEnd();
+                  selection = $getSelection();
+                }
                 const nodes = $generateNodesFromSerializedNodes(root.children);
                 logger.debug('INSERT_MARKDOWN_COMMAND nodes:', nodes);
-                $insertGeneratedNodes(editor, nodes, selection!);
+                $insertMarkdownBlocks(nodes);
                 return true;
               } catch (error) {
                 logger.error('Failed to handle markdown paste:', error);

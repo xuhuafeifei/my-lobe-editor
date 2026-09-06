@@ -7,6 +7,58 @@ import { INodeHelper } from '@/editor-kernel/inode/helper';
 import { parseMarkdownToLexical } from './parse';
 
 describe('Markdown to Lexical Conversion', () => {
+  it('uses default block readers when reader arrays are empty', () => {
+    const lexical = parseMarkdownToLexical('# part229\n\n**罐装的阴谋**\n\n第一段\n\n第二段', {
+      heading: [],
+      paragraph: [],
+      root: [],
+    });
+
+    expect(lexical.children.map((child) => child.type)).toEqual([
+      'heading',
+      'paragraph',
+      'paragraph',
+      'paragraph',
+    ]);
+  });
+
+  it('wraps bare text returned by paragraph readers', () => {
+    const passThrough = (_node: unknown, children: any[]) => children;
+    const lexical = parseMarkdownToLexical('# part229\n\n第一段\n\n第二段', {
+      paragraph: [passThrough, passThrough],
+    });
+
+    expect(lexical.children.map((child) => child.type)).toEqual([
+      'heading',
+      'paragraph',
+      'paragraph',
+    ]);
+  });
+
+  it('wraps a single text node returned by a paragraph reader', () => {
+    const lexical = parseMarkdownToLexical('# part229\n\n第一段\n\n第二段', {
+      paragraph: [(_node, children) => children[0]],
+    });
+
+    expect(lexical.children.map((child) => child.type)).toEqual([
+      'heading',
+      'paragraph',
+      'paragraph',
+    ]);
+  });
+
+  it('wraps paragraph children when all paragraph readers decline', () => {
+    const lexical = parseMarkdownToLexical('# part229\n\n第一段\n\n第二段', {
+      paragraph: [() => false, () => false],
+    });
+
+    expect(lexical.children.map((child) => child.type)).toEqual([
+      'heading',
+      'paragraph',
+      'paragraph',
+    ]);
+  });
+
   it('should convert a simple markdown string to Lexical format', () => {
     const markdown = 'This is a **bold** text.';
     const lexical = parseMarkdownToLexical(markdown, {
@@ -139,21 +191,8 @@ describe('Markdown to Lexical Conversion', () => {
         };
       },
       listItem: (node: any, children: any[], index: number) => {
-        // Fixed implementation
+        // Keep paragraph inlines + nested lists together (do not drop text when nested list exists)
         const isCheck = typeof node.checked === 'boolean';
-        const nestedList = children.find((c: any) => c.type === 'list');
-        if (nestedList) {
-          return {
-            checked: isCheck ? node.checked : undefined,
-            children: [nestedList],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
-            type: 'listitem',
-            value: index + 1,
-            version: 1,
-          };
-        }
         const listItemChildren = children.flatMap((v: any) => {
           if (v.type === 'paragraph') {
             return v.children || [];

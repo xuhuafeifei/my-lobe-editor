@@ -5,6 +5,7 @@ import {
 import { $isCodeNode } from '@lexical/code-core';
 import {
   $getNodeByKey,
+  $getRoot,
   $getSelection,
   $isRangeSelection,
   $isTextNode,
@@ -299,11 +300,26 @@ export const MarkdownPlugin: IEditorPluginConstructor<MarkdownPluginOptions> = c
             event.stopPropagation();
 
             const historyState = this.kernel.getHistoryState().current;
+            const editorState = editor.getEditorState();
+            const replaceDocument = editorState.read(() => {
+              const selection = $getSelection();
+              const rootText = $getRoot()
+                .getTextContent()
+                .replaceAll(/[\u200B-\u200D\u2060\uFEFF]/g, '');
+              if (rootText === '') return true;
+              return (
+                $isRangeSelection(selection) &&
+                !selection.isCollapsed() &&
+                selection.getTextContent().length >= rootText.length - 1
+              );
+            });
             Promise.resolve(this.config.onPasteMarkdown(text)).then((confirmed) => {
               if (confirmed) {
                 editor.dispatchCommand(INSERT_MARKDOWN_COMMAND, {
+                  editorState,
                   historyState,
                   markdown: text,
+                  replaceDocument,
                 });
                 this.kernel.emit('markdownParse', {
                   cacheState: editor.getEditorState(),
@@ -313,12 +329,15 @@ export const MarkdownPlugin: IEditorPluginConstructor<MarkdownPluginOptions> = c
                   score,
                 });
               } else {
-                editor.update(() => {
-                  const selection = $getSelection();
-                  if ($isRangeSelection(selection)) {
-                    selection.insertRawText(text);
-                  }
-                });
+                editor.setEditorState(editorState, { tag: HISTORIC_TAG });
+                setTimeout(() => {
+                  editor.update(() => {
+                    const selection = $getSelection();
+                    if ($isRangeSelection(selection)) {
+                      selection.insertRawText(text);
+                    }
+                  });
+                }, 0);
               }
             });
             return true;

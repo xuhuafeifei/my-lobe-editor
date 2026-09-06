@@ -2,6 +2,34 @@
 
 # Changelog
 
+### [Version 1.0.0-fork.21](https://github.com/xuhuafeifei/my-lobe-editor)
+
+<sup>Released on **2026-09-06**</sup>
+
+#### 🐛 Bug Fixes
+
+- **markdown paste**: Keep multi-paragraph Markdown after paste-confirm convert (paragraph readers that decline no longer leave bare TextNodes under root).
+- **list**: Preserve parent text + nested children when converting nested bullet lists (e.g. mdocs「亮点」).
+- **paste confirm**: Restore pre-dialog selection; empty / select-all paste uses `setDocument('markdown')`.
+
+<br/>
+
+<details>
+<summary><kbd>Improvements and Fixes</kbd></summary>
+
+#### What's fixed
+
+- Novel-style pastes (`# title` + blank-line paragraphs) no longer collapse to a single H1
+- Nested list parents and children round-trip correctly through paste convert
+
+</details>
+
+<div align="right">
+
+[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
+
+</div>
+
 ### [Version 1.0.0-fork.20](https://github.com/xuhuafeifei/my-lobe-editor)
 
 <sup>Released on **2026-08-13**</sup>
