@@ -1,20 +1,22 @@
 # Markdown ListItem 解析 Bug 修复记录
 
-> **tags**: [bugfix, list, markdown, parser]
-> **related_modules**: [src/plugins/list/plugin/index.ts, src/plugins/markdown/data-source/markdown/parse.ts]
+> **tags**: \[bugfix, list, markdown, parser]
+> **related_modules**: \[src/plugins/list/plugin/index.ts, src/plugins/markdown/data-source/markdown/parse.ts]
 > **date**: 2025-05-16
-> **related_commits**: [9cf75c5]
+> **related_commits**: \[9cf75c5]
 
 ## 问题现象
 
 当粘贴包含有序列表的 Markdown 内容时，单个 listItem 节点被错误地拆分成多个独立的 listItem 节点。
 
 **输入**：
+
 ```markdown
 1. **开关关闭时**：不查询果切任务
 ```
 
 **错误输出结构**：
+
 ```
 list
   ├─ listitem (value=1)
@@ -24,6 +26,7 @@ list
 ```
 
 **期望输出结构**：
+
 ```
 list
   └─ listitem (value=1)
@@ -39,10 +42,11 @@ list
 
 ```typescript
 markdownService.registerMarkdownReader('listItem', (node, children, index) => {
-  return children.map((v) => {  // ← 返回数组！
+  return children.map((v) => {
+    // ← 返回数组！
     if (v.type === 'paragraph') {
       return INodeHelper.createElementNode('listitem', {
-        children: v.children,  // 把 paragraph 的 children 直接作为 listitem 的 children
+        children: v.children, // 把 paragraph 的 children 直接作为 listitem 的 children
         value: index + 1,
         // ...
       });
@@ -98,7 +102,8 @@ markdownService.registerMarkdownReader('listItem', (node, children, index) => {
     return v;
   });
 
-  return INodeHelper.createElementNode('listitem', {  // ← 直接返回单个节点
+  return INodeHelper.createElementNode('listitem', {
+    // ← 直接返回单个节点
     checked: isCheck ? node.checked : undefined,
     children: listItemChildren,
     direction: 'ltr',
@@ -111,7 +116,8 @@ markdownService.registerMarkdownReader('listItem', (node, children, index) => {
 });
 ```
 
-**关键点：
+\*\* 关键点：
+
 1. **返回单个节点**，而不是 `children.map()` 的数组
 2. **处理嵌套列表**：如果 children 中有 `list`，直接把它作为唯一子节点
 3. **打平 paragraph**：paragraph 的 children 直接放入 listitem 的 children
@@ -125,6 +131,7 @@ markdownService.registerMarkdownReader('listItem', (node, children, index) => {
 ```
 
 **修复后**：
+
 ```
 list
   └─ listitem (value=1)
@@ -134,15 +141,16 @@ list
 
 ### 测试用例 2：列表包含代码块
 
-```markdown
--   Item 1
-    ```js
-    console.log('Hello, world!');
-    ```
--   Item 2
-```
+````markdown
+- Item 1
+  ```js
+  console.log('Hello, world!');
+  ```
+- Item 2
+````
 
 **修复后**：
+
 ```
 list
   ├─ listitem
@@ -162,8 +170,8 @@ list
 
 ## 相关文件
 
-| 文件 | 说明 |
-|------|------|
-| `src/plugins/list/plugin/index.ts` | ListItem reader 修复 |
-| `src/plugins/list/plugin/index.test.ts` | 测试用例更新 |
-| `src/plugins/markdown/data-source/markdown/parse.test.ts` | 添加回归测试 |
+| 文件                                                      | 说明                 |
+| --------------------------------------------------------- | -------------------- |
+| `src/plugins/list/plugin/index.ts`                        | ListItem reader 修复 |
+| `src/plugins/list/plugin/index.test.ts`                   | 测试用例更新         |
+| `src/plugins/markdown/data-source/markdown/parse.test.ts` | 添加回归测试         |

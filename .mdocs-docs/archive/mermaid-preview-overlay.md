@@ -9,17 +9,17 @@
 
 ## 涉及代码文件
 
-| 文件 | 职责 |
-| --- | --- |
+| 文件                                                                                                                   | 职责                                                                                                                                |
+| ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [`src/plugins/common/react/MermaidWithErrorBoundary.tsx`](../../src/plugins/common/react/MermaidWithErrorBoundary.tsx) | parse/render 兜底 + 内联 `dangerouslySetInnerHTML` 展示 SVG；`SvgPreviewOverlay`（`createPortal` 挂 `document.body`）负责全屏预览。 |
-| [`src/plugins/codemirror-block/react/CodemirrorNode.tsx`](../../src/plugins/codemirror-block/react/CodemirrorNode.tsx) | 代码块预览区挂载 `MermaidWithErrorBoundary`（未改文件名时仍可检索「谁在用预览」）。 |
-| [`src/renderer/renderers/MermaidPreviewBlock.tsx`](../../src/renderer/renderers/MermaidPreviewBlock.tsx) | 只读渲染 Mermaid；同样使用该包装组件。 |
+| [`src/plugins/codemirror-block/react/CodemirrorNode.tsx`](../../src/plugins/codemirror-block/react/CodemirrorNode.tsx) | 代码块预览区挂载 `MermaidWithErrorBoundary`（未改文件名时仍可检索「谁在用预览」）。                                                 |
+| [`src/renderer/renderers/MermaidPreviewBlock.tsx`](../../src/renderer/renderers/MermaidPreviewBlock.tsx)               | 只读渲染 Mermaid；同样使用该包装组件。                                                                                              |
 
 ## 为何不直接用 antd `Image.preview`
 
 - **`data:image/svg+xml` → `<img src>`**：浏览器对图片上下文中的 SVG **不渲染 `<foreignObject>`**，复杂 Mermaid 常空白或失真。
 - **Canvas 栅格化成 PNG**：把同类 SVG 当图片画进 canvas **同样受制**，预览图不可用。
-- **antd Image + `bodyRender(imageRender)`**：预览内部缩放/拖拽依赖绑在原生 `<img>` 上的引用；整块替换自定义节点后，**工具栏缩放与滚轮与 DOM 脱节**（我们曾经踩过）。
+- **antd Image + `bodyRender(imageRender)`**：预览内部缩放 / 拖拽依赖绑在原生 `<img>` 上的引用；整块替换自定义节点后，**工具栏缩放与滚轮与 DOM 脱节**（我们曾经踩过）。
 - **结论**：全屏预览用 **内联 SVG DOM**（`dangerouslySetInnerHTML`）+ **自绘浮层**（缩放、滚轮、`pointer` 拖拽）；与错误兜底写法见 [`mermaid-render-error-boundary.md`](./mermaid-render-error-boundary.md)。
 
 ## 实现要点（便于维护）

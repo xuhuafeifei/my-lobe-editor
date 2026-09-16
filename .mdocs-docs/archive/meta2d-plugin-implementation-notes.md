@@ -1,6 +1,6 @@
 # Meta2d 流程图插件实现经验
 
-> **tags**: [reference, meta2d, flow-diagram, svg-export, decorator-node, pitfall]
+> **tags**: \[reference, meta2d, flow-diagram, svg-export, decorator-node, pitfall]
 > **updated**: 2026-05-12
 
 ## 背景
@@ -14,16 +14,16 @@
 
 对应代码主要在：
 
-| 文件 | 职责 |
-| --- | --- |
-| `src/plugins/meta2d/node/index.ts` | `Meta2dNode`，保存 `diagram` + `svg` + `autoOpenEditor` |
-| `src/plugins/meta2d/plugin/index.ts` | 注册节点、markdown shortcut、markdown reader/writer |
-| `src/plugins/meta2d/react/ReactMeta2dPlugin.tsx` | 注册插件并提供 decorator |
-| `src/plugins/meta2d/react/DiagramEditor.tsx` | Meta2d 拖拽编辑弹窗 |
-| `src/plugins/meta2d/react/DiagramPalette.tsx` | 左侧图形面板，拖拽/点击添加 pen |
-| `src/plugins/meta2d/react/DiagramPreview.tsx` | SVG 预览、编辑/删除 HUD |
-| `src/plugins/meta2d/utils/registerPens.ts` | 注册 flow/activity/class/sequence/chart/form/fta 图形库 |
-| `src/plugins/meta2d/utils/meta2dManager.ts` | 空数据、pen 归一化、SVG 导出、数据清洗 |
+| 文件                                             | 职责                                                    |
+| ------------------------------------------------ | ------------------------------------------------------- |
+| `src/plugins/meta2d/node/index.ts`               | `Meta2dNode`，保存 `diagram` + `svg` + `autoOpenEditor` |
+| `src/plugins/meta2d/plugin/index.ts`             | 注册节点、markdown shortcut、markdown reader/writer     |
+| `src/plugins/meta2d/react/ReactMeta2dPlugin.tsx` | 注册插件并提供 decorator                                |
+| `src/plugins/meta2d/react/DiagramEditor.tsx`     | Meta2d 拖拽编辑弹窗                                     |
+| `src/plugins/meta2d/react/DiagramPalette.tsx`    | 左侧图形面板，拖拽 / 点击添加 pen                       |
+| `src/plugins/meta2d/react/DiagramPreview.tsx`    | SVG 预览、编辑 / 删除 HUD                               |
+| `src/plugins/meta2d/utils/registerPens.ts`       | 注册 flow/activity/class/sequence/chart/form/fta 图形库 |
+| `src/plugins/meta2d/utils/meta2dManager.ts`      | 空数据、pen 归一化、SVG 导出、数据清洗                  |
 
 ## 数据流
 
@@ -89,8 +89,8 @@ useEffect(() => {
 
 这个方案有两个风险：
 
-- 隐藏实例重放依赖 async layout / calculative 状态，容易出现坐标、相对位置和子图形计算不一致。
-- 手动逐个 `renderPenRaw` 容易漏掉特殊 pen、canvas draw pen、图片/图表类 pen 的内部刷新时机。
+- 隐藏实例重放依赖 async layout /calculative 状态，容易出现坐标、相对位置和子图形计算不一致。
+- 手动逐个 `renderPenRaw` 容易漏掉特殊 pen、canvas draw pen、图片 / 图表类 pen 的内部刷新时机。
 
 当前主链路改为：
 
@@ -106,7 +106,7 @@ useEffect(() => {
 
 - 保存时已经生成了正确 SVG。
 - 预览组件挂载后又用隐藏实例重新生成。
-- 如果隐藏实例导出有坐标/漏图问题，会把正确 SVG 覆盖成错误 SVG。
+- 如果隐藏实例导出有坐标 / 漏图问题，会把正确 SVG 覆盖成错误 SVG。
 
 当前规则：
 
@@ -130,7 +130,7 @@ useEffect(() => {
 2. 第一次打开时拖入 Rectangle/Circle，是否立即显示边线。
 3. 保存后 Lexical 中是否显示 SVG 预览。
 4. SVG 预览中的图形数量、大小、相对位置是否和编辑器一致。
-5. hover 预览块右上角是否出现编辑/删除按钮。
+5. hover 预览块右上角是否出现编辑 / 删除按钮。
 6. 点击编辑再次打开，JSON 是否能正确恢复。
 7. 点击删除后节点是否从 Lexical 文档中移除。
 

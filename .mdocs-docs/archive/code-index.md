@@ -77,37 +77,37 @@
 
 ### src/plugins/（核心插件）
 
-| 文件路径                                                | 类型   | 职责                                                                | 关联文件                                                |
-| ------------------------------------------------------- | ------ | ------------------------------------------------------------------- | ------------------------------------------------------- |
-| `src/plugins/common/plugin/index.ts`                    | 插件   | 基础节点、数据源、历史、粘贴                                        | `src/editor-kernel/data-source.ts`                      |
-| `src/plugins/common/node/cursor.ts`                     | 节点   | `CursorNode`                                                        | `src/plugins/common/plugin/index.ts`                    |
-| `src/plugins/common/react/MermaidWithErrorBoundary.tsx` | React  | Mermaid parse/render + 内联 SVG + 全屏预览浮层                    | `src/plugins/codemirror-block/react/CodemirrorNode.tsx`；`src/renderer/renderers/MermaidPreviewBlock.tsx` |
-| `src/plugins/markdown/plugin/index.ts`                  | 插件   | Markdown 中枢                                                       | `src/plugins/markdown/service/shortcut.ts`              |
-| `src/plugins/markdown/react/PasteMarkdownConfirm.tsx`   | 组件   | 粘贴确认弹窗（i18n / 暗色主题）                                     | `src/react/Editor/Editor.tsx`                           |
-| `src/plugins/markdown/service/shortcut.ts`              | 服务   | `MarkdownShortCutService`                                           | 所有注册 Markdown 读写的插件                            |
-| `src/plugins/markdown/data-source/markdown/parse.ts`    | 解析   | mdast → Lexical JSON                                                | `src/plugins/markdown/plugin/index.ts`                  |
-| `src/plugins/slash/plugin/index.ts`                     | 插件   | `/` 斜杠命令                                                        | `src/plugins/slash/service/i-slash-service.ts`          |
-| `src/plugins/slash/service/i-slash-service.ts`          | 服务   | `SlashService` + Fuse.js 搜索                                       | `src/plugins/slash/react/ReactSlashPlugin.tsx`          |
-| `src/plugins/slash/react/ReactSlashPlugin.tsx`          | React  | Slash 菜单 UI                                                       | `src/react/SlashMenu/SlashMenu.tsx`                     |
-| `src/plugins/mention/plugin/index.ts`                   | 插件   | `@` 提及                                                            | `src/plugins/mention/node/MentionNode.ts`               |
-| `src/plugins/mention/node/MentionNode.ts`               | 节点   | `MentionNode`（DecoratorNode）                                      | `src/plugins/mention/react/ReactMentionPlugin.tsx`      |
-| `src/plugins/codeblock/plugin/index.ts`                 | 插件   | 代码块 + Shiki 高亮                                                 | `src/plugins/codeblock/plugin/CodeHighlighterShiki.ts`  |
-| `src/plugins/codeblock/plugin/CodeHighlighterShiki.ts`  | 高亮器 | Shiki Tokenizer                                                     | `src/plugins/codeblock/plugin/index.ts`                 |
-| `src/plugins/table/plugin/index.ts`                     | 插件   | 表格编辑                                                            | `@lexical/table`                                        |
-| `src/plugins/table/node/index.ts`                       | 节点   | `TableNode` + patch                                                 | `src/plugins/table/plugin/index.ts`                     |
-| `src/plugins/toolbar/react/index.tsx`                   | React  | 浮动工具栏                                                          | `src/react/hooks/useEditorState/index.ts`               |
-| `src/plugins/link/plugin/index.ts`                      | 插件   | 链接编辑                                                            | `src/plugins/link-highlight/`                           |
-| `src/plugins/common/plugin/paste-handler.ts`            | 模块   | 粘贴中间件链（file/VSCode/plaintext）                               | `src/plugins/common/plugin/index.ts`                    |
-| `src/plugins/image/plugin/index.ts`                     | 插件   | 图片（含 `registerImageUrlPaste` 图片 URL 粘贴检测）                | `src/renderer/renderers/image.tsx`                      |
-| `src/plugins/image/react/components/LazyImage.tsx`      | React  | 图片懒加载组件                                                      | `src/plugins/image/react/components/useSupenseImage.ts` |
-| `src/plugins/image/react/components/useSupenseImage.ts` | Hook   | Suspense 图片加载，**全局 `imageCache` Map 会永久缓存加载失败状态** | `src/plugins/image/react/components/LazyImage.tsx`      |
-| `src/plugins/math/plugin/index.ts`                      | 插件   | KaTeX 公式                                                          | `src/renderer/renderers/math.tsx`                       |
-| `src/plugins/meta2d/plugin/index.ts`                    | 插件   | Meta2d 流程图节点、`---meta2d---` shortcut、markdown reader/writer | `src/plugins/meta2d/node/index.ts`                      |
-| `src/plugins/meta2d/react/DiagramEditor.tsx`            | React  | Meta2d 拖拽编辑弹窗，保存时导出 JSON + SVG                         | `src/plugins/meta2d/utils/meta2dManager.ts`             |
-| `src/plugins/meta2d/react/DiagramPreview.tsx`           | React  | SVG 预览与 hover 编辑/删除按钮                                      | `src/plugins/meta2d/react/ReactMeta2dPlugin.tsx`        |
-| `src/plugins/meta2d/utils/meta2dManager.ts`             | 工具   | pen 归一化、数据清洗、当前 Meta2d 实例导出 SVG                     | `fgbg-docs/references/meta2d-plugin-implementation-notes.md` |
-| `src/plugins/mermaid/plugin/index.ts`                   | 插件   | Mermaid 图表                                                        | `src/renderer/renderers/mermaid.tsx`                    |
-| `src/plugins/upload/plugin/index.ts`                    | 插件   | 上传逻辑                                                            | `src/plugins/image/`, `src/plugins/file/`               |
+| 文件路径                                                | 类型   | 职责                                                                | 关联文件                                                                                                  |
+| ------------------------------------------------------- | ------ | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `src/plugins/common/plugin/index.ts`                    | 插件   | 基础节点、数据源、历史、粘贴                                        | `src/editor-kernel/data-source.ts`                                                                        |
+| `src/plugins/common/node/cursor.ts`                     | 节点   | `CursorNode`                                                        | `src/plugins/common/plugin/index.ts`                                                                      |
+| `src/plugins/common/react/MermaidWithErrorBoundary.tsx` | React  | Mermaid parse/render + 内联 SVG + 全屏预览浮层                      | `src/plugins/codemirror-block/react/CodemirrorNode.tsx`；`src/renderer/renderers/MermaidPreviewBlock.tsx` |
+| `src/plugins/markdown/plugin/index.ts`                  | 插件   | Markdown 中枢                                                       | `src/plugins/markdown/service/shortcut.ts`                                                                |
+| `src/plugins/markdown/react/PasteMarkdownConfirm.tsx`   | 组件   | 粘贴确认弹窗（i18n / 暗色主题）                                     | `src/react/Editor/Editor.tsx`                                                                             |
+| `src/plugins/markdown/service/shortcut.ts`              | 服务   | `MarkdownShortCutService`                                           | 所有注册 Markdown 读写的插件                                                                              |
+| `src/plugins/markdown/data-source/markdown/parse.ts`    | 解析   | mdast → Lexical JSON                                                | `src/plugins/markdown/plugin/index.ts`                                                                    |
+| `src/plugins/slash/plugin/index.ts`                     | 插件   | `/` 斜杠命令                                                        | `src/plugins/slash/service/i-slash-service.ts`                                                            |
+| `src/plugins/slash/service/i-slash-service.ts`          | 服务   | `SlashService` + Fuse.js 搜索                                       | `src/plugins/slash/react/ReactSlashPlugin.tsx`                                                            |
+| `src/plugins/slash/react/ReactSlashPlugin.tsx`          | React  | Slash 菜单 UI                                                       | `src/react/SlashMenu/SlashMenu.tsx`                                                                       |
+| `src/plugins/mention/plugin/index.ts`                   | 插件   | `@` 提及                                                            | `src/plugins/mention/node/MentionNode.ts`                                                                 |
+| `src/plugins/mention/node/MentionNode.ts`               | 节点   | `MentionNode`（DecoratorNode）                                      | `src/plugins/mention/react/ReactMentionPlugin.tsx`                                                        |
+| `src/plugins/codeblock/plugin/index.ts`                 | 插件   | 代码块 + Shiki 高亮                                                 | `src/plugins/codeblock/plugin/CodeHighlighterShiki.ts`                                                    |
+| `src/plugins/codeblock/plugin/CodeHighlighterShiki.ts`  | 高亮器 | Shiki Tokenizer                                                     | `src/plugins/codeblock/plugin/index.ts`                                                                   |
+| `src/plugins/table/plugin/index.ts`                     | 插件   | 表格编辑                                                            | `@lexical/table`                                                                                          |
+| `src/plugins/table/node/index.ts`                       | 节点   | `TableNode` + patch                                                 | `src/plugins/table/plugin/index.ts`                                                                       |
+| `src/plugins/toolbar/react/index.tsx`                   | React  | 浮动工具栏                                                          | `src/react/hooks/useEditorState/index.ts`                                                                 |
+| `src/plugins/link/plugin/index.ts`                      | 插件   | 链接编辑                                                            | `src/plugins/link-highlight/`                                                                             |
+| `src/plugins/common/plugin/paste-handler.ts`            | 模块   | 粘贴中间件链（file/VSCode/plaintext）                               | `src/plugins/common/plugin/index.ts`                                                                      |
+| `src/plugins/image/plugin/index.ts`                     | 插件   | 图片（含 `registerImageUrlPaste` 图片 URL 粘贴检测）                | `src/renderer/renderers/image.tsx`                                                                        |
+| `src/plugins/image/react/components/LazyImage.tsx`      | React  | 图片懒加载组件                                                      | `src/plugins/image/react/components/useSupenseImage.ts`                                                   |
+| `src/plugins/image/react/components/useSupenseImage.ts` | Hook   | Suspense 图片加载，**全局 `imageCache` Map 会永久缓存加载失败状态** | `src/plugins/image/react/components/LazyImage.tsx`                                                        |
+| `src/plugins/math/plugin/index.ts`                      | 插件   | KaTeX 公式                                                          | `src/renderer/renderers/math.tsx`                                                                         |
+| `src/plugins/meta2d/plugin/index.ts`                    | 插件   | Meta2d 流程图节点、`---meta2d---` shortcut、markdown reader/writer  | `src/plugins/meta2d/node/index.ts`                                                                        |
+| `src/plugins/meta2d/react/DiagramEditor.tsx`            | React  | Meta2d 拖拽编辑弹窗，保存时导出 JSON + SVG                          | `src/plugins/meta2d/utils/meta2dManager.ts`                                                               |
+| `src/plugins/meta2d/react/DiagramPreview.tsx`           | React  | SVG 预览与 hover 编辑 / 删除按钮                                    | `src/plugins/meta2d/react/ReactMeta2dPlugin.tsx`                                                          |
+| `src/plugins/meta2d/utils/meta2dManager.ts`             | 工具   | pen 归一化、数据清洗、当前 Meta2d 实例导出 SVG                      | `fgbg-docs/references/meta2d-plugin-implementation-notes.md`                                              |
+| `src/plugins/mermaid/plugin/index.ts`                   | 插件   | Mermaid 图表                                                        | `src/renderer/renderers/mermaid.tsx`                                                                      |
+| `src/plugins/upload/plugin/index.ts`                    | 插件   | 上传逻辑                                                            | `src/plugins/image/`, `src/plugins/file/`                                                                 |
 
 ### src/types/
 
@@ -219,14 +219,14 @@
 
 ### "我想找 Meta2d / 流程图相关的代码"
 
-| 功能 | 文件 |
-| --- | --- |
-| Meta2d 插件经验与坑点 | `fgbg-docs/references/meta2d-plugin-implementation-notes.md` |
-| Lexical 节点数据结构 | `src/plugins/meta2d/node/index.ts` |
-| `---meta2d---` shortcut / markdown 读写 | `src/plugins/meta2d/plugin/index.ts` |
-| React 插件注册与 decorator | `src/plugins/meta2d/react/ReactMeta2dPlugin.tsx` |
-| 拖拽编辑器弹窗 | `src/plugins/meta2d/react/DiagramEditor.tsx` |
-| SVG 预览与编辑/删除按钮 | `src/plugins/meta2d/react/DiagramPreview.tsx` |
-| 图形面板与拖拽 payload | `src/plugins/meta2d/react/DiagramPalette.tsx` |
-| 图形库注册 | `src/plugins/meta2d/utils/registerPens.ts` |
-| SVG 导出 / pen 归一化 / 数据清洗 | `src/plugins/meta2d/utils/meta2dManager.ts` |
+| 功能                                   | 文件                                                         |
+| -------------------------------------- | ------------------------------------------------------------ |
+| Meta2d 插件经验与坑点                  | `fgbg-docs/references/meta2d-plugin-implementation-notes.md` |
+| Lexical 节点数据结构                   | `src/plugins/meta2d/node/index.ts`                           |
+| `---meta2d---` shortcut /markdown 读写 | `src/plugins/meta2d/plugin/index.ts`                         |
+| React 插件注册与 decorator             | `src/plugins/meta2d/react/ReactMeta2dPlugin.tsx`             |
+| 拖拽编辑器弹窗                         | `src/plugins/meta2d/react/DiagramEditor.tsx`                 |
+| SVG 预览与编辑 / 删除按钮              | `src/plugins/meta2d/react/DiagramPreview.tsx`                |
+| 图形面板与拖拽 payload                 | `src/plugins/meta2d/react/DiagramPalette.tsx`                |
+| 图形库注册                             | `src/plugins/meta2d/utils/registerPens.ts`                   |
+| SVG 导出 /pen 归一化 / 数据清洗        | `src/plugins/meta2d/utils/meta2dManager.ts`                  |

@@ -1,21 +1,21 @@
 # Markmap 思维导图插件
 
-> **tags**: [plugin, markmap, mindmap, codemirror]
-> **related_modules**: [src/plugins/codemirror-block, src/plugins/common/react/MarkmapWithErrorBoundary.tsx, src/plugins/markmap/react/MarkmapPreview.tsx]
+> **tags**: \[plugin, markmap, mindmap, codemirror]
+> **related_modules**: \[src/plugins/codemirror-block, src/plugins/common/react/MarkmapWithErrorBoundary.tsx, src/plugins/markmap/react/MarkmapPreview\.tsx]
 > **updated**: 2026-05-15
 
 ## 定位
 
-Markmap 支持不是一个独立插件，而是**集成在 `codemirror-block` 代码块功能中。用户通过 ` ```markmap ` 语法创建可交互的思维导图，与 Mermaid 流程图使用方式完全一致。
+Markmap 支持不是一个独立插件，而是 \*\* 集成在 `codemirror-block` 代码块功能中。用户通过 ` ```markmap ` 语法创建可交互的思维导图，与 Mermaid 流程图使用方式完全一致。
 
 ## 核心文件
 
-| 文件 | 类型 | 核心内容 |
-|------|------|----------|
-| `src/plugins/codemirror-block/lib/mode.ts` | 语言注册 | 注册 `markmap` 为支持的语言类型 |
-| `src/plugins/codemirror-block/react/CodemirrorNode.tsx` | 渲染逻辑 | 添加 markmap 预览渲染、状态管理 |
-| `src/plugins/common/react/MarkmapWithErrorBoundary.tsx` | 渲染组件 | 带错误边界的 Markmap 渲染组件 |
-| `src/plugins/common/react/index.ts` | 导出 | 统一导出 MarkmapWithErrorBoundary |
+| 文件                                                    | 类型     | 核心内容                          |
+| ------------------------------------------------------- | -------- | --------------------------------- |
+| `src/plugins/codemirror-block/lib/mode.ts`              | 语言注册 | 注册 `markmap` 为支持的语言类型   |
+| `src/plugins/codemirror-block/react/CodemirrorNode.tsx` | 渲染逻辑 | 添加 markmap 预览渲染、状态管理   |
+| `src/plugins/common/react/MarkmapWithErrorBoundary.tsx` | 渲染组件 | 带错误边界的 Markmap 渲染组件     |
+| `src/plugins/common/react/index.ts`                     | 导出     | 统一导出 MarkmapWithErrorBoundary |
 
 ## 功能特性
 
@@ -42,27 +42,28 @@ Markmap 支持不是一个独立插件，而是**集成在 `codemirror-block` �
 
 ### 3. 交互行为（与 Mermaid 一致）
 
-| 操作 | 行为 |
-|------|------|
-| 点击代码块内部 | 显示源码编辑器 |
+| 操作               | 行为                     |
+| ------------------ | ------------------------ |
+| 点击代码块内部     | 显示源码编辑器           |
 | 点击代码块外部区域 | 隐藏源码，只显示思维导图 |
-| 点击图表区域 | 切换全屏放大预览 |
+| 点击图表区域       | 切换全屏放大预览         |
 
 ### 4. 全屏预览浮层
 
 支持的交互：
+
 - **缩放**：鼠标滚轮 / 工具栏按钮
 - **拖拽**：按住鼠标左键拖拽移动
 - **还原**：点击重置按钮 / ESC 键关闭
 
-### 5. 一键展开/折叠全部节点
+### 5. 一键展开 / 折叠全部节点
 
 **两个渲染场景，两种工具栏位置：**
 
-| 场景 | 工具栏位置 | 实现文件 |
-|------|----------|---------|
-| Markmap 编辑器预览面板 | 顶部工具栏 | `src/plugins/markmap/react/MarkmapPreview.tsx` |
-| 代码块中 markmap 渲染 | 左下角浮动工具栏 | `src/plugins/common/react/MarkmapWithErrorBoundary.tsx` |
+| 场景                   | 工具栏位置       | 实现文件                                                |
+| ---------------------- | ---------------- | ------------------------------------------------------- |
+| Markmap 编辑器预览面板 | 顶部工具栏       | `src/plugins/markmap/react/MarkmapPreview.tsx`          |
+| 代码块中 markmap 渲染  | 左下角浮动工具栏 | `src/plugins/common/react/MarkmapWithErrorBoundary.tsx` |
 
 **核心实现逻辑：**
 
@@ -78,7 +79,7 @@ function setFoldAll(node: IMapNode, fold: boolean) {
 // 一键展开全部
 const expandAll = useCallback(() => {
   if (!markmapRef.current) return;
-  const data = markmapRef.current.state.data;  // ⚠️ 必须使用 markmap 内部的 state.data
+  const data = markmapRef.current.state.data; // ⚠️ 必须使用 markmap 内部的 state.data
   if (!data) return;
   setFoldAll(data, false);
   markmapRef.current.renderData(data);
@@ -111,11 +112,13 @@ const collapseAll = useCallback(() => {
    - 超过 30 时，调用 `setFoldAll(root, true)` 预设所有节点折叠状态
    - 注意：自动折叠要在 `setData()` 之前设置，此时操作原始 `root` 即可
 
-**MarkmapPreview.tsx 工具栏布局：**
+**MarkmapPreview\.tsx 工具栏布局：**
+
 - 展开 / 折叠按钮在前，缩放按钮在后
 - 按钮使用 `⟱` 展开 / `⟰` 折叠 图标 + 文字
 
 **MarkmapWithErrorBoundary.tsx 工具栏布局：**
+
 - 左下角半透明浮动工具栏（`position: absolute`）
 - `backdrop-filter: blur(4px)` 实现毛玻璃效果
 - 按钮 `onClick` 需要 `e.stopPropagation()` 防止触发外层的全屏预览
@@ -183,10 +186,10 @@ const showCodeMirror = useMemo(
 
 ### Props
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `children` | `string` | 必填 | Markdown 格式的思维导图内容 |
-| `enableImagePreview` | `boolean` | `true` | 是否启用点击放大预览 |
+| 属性                 | 类型      | 默认值 | 说明                        |
+| -------------------- | --------- | ------ | --------------------------- |
+| `children`           | `string`  | 必填   | Markdown 格式的思维导图内容 |
+| `enableImagePreview` | `boolean` | `true` | 是否启用点击放大预览        |
 
 ### 内部实现
 
@@ -216,10 +219,10 @@ markmap.fit();
 
 ## 新增依赖
 
-| 包名 | 版本 | 用途 |
-|------|------|------|
-| `markmap-lib` | `^0.18.12` | Markdown 转思维导图数据结构 |
-| `markmap-view` | `^0.18.12` | 渲染思维导图为交互式 SVG |
+| 包名           | 版本       | 用途                        |
+| -------------- | ---------- | --------------------------- |
+| `markmap-lib`  | `^0.18.12` | Markdown 转思维导图数据结构 |
+| `markmap-view` | `^0.18.12` | 渲染思维导图为交互式 SVG    |
 
 ## 与 Mermaid 复用的组件
 
@@ -230,17 +233,17 @@ markmap.fit();
 
 ## 测试要点
 
-1. **新建 markmap 代码块是否能正常输入
-2. **输入 Markdown 是否实时渲染思维导图
-3. **点击内部/外部是否正确切换源码显示/隐藏
-4. **点击图表是否进入全屏预览
-5. **全屏下缩放、拖拽是否正常
-6. **语法错误是否显示友好的错误提示
-7. **切换语言为 markmap 时行为是否正确
-8. **export JSON 后再次编辑是否正常
-9. **import JSON 后是否正确渲染
+1. \*\* 新建 markmap 代码块是否能正常输入
+2. \*\* 输入 Markdown 是否实时渲染思维导图
+3. \*\* 点击内部 / 外部是否正确切换源码显示 / 隐藏
+4. \*\* 点击图表是否进入全屏预览
+5. \*\* 全屏下缩放、拖拽是否正常
+6. \*\* 语法错误是否显示友好的错误提示
+7. \*\* 切换语言为 markmap 时行为是否正确
+8. \*\*export JSON 后再次编辑是否正常
+9. \*\*import JSON 后是否正确渲染
 
 ## 版本历史
 
-- **v1.0.0-fork.10** - 新增一键展开/折叠全部节点功能，节点数 > 30 自动折叠
+- **v1.0.0-fork.10** - 新增一键展开 / 折叠全部节点功能，节点数 > 30 自动折叠
 - **v1.0.0-fork.6** - 新增 markmap 思维导图支持

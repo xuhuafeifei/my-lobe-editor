@@ -1,5 +1,7 @@
 # React 层与渲染
 
+> 人读长文：[`../archive/react-layer.md`](../archive/react-layer.md) · [`../archive/renderer.md`](../archive/renderer.md) · [`../archive/headless.md`](../archive/headless.md)
+
 ### 主编辑器组件
 
 - **关键词**：`Editor` `EditorProvider` `useEditor` `useEditorState`

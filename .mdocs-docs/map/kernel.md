@@ -1,5 +1,7 @@
 # 编辑器内核
 
+> 人读长文：[`../archive/editor-kernel.md`](../archive/editor-kernel.md) · [`../archive/architecture-overview.md`](../archive/architecture-overview.md) · [`../archive/data-flow.md`](../archive/data-flow.md)
+
 ### Kernel 引擎
 
 - **关键词**：`Kernel` `createEditor` `IEditor` `IEditorKernel` `setDocument` `registerPlugin`

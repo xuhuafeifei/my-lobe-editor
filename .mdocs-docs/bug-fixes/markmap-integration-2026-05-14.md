@@ -1,12 +1,13 @@
 # Markmap 集成 Bug 修复记录
 
-> **tags**: [bugfix, markmap, codemirror-block, css, runtime]
-> **related_commits**: [862ad48], [ac80579], [7673d44]
+> **tags**: \[bugfix, markmap, codemirror-block, css, runtime]
+> **related_commits**: \[862ad48], \[ac80579], \[7673d44]
 > **date**: 2026-05-14
 
 ## 问题背景
 
 commit `862ad48` 引入了 markmap 思维导图支持，但存在以下问题：
+
 1. `---markmap---` 回车无效果
 2. ` ```markmap` 回车 UI 渲染异常
 3. 整体页面 CSS 异常（选择器漂移、selection 颜色奇怪）
@@ -24,6 +25,7 @@ commit `862ad48` 在 `CodemirrorNode.tsx` 中正确添加了 markmap 预览逻�
 `CodemirrorNode.tsx` 渲染的 JSX 使用了 `.cm-markmap-preview`、`.cm-markmap-chart-area`、`.cm-markmap-render` 等 CSS 类名，但 `style.ts` 中没有对应的样式定义，导致 markmap 预览区域无样式、布局异常。
 
 **修复**：在 `style.ts` 中镜像 mermaid 的 CSS 结构，新增：
+
 - `&:has(.cm-markmap-preview) { overflow: visible; }` — 容器 overflow 适配
 - `.cm-markmap-preview` — 预览区域样式
 - `.cm-markmap-chart-area` — 图表区域样式
@@ -51,7 +53,7 @@ commit `7673d44` 中将暗色模式 selection 背景色从蓝色 `rgba(145, 213,
 
 外层的 `align-items: center` 在 `flex-direction: column` 布局中让子元素水平居中 + 按内容收缩，导致代码块 toolbar 中的 action buttons 没有贴到右侧。
 
-⚠️ **注意**：此 bug 非本 session 引入，是在调试过程中反复修改 CSS 又恢复导致的。最终通过恢复原始 CSS（`overflow: hidden; display: flex; flex-direction: column; align-items: center;`）解决，确认该 CSS 在 5月12日早上仍是正常工作的。
+⚠️ **注意**：此 bug 非本 session 引入，是在调试过程中反复修改 CSS 又恢复导致的。最终通过恢复原始 CSS（`overflow: hidden; display: flex; flex-direction: column; align-items: center;`）解决，确认该 CSS 在 5 月 12 日早上仍是正常工作的。
 
 ### 7. Demo 缺少 ConfigProvider
 
@@ -64,6 +66,7 @@ Toolbar 组件使用了 antd motion 组件（`CollapsedActions`），需要 `Con
 Demo 的 plugins 列表中没有 `ReactMarkmapPlugin`，导致 `---markmap---` 快捷语法无效。
 
 **修复**：
+
 - `src/plugins/markmap/index.ts` 中新增 `export { ReactMarkmapPlugin } from './react'`
 - Demo 中导入并注册 `ReactMarkmapPlugin`
 
@@ -77,7 +80,7 @@ Demo 的 plugins 列表中没有 `ReactMarkmapPlugin`，导致 `---markmap---` �
 
 ## 2026-05-14 增补：MarkmapNode、`---markmap---`、悬浮按钮、嵌套粘贴（AI 检索摘要）
 
-> **tags**: [bugfix, markmap, markdown, paste, lexical]
+> **tags**: \[bugfix, markmap, markdown, paste, lexical]
 
 ### 遇到的问题
 
@@ -87,13 +90,13 @@ Demo 的 plugins 列表中没有 `ReactMarkmapPlugin`，导致 `---markmap---` �
 
 ### 涉及文件与处理
 
-| 文件 | 做了什么 |
-|------|----------|
-| `src/plugins/markmap/plugin/index.ts` | 使用 `kernel.requireService(IMarkdownShortCutService)` 取 Markdown 快捷服务（与 `Meta2dPlugin` 一致）；**勿**误用裸露字符串当 service id，`requireService` 用 Map key 会得到 `null`，shortcut 整段不配。Markdown 读写/shortcut 保持在 `onInit` 里注册。可选：`&markmap&` 等额外 shortcut。 |
-| `src/plugins/markmap/react/index.tsx` | 悬浮按钮：`position: absolute` 改为 `bottom: + right`（原为 `top`）。插件注册可与 `ReactMeta2dPlugin` 类似用语义清晰的生命周期写法。 |
-| `src/plugins/common/plugin/paste-handler.ts` | 新增 `isPasteTargetNativeFormControl(event)`：`event.target` 落在 `textarea` / `input`（非 hidden）/ `select` 内则视为外链原生控件粘贴。 |
-| `src/plugins/common/plugin/index.ts` | `PASTE_COMMAND` 最前：若 `isPasteTargetNativeFormControl` → `return false`，避免 VS Code / 纯文本链路抢粘贴。 |
-| `src/plugins/markdown/plugin/index.ts` | `PASTE_COMMAND` 同样在入口判断：不向嵌套表单做 Markdown 自动解析/插入。 |
+| 文件                                         | 做了什么                                                                                                                                                                                                                                                                                    |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/plugins/markmap/plugin/index.ts`        | 使用 `kernel.requireService(IMarkdownShortCutService)` 取 Markdown 快捷服务（与 `Meta2dPlugin` 一致）；**勿**误用裸露字符串当 service id，`requireService` 用 Map key 会得到 `null`，shortcut 整段不配。Markdown 读写 /shortcut 保持在 `onInit` 里注册。可选：`&markmap&` 等额外 shortcut。 |
+| `src/plugins/markmap/react/index.tsx`        | 悬浮按钮：`position: absolute` 改为 `bottom: + right`（原为 `top`）。插件注册可与 `ReactMeta2dPlugin` 类似用语义清晰的生命周期写法。                                                                                                                                                        |
+| `src/plugins/common/plugin/paste-handler.ts` | 新增 `isPasteTargetNativeFormControl(event)`：`event.target` 落在 `textarea` / `input`（非 hidden）/ `select` 内则视为外链原生控件粘贴。                                                                                                                                                    |
+| `src/plugins/common/plugin/index.ts`         | `PASTE_COMMAND` 最前：若 `isPasteTargetNativeFormControl` → `return false`，避免 VS Code / 纯文本链路抢粘贴。                                                                                                                                                                               |
+| `src/plugins/markdown/plugin/index.ts`       | `PASTE_COMMAND` 同样在入口判断：不向嵌套表单做 Markdown 自动解析 / 插入。                                                                                                                                                                                                                   |
 
 ### 根因一句话
 

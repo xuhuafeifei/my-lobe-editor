@@ -1,5 +1,7 @@
 # 插件地图
 
+> 人读长文：[`../archive/plugin-system.md`](../archive/plugin-system.md) · [`../archive/plugins/`](../archive/plugins/)・Markdown 快捷转换 [`../archive/markdown-shortcut-transformation-system.md`](../archive/markdown-shortcut-transformation-system.md)
+
 插件约定目录：`plugin/`（核心）・`react/` · `command/` · `node/` · `service/` · `index.ts`
 
 ### 核心插件
