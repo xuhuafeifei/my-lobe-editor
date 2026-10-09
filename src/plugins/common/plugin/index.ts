@@ -19,9 +19,11 @@ import {
   $isTextNode,
   COMMAND_PRIORITY_CRITICAL,
   COMMAND_PRIORITY_HIGH,
+  HISTORIC_TAG,
   INSERT_LINE_BREAK_COMMAND,
   INSERT_PARAGRAPH_COMMAND,
   PASTE_COMMAND,
+  SKIP_SCROLL_INTO_VIEW_TAG,
 } from 'lexical';
 import type { LexicalEditor } from 'lexical';
 
@@ -30,6 +32,7 @@ import { KernelPlugin } from '@/editor-kernel/plugin';
 import { IMarkdownShortCutService } from '@/plugins/markdown/service/shortcut';
 import { isPunctuationChar } from '@/plugins/markdown/utils';
 import type { IEditorKernel, IEditorPlugin, IEditorPluginConstructor } from '@/types';
+import { ensureSelectionVisibleInScrollParent } from '@/utils/scrollIntoView';
 
 import { registerCommands } from '../command';
 import JSONDataSource from '../data-source/json-data-source';
@@ -415,6 +418,19 @@ export const CommonPlugin: IEditorPluginConstructor<CommonPluginOptions> = class
   }
 
   onInit(editor: LexicalEditor): void {
+    // Lexical only scrolls when the caret crosses the scroll-port edge and
+    // ignores nested scroll-padding. Keep a bottom margin so Enter near the
+    // bottom of the viewport actually follows the caret.
+    this.register(
+      editor.registerUpdateListener(({ tags }) => {
+        if (tags.has(SKIP_SCROLL_INTO_VIEW_TAG) || tags.has(HISTORIC_TAG)) return;
+        if (typeof window === 'undefined') return;
+        requestAnimationFrame(() => {
+          if (editor.getRootElement() !== document.activeElement) return;
+          ensureSelectionVisibleInScrollParent(96);
+        });
+      }),
+    );
     this.register(
       this.kernel.registerHighCommand(
         PASTE_COMMAND,

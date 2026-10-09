@@ -2,11 +2,12 @@ import {
   $getClipboardDataFromSelection,
   setLexicalClipboardDataTransfer,
 } from '@lexical/clipboard';
-import { $isCodeNode } from '@lexical/code-core';
+import { $isCodeHighlightNode, $isCodeNode } from '@lexical/code-core';
 import {
   $getNodeByKey,
   $getRoot,
   $getSelection,
+  $isNodeSelection,
   $isRangeSelection,
   $isTextNode,
   COLLABORATION_TAG,
@@ -20,7 +21,11 @@ import {
 } from 'lexical';
 
 import { KernelPlugin } from '@/editor-kernel/plugin';
-import { isPasteTargetNativeFormControl } from '@/plugins/common/plugin/paste-handler';
+import { $isCodeMirrorNode } from '@/plugins/codemirror-block/node/CodeMirrorNode';
+import {
+  isPasteTargetCodeEditor,
+  isPasteTargetNativeFormControl,
+} from '@/plugins/common/plugin/paste-handler';
 import { IEditorKernel, IEditorPlugin, IEditorPluginConstructor, IServiceID } from '@/types';
 import { createDebugLogger } from '@/utils/debug';
 
@@ -101,6 +106,25 @@ function detectMarkdownFeatures(text: string): number {
   if (/^\|.*\|/.test(text) && /^\|[:-]+\|/.test(text)) score += 3;
 
   return score;
+}
+
+/** True when Lexical selection is inside CodeNode / CodeMirror / highlight tokens. */
+export function $isSelectionInCodeContext(): boolean {
+  const selection = $getSelection();
+  if ($isRangeSelection(selection)) {
+    let node: ReturnType<typeof selection.anchor.getNode> | null = selection.anchor.getNode();
+    while (node) {
+      if ($isCodeNode(node) || $isCodeHighlightNode(node) || $isCodeMirrorNode(node)) {
+        return true;
+      }
+      node = node.getParent();
+    }
+    return false;
+  }
+  if ($isNodeSelection(selection)) {
+    return selection.getNodes().some((node) => $isCodeNode(node) || $isCodeMirrorNode(node));
+  }
+  return false;
 }
 
 export interface MarkdownPluginOptions {
@@ -268,17 +292,13 @@ export const MarkdownPlugin: IEditorPluginConstructor<MarkdownPluginOptions> = c
         (event) => {
           if (!(event instanceof ClipboardEvent)) return false;
           if (isPasteTargetNativeFormControl(event)) return false;
+          // CodeMirror already applies the paste; skip markdown confirm or cancel
+          // would insertRawText a second copy outside the fence.
+          if (isPasteTargetCodeEditor(event)) return false;
           if (!this.shouldHandlePasteMarkdown()) return false;
 
-          // 代码块内粘贴：跳过 markdown 转换（避免光标跳转）
-          const isInCodeBlock = editor.getEditorState().read(() => {
-            const selection = $getSelection();
-            if (!$isRangeSelection(selection)) return false;
-            const anchorNode = selection.anchor.getNode();
-            if (!anchorNode) return false;
-            // 检查当前节点或父节点是否为代码节点
-            return $isCodeNode(anchorNode) || $isCodeNode(anchorNode.getParent());
-          });
+          // Lexical CodeNode / empty CodeMirror node selection: skip markdown convert
+          const isInCodeBlock = editor.getEditorState().read(() => $isSelectionInCodeContext());
           if (isInCodeBlock) return false;
 
           const clipboardData = event.clipboardData;

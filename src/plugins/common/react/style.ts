@@ -196,7 +196,10 @@ export const styles = createStaticStyles(({ css, cssVar }) => {
   `;
 
   const editorContent = css`
-    flex: 1;
+    /* Grow with content so Lexical rootElement geometry matches the doc.
+     * flex:1 + min-height:0 made the box viewport-tall while text overflowed
+     * visibly — caret stayed glued to the bottom of the scroll port on Enter. */
+    flex: 1 0 auto;
     min-height: 0;
     outline: none;
 

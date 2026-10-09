@@ -45,3 +45,57 @@ export function scrollIntoView(offsetY: number = 0) {
     top: scrollAmount,
   });
 }
+
+function isScrollable(el: Element): boolean {
+  if (!(el instanceof HTMLElement)) return false;
+  if (el.scrollHeight <= el.clientHeight + 1) return false;
+  const style = window.getComputedStyle(el);
+  const overflowY = style.overflowY || el.style.overflowY || el.style.overflow;
+  return overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay';
+}
+
+function getSelectionClientRect(): DOMRect | null {
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return null;
+  const rect = selection.getRangeAt(0).getBoundingClientRect();
+  if (rect.width === 0 && rect.height === 0) {
+    const focusNode = selection.focusNode;
+    if (!focusNode) return null;
+    const el =
+      focusNode.nodeType === Node.ELEMENT_NODE ? (focusNode as Element) : focusNode.parentElement;
+    return el?.getBoundingClientRect() ?? null;
+  }
+  return rect;
+}
+
+/**
+ * Keep the caret above the bottom of the nearest scroll parent.
+ * Lexical's built-in scrollIntoViewIfNeeded only scrolls when the caret
+ * crosses the container edge (no nested scroll-padding), so Enter at the
+ * bottom of the viewport leaves the caret glued to the edge.
+ */
+export function ensureSelectionVisibleInScrollParent(paddingBottom: number = 96): void {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+
+  const rect = getSelectionClientRect();
+  if (!rect) return;
+
+  let el: Element | null = document.activeElement;
+  if (!(el instanceof Element)) return;
+
+  // Walk from focused editor root / caret node up to find scroll parents
+  while (el && el !== document.body && el !== document.documentElement) {
+    if (isScrollable(el)) {
+      const host = el.getBoundingClientRect();
+      const limit = host.bottom - paddingBottom;
+      if (rect.bottom > limit) {
+        el.scrollTop += rect.bottom - limit;
+      }
+      const topLimit = host.top + Math.min(48, paddingBottom / 2);
+      if (rect.top < topLimit) {
+        el.scrollTop -= topLimit - rect.top;
+      }
+    }
+    el = el.parentElement;
+  }
+}

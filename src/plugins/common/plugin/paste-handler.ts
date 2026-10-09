@@ -28,14 +28,30 @@ export interface PasteContext {
   event: ClipboardEvent;
 }
 
-/** Paste landed on a native control (e.g. Markmap textarea) — Lexical markdown/VS Code paste must not run. */
-export function isPasteTargetNativeFormControl(event: ClipboardEvent): boolean {
+function getPasteTargetElement(event: ClipboardEvent): Element | null {
   const t = event.target;
-  if (!(t instanceof Node)) return false;
+  if (!(t instanceof Node)) return null;
   const el =
     t.nodeType === Node.TEXT_NODE ? (t.parentElement as Element | null) : (t as Element | null);
-  if (!el?.closest) return false;
+  return el?.closest ? el : null;
+}
+
+/** Paste landed on a native control (e.g. Markmap textarea) — Lexical markdown/VS Code paste must not run. */
+export function isPasteTargetNativeFormControl(event: ClipboardEvent): boolean {
+  const el = getPasteTargetElement(event);
+  if (!el) return false;
   return Boolean(el.closest('textarea, input:not([type="hidden"]), select'));
+}
+
+/**
+ * Paste landed inside an embedded code editor (CodeMirror / legacy CodeMirror 5).
+ * Native paste already updates the block; Lexical markdown confirm must not run
+ * or choosing “plain text” will insert a second copy outside the fence.
+ */
+export function isPasteTargetCodeEditor(event: ClipboardEvent): boolean {
+  const el = getPasteTargetElement(event);
+  if (!el) return false;
+  return Boolean(el.closest('.cm-editor, .cm-content, .CodeMirror'));
 }
 
 /**
