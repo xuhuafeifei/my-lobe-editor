@@ -2,6 +2,33 @@
 
 # Changelog
 
+### [Version 1.0.0-fork.22](https://github.com/xuhuafeifei/my-lobe-editor)
+
+<sup>Released on **2026-10-10**</sup>
+
+#### 🐛 Bug Fixes
+
+- **scroll**: Enter near the bottom of the viewport keeps the caret in view (nested scroll-parent padding + editor content `flex: 1 0 auto`).
+- **markdown paste**: Skip markdown confirm when pasting inside CodeMirror / Lexical code contexts, avoiding double-insert on cancel.
+
+<br/>
+
+<details>
+<summary><kbd>Improvements and Fixes</kbd></summary>
+
+#### What's fixed
+
+- Caret no longer sticks to the bottom edge of the scroll port after Enter
+- Pasting into \`\`\`sql / CodeMirror blocks no longer shows MD dialog or duplicates content
+
+</details>
+
+<div align="right">
+
+[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
+
+</div>
+
 ### [Version 1.0.0-fork.21](https://github.com/xuhuafeifei/my-lobe-editor)
 
 <sup>Released on **2026-09-06**</sup>
