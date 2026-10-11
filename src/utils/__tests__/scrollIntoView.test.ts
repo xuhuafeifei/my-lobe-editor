@@ -80,4 +80,53 @@ describe('ensureSelectionVisibleInScrollParent', () => {
 
     expect(scrollTop).toBeGreaterThan(0);
   });
+
+  it('does not scroll when the selection is a non-collapsed range (Shift-select)', () => {
+    const host = document.createElement('div');
+    host.style.cssText = 'height:200px;overflow:auto;position:absolute;top:0;left:0;width:300px;';
+    const content = document.createElement('div');
+    content.contentEditable = 'true';
+    content.tabIndex = 0;
+    const line = document.createElement('p');
+    line.textContent = 'selected text';
+    content.append(line);
+    host.append(content);
+    document.body.append(host);
+
+    content.focus();
+    const range = document.createRange();
+    range.selectNodeContents(line);
+    const sel = window.getSelection()!;
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    Object.defineProperty(host, 'clientHeight', { configurable: true, value: 200 });
+    Object.defineProperty(host, 'scrollHeight', { configurable: true, value: 800 });
+    let scrollTop = 0;
+    Object.defineProperty(host, 'scrollTop', {
+      configurable: true,
+      get: () => scrollTop,
+      set: (v: number) => {
+        scrollTop = v;
+      },
+    });
+    host.getBoundingClientRect = () =>
+      ({
+        bottom: 200,
+        height: 200,
+        left: 0,
+        right: 300,
+        top: 0,
+        width: 300,
+        x: 0,
+        y: 0,
+        toJSON() {
+          return {};
+        },
+      }) as DOMRect;
+
+    ensureSelectionVisibleInScrollParent(96);
+
+    expect(scrollTop).toBe(0);
+  });
 });

@@ -2,6 +2,33 @@
 
 # Changelog
 
+### [Version 1.0.0-fork.23](https://github.com/xuhuafeifei/my-lobe-editor)
+
+<sup>Released on **2026-10-11**</sup>
+
+#### 🐛 Bug Fixes
+
+- **markdown paste**: Prefer clipboard rich HTML over weak `text/plain` Markdown detection (e.g. Qwen copy) so Lexical keeps headings/lists instead of the confirm-as-plain path.
+- **scroll**: Shift-extend / select-all no longer moves the viewport; caret-follow scroll only runs for collapsed selections.
+
+<br/>
+
+<details>
+<summary><kbd>Improvements and Fixes</kbd></summary>
+
+#### What's fixed
+
+- Pasting from Qwen (and similar rendered-Markdown HTML) restores structure instead of flat text
+- Shift selection at the top/bottom of the doc no longer nudges scroll
+
+</details>
+
+<div align="right">
+
+[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
+
+</div>
+
 ### [Version 1.0.0-fork.22](https://github.com/xuhuafeifei/my-lobe-editor)
 
 <sup>Released on **2026-10-10**</sup>

@@ -312,6 +312,14 @@ export const MarkdownPlugin: IEditorPluginConstructor<MarkdownPluginOptions> = c
           // If there's no text content, let Lexical handle it
           if (!text) return false;
 
+          // Prefer rich HTML (e.g. Qwen / browser-rendered Markdown) over the
+          // degraded text/plain that often only keeps a few **bold** markers.
+          // Must run before onPasteMarkdown, or a weak MD score steals the paste
+          // and Lexical never sees the structured HTML.
+          if (this.hasRichHTML(clipboardData)) {
+            return false;
+          }
+
           // If confirmation callback is provided, intercept paste for user decision
           // Only trigger when markdown features are detected (score >= 2), to avoid interrupting plain text paste
           const score = detectMarkdownFeatures(text);
@@ -361,10 +369,6 @@ export const MarkdownPlugin: IEditorPluginConstructor<MarkdownPluginOptions> = c
               }
             });
             return true;
-          }
-
-          if (this.hasRichHTML(clipboardData)) {
-            return false;
           }
 
           // Bare URLs (no markdown syntax) should stay as plain text

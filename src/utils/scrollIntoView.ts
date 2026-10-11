@@ -73,9 +73,16 @@ function getSelectionClientRect(): DOMRect | null {
  * Lexical's built-in scrollIntoViewIfNeeded only scrolls when the caret
  * crosses the container edge (no nested scroll-padding), so Enter at the
  * bottom of the viewport leaves the caret glued to the edge.
+ *
+ * Range selections (Shift+extend / select-all) are ignored: the DOM range
+ * bounding box spans the whole selection and would yank the scroll port.
  */
 export function ensureSelectionVisibleInScrollParent(paddingBottom: number = 96): void {
   if (typeof window === 'undefined' || typeof document === 'undefined') return;
+
+  const selection = window.getSelection();
+  // Only follow a collapsed caret (e.g. Enter). Shift-select must not move the view.
+  if (!selection || !selection.isCollapsed) return;
 
   const rect = getSelectionClientRect();
   if (!rect) return;

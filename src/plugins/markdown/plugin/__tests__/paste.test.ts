@@ -34,6 +34,20 @@ describe('Markdown paste', () => {
     expect(result).toBe(true);
   });
 
+  it('should treat Qwen-style heading/list HTML as rich HTML', () => {
+    const plugin = new MarkdownPlugin(createKernelMock()) as any;
+
+    const result = plugin.hasRichHTML(
+      createClipboardDataMock({
+        'text/html':
+          '<h3><strong>标题</strong></h3><ul><li><strong>地点：</strong>听瀑楼</li></ul>',
+        'text/plain': '标题\n地点：听瀑楼\n门外匍匐着**项庄主**的尸体',
+      }),
+    );
+
+    expect(result).toBe(true);
+  });
+
   it('should not treat VS Code HTML markers as rich HTML for markdown bypass', () => {
     const plugin = new MarkdownPlugin(createKernelMock()) as any;
 
