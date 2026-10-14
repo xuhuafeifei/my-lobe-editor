@@ -1,5 +1,6 @@
 import { mergeRegister } from '@lexical/utils';
 import { ActionIconGroup } from '@lobehub/ui';
+import { message } from 'antd';
 import {
   $createRangeSelection,
   $getNodeByKey,
@@ -10,7 +11,14 @@ import {
   COMMAND_PRIORITY_NORMAL,
   LexicalEditor,
 } from 'lexical';
-import { EditIcon, ExternalLinkIcon, UnlinkIcon } from 'lucide-react';
+import {
+  CheckIcon,
+  ClipboardCopyIcon,
+  CopyIcon,
+  EditIcon,
+  ExternalLinkIcon,
+  UnlinkIcon,
+} from 'lucide-react';
 import { memo, useCallback, useRef, useState } from 'react';
 
 import { useLexicalEditor } from '@/editor-kernel/react';
@@ -34,11 +42,32 @@ interface LinkToolbarProps {
   enable: boolean;
 }
 
+type CopiedAction = 'copyText' | 'copyUrl' | null;
+
+async function writeClipboard(value: string): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(value);
+  } catch {
+    const textarea = document.createElement('textarea');
+    textarea.value = value;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.append(textarea);
+    textarea.focus();
+    textarea.select();
+    document.execCommand('copy');
+    textarea.remove();
+  }
+}
+
 const LinkToolbar = memo<LinkToolbarProps>(({ editor, enable }) => {
   const divRef = useRef<HTMLDivElement>(null);
   const LinkRef = useRef<HTMLDivElement>(null);
   const [linkNode, setLinkNode] = useState<LinkNode | null>(null);
+  const [copiedKey, setCopiedKey] = useState<CopiedAction>(null);
   const state = useRef<{ isLink: boolean }>({ isLink: false });
+  const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | number>(-1);
   const t = useTranslation();
   const clearTimerRef = useRef<ReturnType<typeof setTimeout> | number>(-1);
   const { editable } = useEditable();
@@ -90,9 +119,56 @@ const LinkToolbar = memo<LinkToolbarProps>(({ editor, enable }) => {
 
   const handleOpenLink = useCallback(() => {
     if (!linkNode) return;
-    const url = editor.getEditorState().read(() => linkNode.getURL());
-    window.open(url, '_blank');
+    const url = editor.getEditorState().read(() => {
+      const node = $getNodeByKey(linkNode.getKey());
+      return $isLinkNode(node) ? node.getURL() : '';
+    });
+    if (url) window.open(url, '_blank');
   }, [editor, linkNode]);
+
+  const flashCopied = useCallback((key: Exclude<CopiedAction, null>) => {
+    clearTimeout(copiedTimerRef.current);
+    setCopiedKey(key);
+    copiedTimerRef.current = setTimeout(() => setCopiedKey(null), 1500);
+  }, []);
+
+  const handleCopyText = useCallback(async () => {
+    if (!linkNode) return;
+    clearTimeout(clearTimerRef.current);
+
+    const text = editor.getEditorState().read(() => {
+      const node = $getNodeByKey(linkNode.getKey());
+      return $isLinkNode(node) ? node.getTextContent() : '';
+    });
+    if (!text) return;
+
+    try {
+      await writeClipboard(text);
+      flashCopied('copyText');
+      message.success(t('link.copyTextSuccess'));
+    } catch {
+      message.error(t('link.copyFailed'));
+    }
+  }, [editor, flashCopied, linkNode, t]);
+
+  const handleCopyUrl = useCallback(async () => {
+    if (!linkNode) return;
+    clearTimeout(clearTimerRef.current);
+
+    const url = editor.getEditorState().read(() => {
+      const node = $getNodeByKey(linkNode.getKey());
+      return $isLinkNode(node) ? node.getURL() : '';
+    });
+    if (!url) return;
+
+    try {
+      await writeClipboard(url);
+      flashCopied('copyUrl');
+      message.success(t('link.copyUrlSuccess'));
+    } catch {
+      message.error(t('link.copyFailed'));
+    }
+  }, [editor, flashCopied, linkNode, t]);
 
   useLexicalEditor(
     (editor) => {
@@ -170,6 +246,18 @@ const LinkToolbar = memo<LinkToolbarProps>(({ editor, enable }) => {
           onClick: handleEdit,
         },
         {
+          icon: copiedKey === 'copyText' ? CheckIcon : CopyIcon,
+          key: 'copyText',
+          label: t('link.copyText'),
+          onClick: handleCopyText,
+        },
+        {
+          icon: copiedKey === 'copyUrl' ? CheckIcon : ClipboardCopyIcon,
+          key: 'copyUrl',
+          label: t('link.copyUrl'),
+          onClick: handleCopyUrl,
+        },
+        {
           icon: ExternalLinkIcon,
           key: 'openLink',
           label: t('link.open'),
@@ -189,6 +277,8 @@ const LinkToolbar = memo<LinkToolbarProps>(({ editor, enable }) => {
         clearTimeout(clearTimerRef.current);
       }}
       onMouseLeave={() => {
+        // Keep toolbar visible briefly after copy so the checkmark is visible
+        if (copiedKey) return;
         handleCancel();
       }}
       ref={divRef}

@@ -1,6 +1,7 @@
 import { mergeRegister } from '@lexical/utils';
-import { Block, Button, Flexbox, Hotkey, Icon, Input, Text } from '@lobehub/ui';
+import { Block, Button, CopyButton, Flexbox, Hotkey, Icon, Input, Text } from '@lobehub/ui';
 import type { InputRef } from 'antd';
+import { message } from 'antd';
 import { cssVar } from 'antd-style';
 import {
   COMMAND_PRIORITY_EDITOR,
@@ -242,6 +243,16 @@ const LinkEdit: FC<LinkEditProps> = ({ editor }) => {
           onKeyDown={handleKeyDown}
           prefix={<Icon color={cssVar.colorTextDescription} icon={BaselineIcon} />}
           ref={linkTextInputRef}
+          suffix={
+            <CopyButton
+              content={linkText}
+              onClick={() => {
+                if (linkText) message.success(t('link.copyTextSuccess'));
+              }}
+              size={'small'}
+              title={t('link.copyText')}
+            />
+          }
           value={linkText}
         />
         <Text weight={500}>{t('link.editLinkTitle')}</Text>
@@ -254,6 +265,16 @@ const LinkEdit: FC<LinkEditProps> = ({ editor }) => {
           placeholder="https://enter-link-url"
           prefix={<Icon color={cssVar.colorTextDescription} icon={LinkIcon} />}
           ref={linkInputRef}
+          suffix={
+            <CopyButton
+              content={linkUrl}
+              onClick={() => {
+                if (linkUrl) message.success(t('link.copyUrlSuccess'));
+              }}
+              size={'small'}
+              title={t('link.copyUrl')}
+            />
+          }
           value={linkUrl}
         />
       </Flexbox>

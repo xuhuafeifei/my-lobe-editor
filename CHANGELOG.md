@@ -2,6 +2,33 @@
 
 # Changelog
 
+### [Version 1.0.0-fork.24](https://github.com/xuhuafeifei/my-lobe-editor)
+
+<sup>Released on **2026-10-14**</sup>
+
+#### ✨ Features
+
+- **link**: Paste a bare `http(s)://` plain-text URL (e.g. browser address bar) as a `LinkNode`.
+- **link**: Hover toolbar and edit panel support copying link text and URL, with toast / checkmark feedback.
+
+<br/>
+
+<details>
+<summary><kbd>Improvements and Fixes</kbd></summary>
+
+#### What's improved
+
+- Address-bar URL paste becomes a clickable link instead of plain text
+- Copy text / copy URL from the link toolbar and edit panel
+
+</details>
+
+<div align="right">
+
+[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
+
+</div>
+
 ### [Version 1.0.0-fork.23](https://github.com/xuhuafeifei/my-lobe-editor)
 
 <sup>Released on **2026-10-11**</sup>

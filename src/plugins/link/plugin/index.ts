@@ -14,6 +14,7 @@ import {
   LinkNode,
 } from '../node/LinkNode';
 import { ILinkService, LinkService } from '../service/i-link-service';
+import { registerPasteAutoLink } from './paste-autolink';
 import { registerLinkCommands } from './registry';
 
 export interface LinkPluginOptions {
@@ -60,13 +61,20 @@ export const LinkPlugin: IEditorPluginConstructor<LinkPluginOptions> = class
         validateUrl: this.config?.validateUrl,
       }),
     );
+    this.register(
+      registerPasteAutoLink(editor, {
+        attributes: this.config?.attributes,
+        linkRegex: this.linkRegex,
+        validateUrl: this.config?.validateUrl,
+      }),
+    );
 
     this.registerMarkdown();
   }
 
   registerMarkdown() {
     this.kernel.requireService(IMarkdownShortCutService)?.registerMarkdownShortCut({
-      regExp: /(?<!\!)\[([^[]*)]\(([^\s()]+)(?:\s"((?:[^"]*\\")*[^"]*)"\s*)?\)\s?$/,
+      regExp: /(?<!!)\[([^[]*)]\(([^\s()]+)(?:\s"((?:[^"]*\\")*[^"]*)"\s*)?\)\s?$/,
       replace: (textNode, match) => {
         const [, linkText, linkUrl, linkTitle] = match;
         const linkNode = $createLinkNode(linkUrl, { title: linkTitle });

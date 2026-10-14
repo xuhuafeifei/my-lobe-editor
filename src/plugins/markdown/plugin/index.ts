@@ -371,7 +371,7 @@ export const MarkdownPlugin: IEditorPluginConstructor<MarkdownPluginOptions> = c
             return true;
           }
 
-          // Bare URLs (no markdown syntax) should stay as plain text
+          // Bare URLs: skip markdown convert; LinkPlugin paste-autolink may wrap as LinkNode
           if (/^https?:\/\/\S+$/i.test(text)) {
             return false;
           }

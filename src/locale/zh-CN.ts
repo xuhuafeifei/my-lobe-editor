@@ -24,6 +24,11 @@ const zhCN = {
     replace: '替换',
   },
   link: {
+    copyFailed: '复制失败',
+    copyText: '复制文本',
+    copyTextSuccess: '已复制文本',
+    copyUrl: '复制网址',
+    copyUrlSuccess: '已复制网址',
     edit: '编辑链接',
     editLinkTitle: '链接',
     editTextTitle: '文本',

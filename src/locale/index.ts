@@ -24,6 +24,11 @@ const locale = {
     replace: 'Replace',
   },
   link: {
+    copyFailed: 'Copy failed',
+    copyText: 'Copy Text',
+    copyTextSuccess: 'Text copied',
+    copyUrl: 'Copy URL',
+    copyUrlSuccess: 'URL copied',
     edit: 'Edit Link',
     editLinkTitle: 'Link',
     editTextTitle: 'Text',
