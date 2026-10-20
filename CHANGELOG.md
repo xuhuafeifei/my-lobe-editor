@@ -2,6 +2,32 @@
 
 # Changelog
 
+### [Version 1.0.0-fork.25](https://github.com/xuhuafeifei/my-lobe-editor)
+
+<sup>Released on **2026-10-20**</sup>
+
+#### 🐛 Bug Fixes
+
+- **quote**: Typora-like Enter in blockquotes — first Enter keeps a soft line inside `>`, second Enter on an empty quote line exits to a normal paragraph.
+
+<br/>
+
+<details>
+<summary><kbd>Improvements and Fixes</kbd></summary>
+
+#### What's fixed
+
+- Consecutive Enter no longer keeps creating nested quote lines forever
+- Empty quote line + Enter breaks out of the blockquote
+
+</details>
+
+<div align="right">
+
+[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
+
+</div>
+
 ### [Version 1.0.0-fork.24](https://github.com/xuhuafeifei/my-lobe-editor)
 
 <sup>Released on **2026-10-14**</sup>

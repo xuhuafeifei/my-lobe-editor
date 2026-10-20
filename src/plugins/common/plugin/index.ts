@@ -51,6 +51,7 @@ import {
   isPasteTargetNativeFormControl,
   runPasteHandlers,
 } from './paste-handler';
+import { registerQuoteEnter } from './quote-enter';
 import { registerHeaderBackspace, registerLastElement, registerRichKeydown } from './register';
 
 patchBreakLine();
@@ -477,6 +478,7 @@ export const CommonPlugin: IEditorPluginConstructor<CommonPluginOptions> = class
       registerRichKeydown(editor, this.kernel, {
         enableHotkey: this.config?.enableHotkey,
       }),
+      registerQuoteEnter(editor),
       registerCommands(editor),
       registerBreakLineClick(editor),
       registerCursorNode(editor),
