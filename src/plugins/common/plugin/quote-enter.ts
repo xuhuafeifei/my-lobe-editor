@@ -9,6 +9,7 @@ import {
   $isRangeSelection,
   $isTextNode,
   COMMAND_PRIORITY_HIGH,
+  type ElementNode,
   INSERT_PARAGRAPH_COMMAND,
   type LexicalEditor,
   type LexicalNode,
@@ -16,64 +17,90 @@ import {
 } from 'lexical';
 
 /**
- * Offset of the caret within the quote's flat text content (LineBreak → `\n`).
+ * Flat caret offset within `root` text content (LineBreak / block edges → `\n`).
+ * Handles both text anchors and element anchors (common after soft Enter).
  */
-function $getCaretOffsetInQuote(selection: RangeSelection, quote: QuoteNode): number {
+function $getOffsetWithin(selection: RangeSelection, root: ElementNode): number {
   const anchorNode = selection.anchor.getNode();
+  const anchorOffset = selection.anchor.offset;
+  const isElementAnchor = selection.anchor.type === 'element';
+
+  if (isElementAnchor && anchorNode === root) {
+    let offset = 0;
+    const children = root.getChildren();
+    for (let i = 0; i < anchorOffset && i < children.length; i++) {
+      offset += children[i].getTextContentSize();
+    }
+    return offset;
+  }
+
   let offset = 0;
 
   const walk = (node: LexicalNode): boolean => {
     if (node === anchorNode) {
-      if ($isTextNode(node)) {
-        offset += selection.anchor.offset;
+      if (isElementAnchor && $isElementNode(node)) {
+        const children = node.getChildren();
+        for (let i = 0; i < anchorOffset && i < children.length; i++) {
+          offset += children[i].getTextContentSize();
+        }
+      } else if ($isTextNode(node)) {
+        offset += anchorOffset;
       } else if ($isLineBreakNode(node)) {
-        // caret on linebreak itself — treat as after the `\n`
         offset += 1;
       }
       return true;
     }
 
-    if ($isTextNode(node)) {
+    if ($isTextNode(node) || $isLineBreakNode(node)) {
       offset += node.getTextContentSize();
       return false;
     }
 
-    if ($isLineBreakNode(node)) {
-      offset += 1;
-      return false;
-    }
-
-    if ('getChildren' in node) {
-      for (const child of (node as QuoteNode).getChildren()) {
+    if ($isElementNode(node)) {
+      for (const child of node.getChildren()) {
         if (walk(child)) return true;
       }
     }
     return false;
   };
 
-  for (const child of quote.getChildren()) {
+  for (const child of root.getChildren()) {
     if (walk(child)) break;
   }
 
   return offset;
 }
 
-/** True when the caret sits on an empty line inside the quote (Typora “blank quote line”). */
-export function $isEmptyLineInQuote(selection: RangeSelection, quote: QuoteNode): boolean {
-  const content = quote.getTextContent();
+function $isEmptySoftLine(selection: RangeSelection, root: ElementNode): boolean {
+  const content = root.getTextContent();
   if (content.trim() === '') return true;
 
-  const offset = $getCaretOffsetInQuote(selection, quote);
+  const offset = $getOffsetWithin(selection, root);
   const lineStart = content.lastIndexOf('\n', Math.max(0, offset - 1)) + 1;
   const nextNl = content.indexOf('\n', offset);
   const lineEnd = nextNl === -1 ? content.length : nextNl;
   return content.slice(lineStart, lineEnd).trim() === '';
 }
 
+/** True when the caret sits on an empty line inside the quote (Typora “blank quote line”). */
+export function $isEmptyLineInQuote(selection: RangeSelection, quote: QuoteNode): boolean {
+  if (quote.getTextContent().trim() === '') return true;
+
+  // Empty paragraph child (markdown-loaded quotes use paragraph children)
+  const paragraph = $findMatchingParent(selection.anchor.getNode(), $isParagraphNode);
+  if (paragraph && quote.isParentOf(paragraph)) {
+    if (paragraph.getTextContent().trim() === '') return true;
+    return $isEmptySoftLine(selection, paragraph);
+  }
+
+  // Quote with direct text / linebreak children (typed via `> ` shortcut)
+  return $isEmptySoftLine(selection, quote);
+}
+
 /**
  * Exit quote on empty-line Enter; keep soft line breaks for non-empty lines (Typora-like).
  */
-export function $exitQuoteAtSelection(selection: RangeSelection, quote: QuoteNode): void {
+export function $exitQuoteAtSelection(_selection: RangeSelection, quote: QuoteNode): void {
   const content = quote.getTextContent();
 
   // Completely empty quote → replace with paragraph
@@ -84,7 +111,7 @@ export function $exitQuoteAtSelection(selection: RangeSelection, quote: QuoteNod
     return;
   }
 
-  // Drop trailing empty line(s) / linebreak / empty paragraph at end, then insert paragraph after quote
+  // Drop trailing empty line(s) / linebreak / empty paragraph at end
   const children = quote.getChildren();
   for (let i = children.length - 1; i >= 0; i--) {
     const child = children[i];
@@ -96,17 +123,33 @@ export function $exitQuoteAtSelection(selection: RangeSelection, quote: QuoteNod
       child.remove();
       continue;
     }
-    if (
-      ($isParagraphNode(child) || $isElementNode(child)) &&
-      child.getTextContent().trim() === ''
-    ) {
+    if ($isParagraphNode(child) && child.getTextContent().trim() === '') {
       child.remove();
       continue;
+    }
+    // Trailing soft-breaks only inside last paragraph
+    if ($isParagraphNode(child) || $isElementNode(child)) {
+      const nested = child.getChildren();
+      for (let j = nested.length - 1; j >= 0; j--) {
+        const n = nested[j];
+        if ($isLineBreakNode(n)) {
+          n.remove();
+          continue;
+        }
+        if ($isTextNode(n) && n.getTextContent().trim() === '') {
+          n.remove();
+          continue;
+        }
+        break;
+      }
+      if (child.getTextContent().trim() === '' && $isParagraphNode(child)) {
+        child.remove();
+        continue;
+      }
     }
     break;
   }
 
-  // If quote became empty after cleanup, replace it
   if (quote.getTextContent().trim() === '') {
     const paragraph = $createParagraphNode();
     quote.replace(paragraph);
@@ -121,7 +164,7 @@ export function $exitQuoteAtSelection(selection: RangeSelection, quote: QuoteNod
 
 /**
  * Typora-like blockquote Enter:
- * - non-empty line → soft linebreak (stay in quote)
+ * - non-empty line → new line inside quote
  * - empty line → exit quote into a normal paragraph
  */
 export function registerQuoteEnter(editor: LexicalEditor): () => void {
@@ -143,7 +186,14 @@ export function registerQuoteEnter(editor: LexicalEditor): () => void {
         return true;
       }
 
-      // Stay in quote (first Enter on a non-empty line)
+      // Markdown-style quote: paragraphs inside quote → split into a new paragraph in the quote
+      const paragraph = $findMatchingParent(selection.anchor.getNode(), $isParagraphNode);
+      if (paragraph && quote.isParentOf(paragraph)) {
+        selection.insertParagraph();
+        return true;
+      }
+
+      // Shortcut-created quote (text directly under quote) → soft linebreak
       selection.insertLineBreak();
       return true;
     },

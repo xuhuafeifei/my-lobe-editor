@@ -2,6 +2,32 @@
 
 # Changelog
 
+### [Version 1.0.0-fork.26](https://github.com/xuhuafeifei/my-lobe-editor)
+
+<sup>Released on **2026-10-21**</sup>
+
+#### 🐛 Bug Fixes
+
+- **quote**: Empty-line Enter now correctly exits Markdown-loaded blockquotes (paragraph children + element selection after Enter), matching Typora break-out behavior.
+
+<br/>
+
+<details>
+<summary><kbd>Improvements and Fixes</kbd></summary>
+
+#### What's fixed
+
+- Double Enter in imported `>` blocks no longer keeps extending the quote border
+- Empty paragraph / soft-break line inside a quote exits to a normal paragraph
+
+</details>
+
+<div align="right">
+
+[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
+
+</div>
+
 ### [Version 1.0.0-fork.25](https://github.com/xuhuafeifei/my-lobe-editor)
 
 <sup>Released on **2026-10-20**</sup>
