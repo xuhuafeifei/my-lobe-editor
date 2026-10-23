@@ -2,6 +2,31 @@
 
 # Changelog
 
+### [Version 1.0.0-fork.27](https://github.com/xuhuafeifei/my-lobe-editor)
+
+<sup>Released on **2026-10-23**</sup>
+
+#### ✨ Features
+
+- **image**: Download selected images — floating download button when selected, plus download action in the image edit popover.
+
+<br/>
+
+<details>
+<summary><kbd>Improvements and Fixes</kbd></summary>
+
+#### What's improved
+
+- Click a selected image’s download control to save the image locally
+
+</details>
+
+<div align="right">
+
+[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
+
+</div>
+
 ### [Version 1.0.0-fork.26](https://github.com/xuhuafeifei/my-lobe-editor)
 
 <sup>Released on **2026-10-21**</sup>

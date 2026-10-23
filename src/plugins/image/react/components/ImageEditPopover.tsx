@@ -1,6 +1,6 @@
 import { Button, Flexbox, Icon, Input, Popover } from '@lobehub/ui';
 import { cssVar } from 'antd-style';
-import { LinkIcon, UploadIcon } from 'lucide-react';
+import { DownloadIcon, LinkIcon, UploadIcon } from 'lucide-react';
 import {
   type ChangeEvent,
   type FC,
@@ -17,6 +17,7 @@ import { useTranslation } from '@/editor-kernel/react/useTranslation';
 
 import { BlockImageNode } from '../../node/block-image-node';
 import { ImageNode } from '../../node/image-node';
+import { downloadImage } from '../../utils/downloadImage';
 
 interface ImageEditPopoverProps {
   children: ReactNode;
@@ -134,6 +135,11 @@ const ImageEditPopover: FC<ImageEditPopoverProps> = memo(
       }
     }, [onPickFile, handleUpload, handleClose, node]);
 
+    const handleDownload = useCallback(() => {
+      if (!node.src) return;
+      void downloadImage(node.src);
+    }, [node]);
+
     const content = (
       <Flexbox gap={8} style={{ width: 320 }}>
         <Input
@@ -147,6 +153,14 @@ const ImageEditPopover: FC<ImageEditPopoverProps> = memo(
           value={url}
         />
         <Flexbox gap={8} horizontal justify="flex-end">
+          <Button
+            icon={<Icon icon={DownloadIcon} />}
+            onClick={handleDownload}
+            size="small"
+            type="text"
+          >
+            {t('image.download')}
+          </Button>
           {handleUpload && (
             <>
               {!onPickFile && (

@@ -1,14 +1,16 @@
-import { Icon } from '@lobehub/ui';
+import { ActionIcon, Icon } from '@lobehub/ui';
 import { cx } from 'antd-style';
 import { COMMAND_PRIORITY_LOW, SELECTION_CHANGE_COMMAND } from 'lexical';
-import { LoaderCircleIcon } from 'lucide-react';
+import { DownloadIcon, LoaderCircleIcon } from 'lucide-react';
 import React, { Suspense, memo, useCallback, useMemo, useRef, useState } from 'react';
 
 import { useLexicalEditor } from '@/editor-kernel/react/useLexicalEditor';
 import { useLexicalNodeSelection } from '@/editor-kernel/react/useLexicalNodeSelection';
+import { useTranslation } from '@/editor-kernel/react/useTranslation';
 
 import { $isBlockImageNode, BlockImageNode } from '../../node/block-image-node';
 import { ImageNode } from '../../node/image-node';
+import { downloadImage } from '../../utils/downloadImage';
 import BrokenImage from './BrokenImage';
 import ImageEditPopover from './ImageEditPopover';
 import LazyImage from './LazyImage';
@@ -45,9 +47,20 @@ const Image = memo<ImageProps>(
     const editorRef = useRef<any>(null);
     const startWidthRef = useRef<number>(0);
     const lastLoadedSrcRef = useRef<string | null>(null);
+    const t = useTranslation();
     const isBlock = useMemo(() => {
       return $isBlockImageNode(node);
     }, [node]);
+
+    const handleDownload = useCallback(
+      (e: React.MouseEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+        if (!node.src) return;
+        void downloadImage(node.src);
+      },
+      [node],
+    );
 
     useLexicalEditor((editor) => {
       editorRef.current = editor;
@@ -239,6 +252,16 @@ const Image = memo<ImageProps>(
           {/* Scale info display */}
           {showScaleInfo && isSelected && scale !== 1 && (
             <div className={styles.scaleInfo}>{Math.round(scale * 100)}%</div>
+          )}
+
+          {isSelected && node.status === 'uploaded' && node.src && (
+            <ActionIcon
+              className={styles.downloadButton}
+              icon={DownloadIcon}
+              onClick={handleDownload}
+              size="small"
+              title={t('image.download')}
+            />
           )}
 
           {/* Resize handles - only left and right */}

@@ -21,6 +21,7 @@ const locale = {
   },
   image: {
     broken: 'Broken image',
+    download: 'Download',
     replace: 'Replace',
   },
   link: {

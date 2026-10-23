@@ -21,6 +21,7 @@ const zhCN = {
   },
   image: {
     broken: '图片加载失败',
+    download: '下载',
     replace: '替换',
   },
   link: {

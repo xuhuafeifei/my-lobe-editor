@@ -10,6 +10,7 @@ const customLocale = {
   },
   image: {
     broken: '图片损坏',
+    download: '下载',
     replace: '替换',
   },
   link: {

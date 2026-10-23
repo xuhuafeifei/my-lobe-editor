@@ -6,6 +6,25 @@ export const styles = createStaticStyles(({ css, cssVar }) => ({
     height: auto;
   `,
 
+  downloadButton: css`
+    pointer-events: auto;
+
+    position: absolute;
+    z-index: 12;
+    inset-block-start: 6px;
+    inset-inline-end: 6px;
+
+    border-radius: ${cssVar.borderRadiusSM};
+
+    color: white !important;
+
+    background-color: color-mix(in srgb, rgb(0, 0, 0) 55%, transparent) !important;
+
+    &:hover {
+      background-color: color-mix(in srgb, rgb(0, 0, 0) 75%, transparent) !important;
+    }
+  `,
+
   imageContainer: css`
     cursor: default;
     user-select: none;
