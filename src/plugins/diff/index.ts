@@ -1,4 +1,17 @@
 export {
+  assertCanPublish,
+  flattenCanonicalState,
+  getCanonicalEditorState,
+  hasPendingDiff,
+  insertAfterSlot,
+  materializeCanonical,
+  overwriteAll,
+  removeSlot,
+  updateSlot,
+  type DiffApiResult,
+  type FlattenMode,
+} from './api';
+export {
   ACCEPT_DIFF_OP_COMMAND,
   APPLY_DIFF_OP_COMMAND,
   REJECT_DIFF_OP_COMMAND,

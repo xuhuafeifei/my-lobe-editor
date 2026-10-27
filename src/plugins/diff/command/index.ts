@@ -72,7 +72,8 @@ function $appendSerializedBlock(hunk: ReturnType<typeof $createDiffHunkNode>, bl
   hunk.append(live);
 }
 
-function $buildHunk(
+/** @internal exported for overwrite_all / slot APIs */
+export function $buildHunk(
   kind: DiffHunkKind,
   oldBlock: SerializedLexicalNode | null,
   contentBlock: SerializedLexicalNode,
@@ -273,6 +274,24 @@ export function rejectAllDiffOps(editor: LexicalEditor) {
   editor.update(() => {
     for (const id of $collectOpIds()) $reject(id);
   });
+}
+
+export function $hasPendingDiff(): boolean {
+  return $collectOpIds().length > 0;
+}
+
+export function hasPendingDiff(editor: LexicalEditor): boolean {
+  return editor.getEditorState().read(() => $hasPendingDiff());
+}
+
+/** Host publish gate: block when any DiffHunk is pending. */
+export function assertCanPublish(
+  editor: LexicalEditor,
+): { ok: true } | { ok: false; error: string } {
+  if (hasPendingDiff(editor)) {
+    return { ok: false, error: 'pending diff; Keep All / Undo All before publish' };
+  }
+  return { ok: true };
 }
 
 /** @deprecated use acceptDiffOp */

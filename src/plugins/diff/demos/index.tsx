@@ -1,7 +1,9 @@
 import {
   APPLY_DIFF_OP_COMMAND,
   ReactDiffPlugin,
+  assertCanPublish,
   makeParagraphBlock,
+  overwriteAll,
 } from '@/plugins/diff';
 import { ReactListPlugin, ReactMarkdownPlugin, type IEditor } from '@/index';
 import { Editor, useEditor } from '@/react';
@@ -174,6 +176,42 @@ const Demo: FC = () => {
           type="primary"
         >
           Insert after 当前段
+        </Button>
+        <Button
+          onClick={() => {
+            const lexical = editor.getLexicalEditor();
+            if (!lexical) {
+              setHint('编辑器未就绪');
+              return;
+            }
+            const r = overwriteAll(
+              lexical,
+              '第一段：Overwrite All（LCS）改过的正文。\n\n第二段：新增一段会出现绿 hunk。\n\n第三段：接受或拒绝会写回同一 Editor。',
+            );
+            setHint(
+              r.ok
+                ? 'overwrite_all：块级 LCS → 多 hunk；有 pending 时不可再套一层'
+                : `overwrite_all 失败：${r.error}`,
+            );
+          }}
+          onMouseDown={(e) => e.preventDefault()}
+        >
+          Overwrite All (LCS)
+        </Button>
+        <Button
+          onClick={() => {
+            const lexical = editor.getLexicalEditor();
+            if (!lexical) return;
+            const gate = assertCanPublish(lexical);
+            setHint(
+              gate.ok
+                ? 'assertCanPublish：通过（无 pending）'
+                : `发布拦截：${gate.error}`,
+            );
+          }}
+          onMouseDown={(e) => e.preventDefault()}
+        >
+          检查可否发布
         </Button>
       </div>
       <Text type="secondary">{hint}</Text>
