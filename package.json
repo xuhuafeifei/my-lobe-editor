@@ -24,19 +24,23 @@
   "exports": {
     ".": {
       "types": "./es/index.d.ts",
-      "import": "./es/index.js"
+      "import": "./es/index.js",
+      "default": "./es/index.js"
     },
     "./headless": {
       "types": "./es/headless.d.ts",
-      "import": "./es/headless.js"
+      "import": "./es/headless.js",
+      "default": "./es/headless.js"
     },
     "./react": {
       "types": "./es/react.d.ts",
-      "import": "./es/react.js"
+      "import": "./es/react.js",
+      "default": "./es/react.js"
     },
     "./renderer": {
       "types": "./es/renderer.d.ts",
-      "import": "./es/renderer.js"
+      "import": "./es/renderer.js",
+      "default": "./es/renderer.js"
     },
     "./package.json": "./package.json"
   },

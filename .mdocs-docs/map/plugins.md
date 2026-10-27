@@ -14,6 +14,22 @@
   | `src/plugins/markdown/plugin/index.ts` | `MarkdownPlugin` | |
   | `src/plugins/upload/plugin/index.ts` | `UploadPlugin` | |
 
+### Inline Diff（DiffHunk / Agent slot）
+
+- **关键词**：`DiffPlugin` `DiffHunkNode` `DiffChromeNode` `APPLY_DIFF_OP_COMMAND` `ReactDiffPlugin` `acceptDiffOp` `hasPendingDiff` `overwrite_all`
+- **需求**：[`../requirements/inline-diff-slot-agent/`](../requirements/inline-diff-slot-agent/)
+- **ADR**：[`../decisions/002-inline-diff-live-hunk-review-draft.md`](../decisions/002-inline-diff-live-hunk-review-draft.md)
+- **定位**：
+  | 路径 | 符号 | 行号（可选） |
+  | ------------------------------------------------- | --------------------- | ------ |
+  | `src/plugins/diff/plugin/index.ts` | `DiffPlugin` | |
+  | `src/plugins/diff/node/DiffHunkNode.ts` | `DiffHunkNode` | |
+  | `src/plugins/diff/node/DiffChromeNode.ts` | `DiffChromeNode` | |
+  | `src/plugins/diff/command/index.ts` | `$applyOp` `$accept` `$reject` | |
+  | `src/plugins/diff/react/ReactDiffPlugin.tsx` | `ReactDiffPlugin` | |
+  | `src/plugins/diff/react/components/DiffReviewBar.tsx` | `DiffReviewBar` | |
+  | `src/renderer/diff/compute.ts` | `computeLexicalDiffRows` | |
+
 ### 内容插件
 
 - **关键词**：`SlashPlugin` `MentionPlugin` `CodeblockPlugin` `ImagePlugin` `TablePlugin` `ListPlugin` `FilePlugin` `isAllowedUploadFile`

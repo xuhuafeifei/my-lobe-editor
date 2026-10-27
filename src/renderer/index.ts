@@ -1,4 +1,5 @@
 export type { DiffAppearance } from './diff/style';
+export { computeLexicalDiffRows } from './diff/compute';
 export type {
   LexicalDiffBlockRenderContext,
   LexicalDiffBlockRenderer,

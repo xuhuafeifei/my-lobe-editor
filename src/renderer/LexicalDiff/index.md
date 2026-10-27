@@ -14,9 +14,21 @@ apiHeader:
 
 `LexicalDiff` compares two `SerializedEditorState` values and renders a read-only side-by-side diff view. It uses the existing headless `LexicalRenderer` for default block rendering and adds block-level renderer extension points for custom diff UIs.
 
+## Try It（贴自己的 MD）
+
+左右各贴一段 Markdown，点「比对」即可看 LexicalDiff 效果（内部会先 md → JSON）。
+
+<code src="./demos/try-it.tsx" compact></code>
+
 ## Basic Usage
 
 <code src="./demos/index.tsx"></code>
+
+## Playground Copy Diff
+
+Real Lobe playground intro text — small wording / link-text edits.
+
+<code src="./demos/playground-copy.tsx"></code>
 
 ## Custom Block Renderer
 

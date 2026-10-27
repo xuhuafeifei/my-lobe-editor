@@ -427,7 +427,9 @@ export const CommonPlugin: IEditorPluginConstructor<CommonPluginOptions> = class
         if (tags.has(SKIP_SCROLL_INTO_VIEW_TAG) || tags.has(HISTORIC_TAG)) return;
         if (typeof window === 'undefined') return;
         requestAnimationFrame(() => {
-          if (editor.getRootElement() !== document.activeElement) return;
+          // Prefer kernel: Lexical headless getRootElement() throws in browser.
+          const root = this.kernel.getRootElement();
+          if (!root || root !== document.activeElement) return;
           ensureSelectionVisibleInScrollParent(96);
         });
       }),

@@ -5,8 +5,11 @@ export type LexicalDiffRowKind = 'delete' | 'equal' | 'insert' | 'modify';
 
 export interface LexicalDiffCell {
   baseBlockType: string | null;
+  /** Decorated block for diff UI (may include inline delete/insert styles). */
   block: SerializedLexicalNode | null;
   blockType: string | null;
+  /** Undecorated source block — use this when accepting / writing back to the editor. */
+  sourceBlock: SerializedLexicalNode | null;
 }
 
 export interface LexicalDiffRow {

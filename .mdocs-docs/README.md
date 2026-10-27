@@ -38,6 +38,7 @@
 
 | 需求                       | 状态                            | 路径                                                                                   |
 | -------------------------- | ------------------------------- | -------------------------------------------------------------------------------------- |
+| Inline Diff × Slot Agent   | **已同意**（2026-10-27），实现中 | [requirements/inline-diff-slot-agent/](./requirements/inline-diff-slot-agent/)         |
 | 文件上传增强（zip / 音频） | 已同意，已实现                  | [requirements/file-upload-zip-audio/](./requirements/file-upload-zip-audio/)           |
 | Markdown ↔ 颜色往返        | 已同意，已实现（1.0.0-fork.20） | [requirements/md-color-roundtrip/](./requirements/md-color-roundtrip/)                 |
 | Markdown 粘贴确认          | 已同意（历史迁入）              | [requirements/markdown-paste-confirm/](./requirements/markdown-paste-confirm/)         |

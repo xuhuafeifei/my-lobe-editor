@@ -71,13 +71,18 @@ function getNormalizedBlockType(node: SerializedLexicalNode | null): string | nu
   return type;
 }
 
-function createCell(block: SerializedLexicalNode | null): LexicalDiffCell | null {
+function createCell(
+  block: SerializedLexicalNode | null,
+  sourceBlock: SerializedLexicalNode | null = block,
+): LexicalDiffCell | null {
   if (!block) return null;
 
+  const source = sourceBlock ?? block;
   return {
-    baseBlockType: getBaseNodeType(block),
+    baseBlockType: getBaseNodeType(source),
     block,
-    blockType: getNormalizedBlockType(block),
+    blockType: getNormalizedBlockType(source),
+    sourceBlock: source,
   };
 }
 
@@ -529,8 +534,8 @@ export function computeLexicalDiffRows(
       const diffed = diffNodeInline(op.oldNode, op.newNode);
       rows.push({
         kind: 'modify',
-        newCell: createCell(diffed.newNode),
-        oldCell: createCell(diffed.oldNode),
+        newCell: createCell(diffed.newNode, op.newNode),
+        oldCell: createCell(diffed.oldNode, op.oldNode),
       });
       index++;
       continue;

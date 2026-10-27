@@ -203,6 +203,21 @@ describe('computeLexicalDiffRows', () => {
         (node) => typeof node.style === 'string' && node.style.includes('--ant-color-success'),
       ),
     ).toBe(true);
+
+    const oldSource = (rows[0].oldCell?.sourceBlock as any).children as any[];
+    const newSource = (rows[0].newCell?.sourceBlock as any).children as any[];
+    expect(oldSource.map((node) => node.text).join('')).toBe('hello world');
+    expect(newSource.map((node) => node.text).join('')).toBe('hello there');
+    expect(
+      oldSource.some(
+        (node) => typeof node.style === 'string' && node.style.includes('line-through'),
+      ),
+    ).toBe(false);
+    expect(
+      newSource.some(
+        (node) => typeof node.style === 'string' && node.style.includes('--ant-color-success'),
+      ),
+    ).toBe(false);
   });
 
   it('creates insert and delete rows for unmatched blocks', () => {
