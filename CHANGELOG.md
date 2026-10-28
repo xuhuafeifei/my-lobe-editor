@@ -2,6 +2,69 @@
 
 # Changelog
 
+### [version 1.0.0-fork.30](https://github.com/xuhuafeifei/my-lobe-editor)
+
+<sup>Released on **2026-10-27**</sup>
+
+#### 🐛 Bug Fixes
+
+- **diff**: `overwriteAll` / LexicalDiff no longer flags unchanged blocks — ignore MD-reparse meta noise (`direction`/`version`/…) and coalesce split text nodes; `modify` with no visible change demotes to `equal`.
+
+<br/>
+
+<details>
+<summary><kbd>Improvements and Fixes</kbd></summary>
+
+</details>
+
+<div align="right">
+
+[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
+
+</div>
+
+### [version 1.0.0-fork.29](https://github.com/xuhuafeifei/my-lobe-editor)
+
+<sup>Released on **2026-10-27**</sup>
+
+#### 🐛 Bug Fixes
+
+- **diff**: New slot / overwrite ops auto Undo All any pending DiffHunks first (no longer error `pending diff; resolve before applying more ops`).
+
+<br/>
+
+<details>
+<summary><kbd>Improvements and Fixes</kbd></summary>
+
+</details>
+
+<div align="right">
+
+[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
+
+</div>
+
+### [version 1.0.0-fork.28](https://github.com/xuhuafeifei/my-lobe-editor)
+
+<sup>Released on **2026-10-27**</sup>
+
+#### ✨ Features
+
+- **diff**: Agent slot APIs — `updateSlot` / `insertAfterSlot` / `removeSlot` / `overwriteAll` (block LCS); live `DiffHunk` + review bar; `assertCanPublish` / `hasPendingDiff`; tighter adjacent red/green hunk spacing.
+
+<br/>
+
+<details>
+<summary><kbd>Improvements and Fixes</kbd></summary>
+
+</details>
+
+<div align="right">
+
+[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
+
+</div>
+
 ### [version 1.0.0-fork.27](https://github.com/xuhuafeifei/my-lobe-editor)
 
 <sup>Released on **2026-10-23**</sup>

@@ -39,6 +39,7 @@ const Image = memo<ImageProps>(
   }) => {
     const [isSelected, setSelected] = useLexicalNodeSelection(node.getKey());
     const [isHovered, setIsHovered] = useState(false);
+    const [isResizing, setIsResizing] = useState(false);
     const [scale, setScale] = useState(1);
     const [size, setSize] = useState({ height: 0, width: 0 });
     const [newWidth, setNewWidth] = useState<number | null>(null);
@@ -109,6 +110,7 @@ const Image = memo<ImageProps>(
 
     // Store the initial width when resize starts
     const handleResizeStart = useCallback((initialWidth: number) => {
+      setIsResizing(true);
       startWidthRef.current = initialWidth;
     }, []);
 
@@ -147,10 +149,11 @@ const Image = memo<ImageProps>(
       setIsHovered(true);
     }, []);
 
-    // Mouse leave handler
+    // Mouse leave handler — keep hovered while dragging so handles stay mounted
     const handleMouseLeave = useCallback(() => {
+      if (isResizing) return;
       setIsHovered(false);
-    }, []);
+    }, [isResizing]);
 
     const children = useMemo(() => {
       switch (node.status) {
@@ -196,6 +199,7 @@ const Image = memo<ImageProps>(
     // On resize end, persist to node (set maxWidth)
     const handleResizeEnd = useCallback(
       (deltaX: number) => {
+        setIsResizing(false);
         if (!originalSizeRef.current.width || !originalSizeRef.current.height) return;
         if (!imageRef.current) return;
 
@@ -203,11 +207,18 @@ const Image = memo<ImageProps>(
         const parentWidth = imageRef.current.parentElement?.clientWidth || window.innerWidth;
         const maxWidth = parentWidth;
 
-        // Since image is centered, delta is halved (both sides resize)
-        const adjustedDeltaX = deltaX / 2;
+        // Must match handleResize: centered image → both sides move → delta * 2
+        const adjustedDeltaX = deltaX * 2;
 
         // Use the width captured at mousedown time
         const finalWidth = Math.max(50, Math.min(startWidthRef.current + adjustedDeltaX, maxWidth));
+
+        setSize((prev) => ({
+          height: finalWidth / (originalSizeRef.current.width / originalSizeRef.current.height),
+          width: finalWidth,
+        }));
+        setNewWidth(finalWidth);
+        setScale(finalWidth / originalSizeRef.current.width);
 
         // persist to node via editor.update
         const editor = editorRef.current;
@@ -264,8 +275,8 @@ const Image = memo<ImageProps>(
             />
           )}
 
-          {/* Resize handles - only left and right */}
-          {isHovered && node.status === 'uploaded' && (
+          {/* Resize handles — show on hover/select/drag (not hover-only, else mouseLeave kills drag) */}
+          {(isHovered || isSelected || isResizing) && node.status === 'uploaded' && (
             <>
               <ResizeHandle
                 imageRef={imageRef}

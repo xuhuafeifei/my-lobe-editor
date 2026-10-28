@@ -265,6 +265,50 @@ describe('computeLexicalDiffRows', () => {
     expect(JSON.stringify(oldValue)).toBe(oldSnapshot);
     expect(JSON.stringify(newValue)).toBe(newSnapshot);
   });
+
+  it('treats meta-only differences (direction/version) as equal — MD reparse noise', () => {
+    const oldValue = makeEditorState([
+      makeParagraph('unchanged'),
+      { ...makeHeading('Title', 'h2'), direction: 'ltr', version: 1 },
+    ]);
+    const newValue = makeEditorState([
+      { ...makeParagraph('unchanged'), direction: null, version: 2 },
+      { ...makeHeading('Title', 'h2'), direction: null, version: 99 },
+    ]);
+
+    const rows = computeLexicalDiffRows(oldValue, newValue);
+    expect(rows.map((row) => row.kind)).toEqual(['equal', 'equal']);
+  });
+
+  it('treats differently split text nodes with same marks+text as equal', () => {
+    const oldValue = makeEditorState([makeParagraph('hello world')]);
+    const newValue = makeEditorState([
+      {
+        ...makeParagraph(''),
+        children: [makeText('hello '), makeText('world')],
+      },
+    ]);
+
+    const rows = computeLexicalDiffRows(oldValue, newValue);
+    expect(rows).toHaveLength(1);
+    expect(rows[0].kind).toBe('equal');
+  });
+
+  it('still marks real prose edits as modify among unchanged neighbors', () => {
+    const oldValue = makeEditorState([
+      makeParagraph('keep A'),
+      makeParagraph('old middle'),
+      makeParagraph('keep B'),
+    ]);
+    const newValue = makeEditorState([
+      { ...makeParagraph('keep A'), direction: null },
+      makeParagraph('new middle'),
+      { ...makeParagraph('keep B'), version: 7 },
+    ]);
+
+    const rows = computeLexicalDiffRows(oldValue, newValue);
+    expect(rows.map((row) => row.kind)).toEqual(['equal', 'modify', 'equal']);
+  });
 });
 
 describe('LexicalDiff', () => {

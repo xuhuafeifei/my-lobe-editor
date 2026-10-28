@@ -5,6 +5,7 @@ import type { LexicalDiffCell, LexicalDiffRow } from './types';
 type NodeRecord = Record<string, unknown>;
 
 type SerializedTextNodeLike = SerializedLexicalNode & {
+  format?: number;
   style?: string;
   text: string;
   type: 'text';
@@ -91,13 +92,80 @@ function getChildren(node: SerializedLexicalNode): SerializedLexicalNode[] | nul
   return Array.isArray(children) ? (children as SerializedLexicalNode[]) : null;
 }
 
-function nodesEqual(a: SerializedLexicalNode, b: SerializedLexicalNode): boolean {
-  return JSON.stringify(a) === JSON.stringify(b);
+/** Fields that often differ across editor JSON vs Markdown re-parse without visible change. */
+const EPHEMERAL_KEYS = new Set([
+  'version',
+  'direction',
+  'textFormat',
+  'textStyle',
+  'detail',
+  'mode',
+]);
+
+/**
+ * Stable compare form: drop ephemeral Lexical metadata and empty styles so
+ * editor.toJSON() vs parseMarkdownToLexical() of the same prose can match.
+ */
+function canonicalizeForCompare(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map((item) => canonicalizeForCompare(item));
+  }
+  if (!value || typeof value !== 'object') {
+    return value;
+  }
+
+  const record = value as Record<string, unknown>;
+  const next: Record<string, unknown> = {};
+  for (const key of Object.keys(record).sort()) {
+    if (EPHEMERAL_KEYS.has(key)) continue;
+    const raw = record[key];
+    if (key === 'style' && (raw === '' || raw == null)) continue;
+    if (key === 'format' && (raw === '' || raw === 0 || raw == null)) continue;
+    next[key] = canonicalizeForCompare(raw);
+  }
+  return next;
 }
 
 function isTextNode(node: SerializedLexicalNode): node is SerializedTextNodeLike {
   const record = node as NodeRecord;
   return record.type === 'text' && typeof record.text === 'string';
+}
+
+function textMetaKey(node: SerializedTextNodeLike): string {
+  return JSON.stringify({
+    format: node.format ?? 0,
+    style: typeof node.style === 'string' ? node.style : '',
+  });
+}
+
+/** Merge adjacent text nodes that share the same marks (MD parse often splits differently). */
+function coalesceAdjacentTextNodes(nodes: SerializedLexicalNode[]): SerializedLexicalNode[] {
+  const out: SerializedLexicalNode[] = [];
+  for (const node of nodes) {
+    const last = out.at(-1);
+    if (last && isTextNode(last) && isTextNode(node) && textMetaKey(last) === textMetaKey(node)) {
+      out[out.length - 1] = {
+        ...last,
+        text: last.text + node.text,
+      } as SerializedLexicalNode;
+      continue;
+    }
+    const children = getChildren(node);
+    if (children) {
+      out.push(cloneNodeWithChildren(node, coalesceAdjacentTextNodes(children)));
+    } else {
+      out.push(node);
+    }
+  }
+  return out;
+}
+
+function nodesEqual(a: SerializedLexicalNode, b: SerializedLexicalNode): boolean {
+  const left = coalesceAdjacentTextNodes([a])[0] ?? a;
+  const right = coalesceAdjacentTextNodes([b])[0] ?? b;
+  return (
+    JSON.stringify(canonicalizeForCompare(left)) === JSON.stringify(canonicalizeForCompare(right))
+  );
 }
 
 function appendStyle(baseStyle: unknown, extraStyle: string): string {
@@ -417,7 +485,10 @@ function diffChildrenInline(
   oldChildren: SerializedLexicalNode[],
   newChildren: SerializedLexicalNode[],
 ): InlineChildrenDiffResult {
-  const ops = alignNodes(oldChildren, newChildren);
+  const ops = alignNodes(
+    coalesceAdjacentTextNodes(oldChildren),
+    coalesceAdjacentTextNodes(newChildren),
+  );
   const nextOldChildren: SerializedLexicalNode[] = [];
   const nextNewChildren: SerializedLexicalNode[] = [];
   let changed = false;
@@ -513,7 +584,10 @@ export function computeLexicalDiffRows(
   oldState: SerializedEditorState,
   newState: SerializedEditorState,
 ): LexicalDiffRow[] {
-  const ops = alignNodes(getRootChildren(oldState), getRootChildren(newState));
+  const ops = alignNodes(
+    coalesceAdjacentTextNodes(getRootChildren(oldState)),
+    coalesceAdjacentTextNodes(getRootChildren(newState)),
+  );
   const rows: LexicalDiffRow[] = [];
 
   let index = 0;
@@ -532,6 +606,17 @@ export function computeLexicalDiffRows(
 
     if (op.kind === 'modify') {
       const diffed = diffNodeInline(op.oldNode, op.newNode);
+      // JSON/meta noise or text-node split differences with no visible change → treat as equal
+      // (overwriteAll keeps the live editor block).
+      if (!diffed.changed) {
+        rows.push({
+          kind: 'equal',
+          newCell: createCell(op.oldNode),
+          oldCell: createCell(op.oldNode),
+        });
+        index++;
+        continue;
+      }
       rows.push({
         kind: 'modify',
         newCell: createCell(diffed.newNode, op.newNode),

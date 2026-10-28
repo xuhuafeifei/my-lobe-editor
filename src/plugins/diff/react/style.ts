@@ -2,13 +2,18 @@ import { createStaticStyles } from 'antd-style';
 
 export const styles = createStaticStyles(({ css }) => ({
   chrome: css`
+    margin: 0;
+    padding: 0;
+    line-height: 0;
     user-select: none;
   `,
   deleteLine: css`
     margin: 0;
-    padding: 4px 10px;
+    padding: 2px 10px;
     background: color-mix(in srgb, #f14c4c 16%, transparent);
     color: #c72e2e;
+    font-size: 1rem;
+    line-height: 1.6;
     text-decoration: line-through;
     text-decoration-color: color-mix(in srgb, #c72e2e 50%, transparent);
     box-shadow: inset 3px 0 0 #f14c4c;
@@ -112,8 +117,17 @@ export const styles = createStaticStyles(({ css }) => ({
 export const diffHunkTheme = createStaticStyles(
   ({ css }) => css`
     position: relative;
-    margin-block: 2px;
+    /* 不同 hunk（不相关改动）之间留间距，避免糊成一片 */
+    margin-block: 0.55em;
     border-radius: 0;
+
+    /*
+     * hunk 内部子块贴紧：update 的红 chrome + 绿正文是同一改动，不要露白缝。
+     * （也压掉 .mdocs-editor p / UA 的默认外边距）
+     */
+    & > * {
+      margin-block: 0 !important;
+    }
 
     &.is-delete {
       background: color-mix(in srgb, #f14c4c 16%, transparent);
@@ -134,7 +148,15 @@ export const diffHunkTheme = createStaticStyles(
     &.is-update {
       background: transparent;
 
+      /* chrome 宿主本身不留底缝 */
+      & > [data-diff-chrome-kind] {
+        margin: 0 !important;
+        padding: 0;
+        line-height: 0;
+      }
+
       & > :not([data-diff-chrome-kind]) {
+        margin-block: 0 !important;
         background: color-mix(in srgb, #3fb950 16%, transparent);
       }
 

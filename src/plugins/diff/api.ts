@@ -9,7 +9,7 @@ import { computeLexicalDiffRows } from '@/renderer/diff/compute';
 
 import {
   $buildHunk,
-  $hasPendingDiff,
+  $rejectAllDiffOps,
   acceptAllDiffOps,
   assertCanPublish,
   hasPendingDiff,
@@ -22,6 +22,13 @@ export type DiffApiResult = { ok: true } | { ok: false; error: string };
 export type FlattenMode = 'keep' | 'reject';
 
 type SerializedRecord = Record<string, unknown>;
+
+/** Drop any in-flight DiffHunks (Undo All) so a new proposal can land. */
+function discardPendingDiffs(editor: LexicalEditor): void {
+  if (hasPendingDiff(editor)) {
+    rejectAllDiffOps(editor);
+  }
+}
 
 function mdToRoot(editor: LexicalEditor, md: string): SerializedEditorState {
   try {
@@ -100,20 +107,12 @@ export function getCanonicalEditorState(
   return flattenCanonicalState(state, mode);
 }
 
-function guardNoPending(editor: LexicalEditor): DiffApiResult | null {
-  if (hasPendingDiff(editor)) {
-    return { ok: false, error: 'pending diff; resolve before applying more ops' };
-  }
-  return null;
-}
-
 function $getSlotNode(slot1Based: number) {
   return $getRoot().getChildren()[slot1Based - 1] ?? null;
 }
 
 export function updateSlot(editor: LexicalEditor, slot: number, md: string): DiffApiResult {
-  const blocked = guardNoPending(editor);
-  if (blocked) return blocked;
+  discardPendingDiffs(editor);
 
   const blocks = mdToBlocks(editor, md);
   if (blocks.length !== 1) {
@@ -124,10 +123,7 @@ export function updateSlot(editor: LexicalEditor, slot: number, md: string): Dif
   let error = 'update_slot failed';
   editor.update(
     () => {
-      if ($hasPendingDiff()) {
-        error = 'pending diff; resolve before applying more ops';
-        return;
-      }
+      $rejectAllDiffOps();
       const target = $getSlotNode(slot);
       if (!target || $isDiffHunkNode(target)) {
         error = 'invalid slot or target is already a diff hunk';
@@ -144,8 +140,7 @@ export function updateSlot(editor: LexicalEditor, slot: number, md: string): Dif
 }
 
 export function insertAfterSlot(editor: LexicalEditor, slot: number, md: string): DiffApiResult {
-  const blocked = guardNoPending(editor);
-  if (blocked) return blocked;
+  discardPendingDiffs(editor);
 
   const blocks = mdToBlocks(editor, md);
   if (blocks.length === 0) {
@@ -156,10 +151,7 @@ export function insertAfterSlot(editor: LexicalEditor, slot: number, md: string)
   let error = 'insert_after failed';
   editor.update(
     () => {
-      if ($hasPendingDiff()) {
-        error = 'pending diff; resolve before applying more ops';
-        return;
-      }
+      $rejectAllDiffOps();
       const after = slot === 0 ? null : $getSlotNode(slot);
       if (slot !== 0 && (!after || $isDiffHunkNode(after))) {
         error = 'invalid afterSlot';
@@ -187,17 +179,13 @@ export function insertAfterSlot(editor: LexicalEditor, slot: number, md: string)
 }
 
 export function removeSlot(editor: LexicalEditor, slot: number): DiffApiResult {
-  const blocked = guardNoPending(editor);
-  if (blocked) return blocked;
+  discardPendingDiffs(editor);
 
   let ok = false;
   let error = 'remove_slot failed';
   editor.update(
     () => {
-      if ($hasPendingDiff()) {
-        error = 'pending diff; resolve before applying more ops';
-        return;
-      }
+      $rejectAllDiffOps();
       const target = $getSlotNode(slot);
       if (!target || $isDiffHunkNode(target)) {
         error = 'invalid slot or target is already a diff hunk';
@@ -215,11 +203,10 @@ export function removeSlot(editor: LexicalEditor, slot: number): DiffApiResult {
 
 /**
  * Full-document propose (approach B): LCS current vs md → multiple DiffHunks.
- * Refuses when pending hunks already exist.
+ * Any pending hunks are Undo All'd first so LCS runs against the restored base.
  */
 export function overwriteAll(editor: LexicalEditor, md: string): DiffApiResult {
-  const blocked = guardNoPending(editor);
-  if (blocked) return blocked;
+  discardPendingDiffs(editor);
 
   const oldState = editor.getEditorState().toJSON() as SerializedEditorState;
   const newState = mdToRoot(editor, md);
@@ -259,7 +246,7 @@ export function overwriteAll(editor: LexicalEditor, md: string): DiffApiResult {
   let applied = false;
   editor.update(
     () => {
-      if ($hasPendingDiff()) return;
+      $rejectAllDiffOps();
       const root = $getRoot();
       root.clear();
       for (const step of plan) {

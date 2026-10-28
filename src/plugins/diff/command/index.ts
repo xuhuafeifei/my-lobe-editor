@@ -264,15 +264,25 @@ function $collectOpIds(): string[] {
   return ids;
 }
 
+/** Must run inside `editor.update`. */
+export function $acceptAllDiffOps() {
+  for (const id of $collectOpIds()) $accept(id);
+}
+
+/** Must run inside `editor.update`. Undo All — restore pre-proposal tree. */
+export function $rejectAllDiffOps() {
+  for (const id of $collectOpIds()) $reject(id);
+}
+
 export function acceptAllDiffOps(editor: LexicalEditor) {
   editor.update(() => {
-    for (const id of $collectOpIds()) $accept(id);
+    $acceptAllDiffOps();
   });
 }
 
 export function rejectAllDiffOps(editor: LexicalEditor) {
   editor.update(() => {
-    for (const id of $collectOpIds()) $reject(id);
+    $rejectAllDiffOps();
   });
 }
 
