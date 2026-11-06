@@ -1,27 +1,28 @@
 export {
   assertCanPublish,
+  type DiffApiResult,
   flattenCanonicalState,
+  type FlattenMode,
   getCanonicalEditorState,
   hasPendingDiff,
   insertAfterSlot,
   materializeCanonical,
   overwriteAll,
+  overwriteAllFromState,
   removeSlot,
   updateSlot,
-  type DiffApiResult,
-  type FlattenMode,
 } from './api';
 export {
   ACCEPT_DIFF_OP_COMMAND,
-  APPLY_DIFF_OP_COMMAND,
-  REJECT_DIFF_OP_COMMAND,
   acceptAllDiffOps,
   acceptDiffHunkByKey,
   acceptDiffOp,
+  APPLY_DIFF_OP_COMMAND,
+  type DiffOpPayload,
+  REJECT_DIFF_OP_COMMAND,
   rejectAllDiffOps,
   rejectDiffHunkByKey,
   rejectDiffOp,
-  type DiffOpPayload,
 } from './command';
 export {
   $createDiffChromeNode,
@@ -32,8 +33,8 @@ export {
 export {
   $createDiffHunkNode,
   $isDiffHunkNode,
-  DiffHunkNode,
   type DiffHunkKind,
+  DiffHunkNode,
   type SerializedDiffHunkNode,
 } from './node/DiffHunkNode';
 export * from './plugin';

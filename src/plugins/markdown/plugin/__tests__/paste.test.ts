@@ -34,6 +34,23 @@ describe('Markdown paste', () => {
     expect(result).toBe(true);
   });
 
+  it('shouldDeferToRichHTML is false when onPasteMarkdown is set (source paste confirm)', () => {
+    const withConfirm = new MarkdownPlugin(createKernelMock(), {
+      onPasteMarkdown: () => true,
+    }) as any;
+    const without = new MarkdownPlugin(createKernelMock()) as any;
+    const rich = createClipboardDataMock({
+      'text/html': '<p><strong>Bold</strong> text</p>',
+      'text/plain': '**Bold** text\n\n- item',
+    });
+
+    // Mirror PASTE_COMMAND gate: rich HTML only wins when no confirm callback.
+    expect(Boolean(without.hasRichHTML(rich) && !without.config?.onPasteMarkdown)).toBe(true);
+    expect(Boolean(withConfirm.hasRichHTML(rich) && !withConfirm.config?.onPasteMarkdown)).toBe(
+      false,
+    );
+  });
+
   it('should treat Qwen-style heading/list HTML as rich HTML', () => {
     const plugin = new MarkdownPlugin(createKernelMock()) as any;
 

@@ -2,6 +2,36 @@
 
 # Changelog
 
+### [version 1.0.0-fork.39](https://github.com/xuhuafeifei/my-lobe-editor)
+
+<sup>Released on **2026-11-06**</sup>
+
+#### ✨ Features
+
+- **diff**: `overwriteAllFromState` — full-doc Diff from Lexical JSON (batch slots without MD round-trip). Includes rebuilt `es/` exports.
+
+<br/>
+
+### [version 1.0.0-fork.38](https://github.com/xuhuafeifei/my-lobe-editor)
+
+<sup>Released on **2026-11-06**</sup>
+
+#### ✨ Features
+
+- **diff**: `overwriteAllFromState` (source); prefer **fork.39** for published `es/` bundle.
+
+<br/>
+
+### [version 1.0.0-fork.37](https://github.com/xuhuafeifei/my-lobe-editor)
+
+<sup>Released on **2026-11-06**</sup>
+
+#### 🐛 Bug Fixes
+
+- **paste**: `confirmPasteMarkdown` / `onPasteMarkdown` no longer skipped when clipboard also has rich HTML — restore source-paste confirm dialog (convert vs keep plain).
+
+<br/>
+
 ### [version 1.0.0-fork.30](https://github.com/xuhuafeifei/my-lobe-editor)
 
 <sup>Released on **2026-10-27**</sup>

@@ -314,9 +314,9 @@ export const MarkdownPlugin: IEditorPluginConstructor<MarkdownPluginOptions> = c
 
           // Prefer rich HTML (e.g. Qwen / browser-rendered Markdown) over the
           // degraded text/plain that often only keeps a few **bold** markers.
-          // Must run before onPasteMarkdown, or a weak MD score steals the paste
-          // and Lexical never sees the structured HTML.
-          if (this.hasRichHTML(clipboardData)) {
+          // Exception: confirmPasteMarkdown / onPasteMarkdown must still see the
+          // clipboard so the user can choose「转换」or「保留纯文本/源码」.
+          if (this.hasRichHTML(clipboardData) && !this.config?.onPasteMarkdown) {
             return false;
           }
 

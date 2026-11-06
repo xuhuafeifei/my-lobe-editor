@@ -1,7 +1,6 @@
 'use client';
 
 import { Mermaid } from '@lobehub/ui';
-import mermaid from 'mermaid';
 import React, {
   Component,
   type ReactNode,
@@ -13,6 +12,23 @@ import React, {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
+
+/** Lazy-load mermaid so the ~3MB diagram chunk is not on first paint. */
+let mermaidLoader: Promise<typeof import('mermaid').default> | null = null;
+
+function loadMermaid() {
+  if (!mermaidLoader) {
+    mermaidLoader = import('mermaid').then((mod) => {
+      const mermaid = mod.default;
+      mermaid.initialize({
+        securityLevel: 'strict',
+        startOnLoad: false,
+      });
+      return mermaid;
+    });
+  }
+  return mermaidLoader;
+}
 
 // ============================================================================
 // Mermaid 渲染错误边界
@@ -405,8 +421,8 @@ const MermaidWithErrorBoundary = memo<MermaidWithErrorBoundaryProps>(
       // Only clear when we have nothing to show for this code (avoids flash on remount).
       setSvg('');
 
-      Promise.resolve()
-        .then(async () => {
+      loadMermaid()
+        .then(async (mermaid) => {
           await mermaid.parse(code);
           return mermaid.render(renderId, code);
         })

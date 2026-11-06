@@ -11,13 +11,12 @@ import {
   $buildHunk,
   $rejectAllDiffOps,
   acceptAllDiffOps,
-  assertCanPublish,
   hasPendingDiff,
   rejectAllDiffOps,
 } from './command';
 import { $isDiffHunkNode } from './node/DiffHunkNode';
 
-export type DiffApiResult = { ok: true } | { ok: false; error: string };
+export type DiffApiResult = { ok: true } | { error: string; ok: false };
 
 export type FlattenMode = 'keep' | 'reject';
 
@@ -116,7 +115,7 @@ export function updateSlot(editor: LexicalEditor, slot: number, md: string): Dif
 
   const blocks = mdToBlocks(editor, md);
   if (blocks.length !== 1) {
-    return { ok: false, error: 'update_slot expects exactly one top-level markdown block' };
+    return { error: 'update_slot expects exactly one top-level markdown block', ok: false };
   }
 
   let ok = false;
@@ -136,7 +135,7 @@ export function updateSlot(editor: LexicalEditor, slot: number, md: string): Dif
     },
     { discrete: true },
   );
-  return ok ? { ok: true } : { ok: false, error };
+  return ok ? { ok: true } : { error, ok: false };
 }
 
 export function insertAfterSlot(editor: LexicalEditor, slot: number, md: string): DiffApiResult {
@@ -144,7 +143,7 @@ export function insertAfterSlot(editor: LexicalEditor, slot: number, md: string)
 
   const blocks = mdToBlocks(editor, md);
   if (blocks.length === 0) {
-    return { ok: false, error: 'insert_after got empty markdown' };
+    return { error: 'insert_after got empty markdown', ok: false };
   }
 
   let ok = false;
@@ -175,7 +174,7 @@ export function insertAfterSlot(editor: LexicalEditor, slot: number, md: string)
     },
     { discrete: true },
   );
-  return ok ? { ok: true } : { ok: false, error };
+  return ok ? { ok: true } : { error, ok: false };
 }
 
 export function removeSlot(editor: LexicalEditor, slot: number): DiffApiResult {
@@ -198,26 +197,21 @@ export function removeSlot(editor: LexicalEditor, slot: number): DiffApiResult {
     },
     { discrete: true },
   );
-  return ok ? { ok: true } : { ok: false, error };
+  return ok ? { ok: true } : { error, ok: false };
 }
 
-/**
- * Full-document propose (approach B): LCS current vs md → multiple DiffHunks.
- * Any pending hunks are Undo All'd first so LCS runs against the restored base.
- */
-export function overwriteAll(editor: LexicalEditor, md: string): DiffApiResult {
-  discardPendingDiffs(editor);
+type OverwritePlanStep =
+  | { block: SerializedLexicalNode; kind: 'equal' }
+  | { kind: 'update'; newBlock: SerializedLexicalNode; oldBlock: SerializedLexicalNode }
+  | { kind: 'delete'; oldBlock: SerializedLexicalNode }
+  | { kind: 'insert'; newBlock: SerializedLexicalNode };
 
-  const oldState = editor.getEditorState().toJSON() as SerializedEditorState;
-  const newState = mdToRoot(editor, md);
+function buildOverwritePlan(
+  oldState: SerializedEditorState,
+  newState: SerializedEditorState,
+): OverwritePlanStep[] {
   const rows = computeLexicalDiffRows(oldState, newState);
-
-  const plan: Array<
-    | { kind: 'equal'; block: SerializedLexicalNode }
-    | { kind: 'update'; oldBlock: SerializedLexicalNode; newBlock: SerializedLexicalNode }
-    | { kind: 'delete'; oldBlock: SerializedLexicalNode }
-    | { kind: 'insert'; newBlock: SerializedLexicalNode }
-  > = [];
+  const plan: OverwritePlanStep[] = [];
 
   for (const row of rows) {
     if (row.kind === 'equal') {
@@ -239,7 +233,14 @@ export function overwriteAll(editor: LexicalEditor, md: string): DiffApiResult {
     const newBlock = row.newCell?.sourceBlock ?? row.newCell?.block;
     if (newBlock) plan.push({ kind: 'insert', newBlock });
   }
+  return plan;
+}
 
+function applyOverwritePlan(editor: LexicalEditor, newState: SerializedEditorState): DiffApiResult {
+  discardPendingDiffs(editor);
+
+  const oldState = editor.getEditorState().toJSON() as SerializedEditorState;
+  const plan = buildOverwritePlan(oldState, newState);
   const hasChange = plan.some((p) => p.kind !== 'equal');
   if (!hasChange) return { ok: true };
 
@@ -269,13 +270,33 @@ export function overwriteAll(editor: LexicalEditor, md: string): DiffApiResult {
     { discrete: true },
   );
 
-  return applied ? { ok: true } : { ok: false, error: 'overwrite_all failed' };
+  return applied ? { ok: true } : { error: 'overwrite_all failed', ok: false };
 }
 
-export { assertCanPublish, hasPendingDiff };
+/**
+ * Full-document propose (approach B): LCS current vs md → multiple DiffHunks.
+ * Any pending hunks are Undo All'd first so LCS runs against the restored base.
+ */
+export function overwriteAll(editor: LexicalEditor, md: string): DiffApiResult {
+  return applyOverwritePlan(editor, mdToRoot(editor, md));
+}
+
+/**
+ * Same as overwriteAll, but new side is already Lexical JSON.
+ * Prefer this for batch_update_slots: avoid Lexical→MD→Lexical round-trip that
+ * rewrites every unchanged block and paints the whole doc as modified.
+ */
+export function overwriteAllFromState(
+  editor: LexicalEditor,
+  newState: SerializedEditorState,
+): DiffApiResult {
+  return applyOverwritePlan(editor, newState);
+}
 
 /** Mutate live tree via accept/reject all. Prefer getCanonicalEditorState for export. */
 export function materializeCanonical(editor: LexicalEditor, mode: FlattenMode): void {
   if (mode === 'keep') acceptAllDiffOps(editor);
   else rejectAllDiffOps(editor);
 }
+
+export { assertCanPublish, hasPendingDiff } from './command';
